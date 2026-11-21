@@ -22,7 +22,7 @@ A key can reach some types of a vault and nothing else: a key named `claude` tha
 never sees a `journal` record, not by id, in a search, a link, a count, a file or an old version. The vault keeps the
 key's grant and checks every request against it, so ending the key works on its very next request.
 
-- **In the app:** Vault > a vault > **Sharing** > **Give an AI a key**: its name, read or read and add, every type or
+- **In the app:** Vault > a vault > **Sharing** > **Give an AI a key**: its name, read or read and change, every type or
   some. The key is shown once, with the vault's own address.
 - **Over the account API:** `POST /account/keys {"name": "claude", "vault": "home", "can": "write", "types": ["recipe"]}`.
 
