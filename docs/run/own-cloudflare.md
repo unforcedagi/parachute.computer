@@ -51,8 +51,15 @@ You need [Bun](https://bun.sh) 1.4 or newer, git, jq, and a Cloudflare account w
    The deploy keeps what must stay secret (an ops token) in `~/parachute/private/`; keep it, the key and the profile out of git.
 
 4. **Deploy**: `bunx wrangler login`, then `bash deploy/personal/deploy.sh ~/parachute/me.env ~/parachute/evidence` (the last folder gets its log). It takes about a minute, makes the bucket, the database and both workers, and prints two addresses. Yours is the `-identity` one: `https://me-parachute-identity.<subdomain>.workers.dev`. That one address is your Parachute: sign-in, your account and every vault answer there.
-5. **Sign in from the Parachute app** (phone or desktop). On its first screen, open **Advanced: paste a secret key**, paste the key file's contents (the hex is fine, though the hint says nsec) and tap **Keep this key**. Then type your address, choose **Mine**, **Sign in with your key**, and **Allow** on your Parachute's page; pick your home vault, **Continue**, and **Allow** once more. Your first sign-in makes your account. This needs an app build from 2026-11-21 or later (it carries the key sign-in for this kind of Parachute); an older one says "This hub doesn't take a key to sign in".
-6. **Connect your AI** with a key made for it (below): `https://<your address>/vault/<name>/mcp` for one vault, or `https://<your address>/account/mcp` for a key that names several. Or add `https://<your address>/mcp` as a connector (Claude, ChatGPT): it signs in through your browser, and you pick the vaults it may reach.
+5. **Make your first vault**, with your key (your first sign-in makes your account):
+
+   ```bash
+   D=https://me-parachute-identity.<subdomain>.workers.dev                # your address
+   bun deploy/personal/nip98.ts token $D ~/parachute/me.key acct.curl    # a 10-minute pass, signed by your key
+   curl -K acct.curl $D/account/vaults -d '{"name":"home"}'               # a few names, like notes, are reserved
+   ```
+6. **Sign in from the Parachute app** (phone or desktop). On its first screen, open **Advanced: paste a secret key**, paste the key file's contents (the hex is fine, though the hint says nsec) and tap **Keep this key**. Then type your address, choose **Mine**, **Sign in with your key**, and **Allow** on your Parachute's page; pick your home vault, **Continue**, and **Allow** once more. This needs an app build from 2026-11-21 or later (it carries the key sign-in for this kind of Parachute); an older one says "This hub doesn't take a key to sign in".
+7. **Connect your AI** with a key made for it (below): `https://<your address>/vault/<name>/mcp` for one vault, or `https://<your address>/account/mcp` for a key that names several. Or add `https://<your address>/mcp` as a connector (Claude, ChatGPT): it signs in through your browser, and you pick the vaults it may reach.
 
 In a browser tab (the app's web version) there is no key, and this Parachute sends no email, so open a browser session first with a one-time link from your key (below), then sign in.
 
@@ -61,7 +68,7 @@ In a browser tab (the app's web version) there is no key, and this Parachute sen
 ```bash
 D=https://me-parachute-identity.<subdomain>.workers.dev                  # your address
 bun deploy/personal/nip98.ts token $D ~/parachute/me.key acct.curl      # a 10-minute pass, signed by your key
-curl -K acct.curl $D/account/vaults -d '{"name":"home"}'                 # a vault (a few names, like notes, are reserved)
+curl -K acct.curl $D/account/vaults -d '{"name":"podcast"}'              # another vault
 curl -K acct.curl $D/account/keys -d '{"name":"claude","vault":"home","can":"write"}'    # a key for an AI or app
 curl -K acct.curl -X DELETE $D/account/keys/claude                       # take it back
 curl -K acct.curl $D/account/session-link -d '{}'                        # a one-time browser sign-in link
