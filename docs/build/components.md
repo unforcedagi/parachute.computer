@@ -3,7 +3,7 @@ title: "Components"
 summary: "The parts an applet builds its screens from, drawn live in each look, with the code that draws them."
 door: build
 order: 4.2
-checked: "parachute docs/COMPONENTS.md, docs/WRITE-AN-APPLET.md (The parts), docs/THEME.md (looks), src/kit/base.css, src/kit/parts.css and src/theme/theme.ts at 8588af2; the drawing is the app's own Parts applet (scripts/components-gallery.mjs)"
+checked: "parachute docs/COMPONENTS.md, docs/LOOK.md, docs/WRITE-AN-APPLET.md (The parts), docs/THEME.md (looks), src/kit/base.css, src/kit/parts.css, src/kit/pages.ts and src/theme/theme.ts at the T-476 look (PRs 165, 166, 168); the drawing is the app's own Parts applet (scripts/components-gallery.mjs)"
 gallery: true
 ---
 
@@ -27,7 +27,9 @@ export default function Shelf() {
 }
 ```
 
-`Page` gives the screen its title, one width and one margin, a way back (`back`), pull to read again (`onRefresh`), and with `wide` room for a board on a computer (lay its columns out with `pa-grid`, below). Start every applet with it; the frame adds no margin of its own around a `Page`.
+`Page` gives the screen its title (in the display serif, in the hour's sky), one width and one margin, a way back (`back`), pull to read again (`onRefresh`), and with `wide` room for a board on a computer (lay its columns out with `pa-grid`, below). Start every applet with it; the frame adds no margin of its own around a `Page`.
+
+A `Page` is a short run of pages the person turns: what doesn't fit runs on to the next page, sideways, with "2 of 3" and the arrows at its foot; a finger drags it, the arrows glide it, ← and → turn it, and on a computer it is an open book of two pages. `start="first"` opens it on its first page each time it is shown, `start="last"` on its newest (a conversation); `scroll` (and `wide`) make a page that scrolls instead. A line to write in goes under the pages with `Write dock`, so writing never turns the page. Why: [the look](https://github.com/ParachuteComputer/parachute/blob/next/docs/LOOK.md).
 
 ## Button
 
@@ -79,7 +81,7 @@ A block that stands apart from the rows around it. Use few: rows are not cards.
 <Write label="A note" labelled value={draft} onChange={setDraft} onSend={save} send="Save" />
 ```
 
-`Field` is a line to write on with one action (Enter does it too). `Search` searches on Enter. `Write` is a box for longer words, with its action.
+`Field` is a line to write on with one action (Enter does it too). `Search` searches on Enter. `Write` is a box for longer words, with its action; `<Write line dock …>` puts it in the strip under the page's pages (a chat's reply, Home's line for today).
 
 ## Table and Fields
 

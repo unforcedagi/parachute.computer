@@ -1,14 +1,14 @@
 ---
 title: "Change the look"
-summary: "One theme record sets the look of the whole app and every applet: one of four built-in looks, and any of its colours, fonts and style tokens."
+summary: "One theme record sets the look of the whole app and every applet: one of four built-in looks, the hour's sky, and any of its colours, fonts and style tokens."
 door: build
 order: 6
-checked: "parachute docs/THEME.md, docs/CHANGE-YOUR-FRAME.md, docs/WRITE-AN-APPLET.md (Make it look like Parachute) and src/theme/theme.ts (LOOKS, STYLE_TOKENS) at 8588af2"
+checked: "parachute docs/LOOK.md, docs/THEME.md, docs/CHANGE-YOUR-FRAME.md, docs/WRITE-AN-APPLET.md and src/theme/theme.ts (LOOKS, STYLE_TOKENS, MOTION) at the T-476 look (PRs 165, 166, 168)"
 ---
 
 *On a 0.8 server (Parachute Cloud today):* `create-note`, with `metadata.theme` for `fields.theme`.
 
-The whole app (its own screens, the list, every applet) takes its look from one record: `Parachute/Theme` in the home vault, tagged `parachute-theme`, with the theme in `fields.theme`. With none, the built-in theme: the Paper look, a moss accent, Literata for reading and Instrument Sans for the app's own words.
+The whole app (its own screens, the list, every applet) takes its look from one record: `Parachute/Theme` in the home vault, tagged `parachute-theme`, with the theme in `fields.theme`. With none, the built-in theme: the Paper look under the hour's sky, coral for the one thing to do next, Fraunces for a place's name, Literata for reading and Instrument Sans for the app's own words. Why it looks and moves as it does: [LOOK.md](https://github.com/ParachuteComputer/parachute/blob/next/docs/LOOK.md).
 
 ## The looks
 
@@ -16,7 +16,7 @@ A theme starts from one of four built-in looks. Each sets the two palettes and h
 
 | Look | What it is |
 |---|---|
-| `paper` | The default: hairlines, soft corners, a card lifted a little, boxed fields. |
+| `paper` | The default: warm paper with hairlines, the hour's sky at the head of each place, the one card with light on it, boxed fields, coral on the main action. |
 | `almanac` | Ink rules, dotted rows, a printed card, a line to write on. |
 | `book` | A printed page: no raised parts, a double rule, small capitals. |
 | `daylight` | Black on white for an e-paper screen: heavier rules, no tints or shadows, nothing moves. |
@@ -44,10 +44,10 @@ create-record {
 | `colors` | The light palette: `bg` (the page), `surface` (raised parts), `text`, `muted`, `line`, `accent`, `danger`. A colour given here stands over the look's. |
 | `dark` | The same seven, for dark mode. |
 | `tokens` | Any style token, by name without the `--`, over the look's value (below). |
-| `fonts` | `serif` (names, titles, reading), `sans` (labels, buttons, the bar), `mono`: lists of font names, ending in `serif`, `sans-serif` or `monospace`. The app carries Literata and Instrument Sans; any other font must be one the device has. |
+| `fonts` | `display` (a place's name, the one big line of a screen), `serif` (names, headings, reading), `sans` (labels, buttons, the bar), `mono`: lists of font names, ending in `serif`, `sans-serif` or `monospace`. The app carries Fraunces, Literata and Instrument Sans; any other font must be one the device has. |
 | `density` | `compact`, `regular` or `roomy`: padding, gaps, corners and text size. |
 | `scheme` | `system`, `light` or `dark`. |
-| `motion` | `flowing` or `still` (nothing moves). A device set to reduce motion, or a screen slow to redraw, is still whatever this says. |
+| `motion` | `flowing` or `still` (nothing moves, and pages turn at once). A device set to reduce motion, a screen slow to redraw, or Daylight on the screen, is still whatever this says. |
 
 Every key is optional. Anything left out, or written in a form the app doesn't read, stays the built-in value, and the rest still apply. A colour is hex, or `rgb()`, `hsl()`, `oklch()`, `oklab()` with plain numbers. Nothing else is read, so a theme can't load anything from the network.
 
@@ -66,6 +66,7 @@ Each is a CSS variable (`--line-row`) in every applet's frame, and a key in `tok
 | Depth | `shadow-card`, `shadow-sheet` |
 | Labels and titles | `label-transform`, `label-caps`, `label-track`, `title-weight` |
 | The page | `measure` (its width at most) |
+| The sky | `sky-top`, `sky-mid`, `sky-foot`: the hour's sky at the head of a place's first page. In `paper` they follow the time of day (morning gold, midday clear, evening rose, night lilac, light and dark); set one in `tokens` to fix it. The other looks have none. |
 
 What each draws, and its value in each look: [THEME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56/docs/THEME.md#in-an-applet).
 
@@ -78,7 +79,7 @@ Each value is held to the grammar of its kind:
 
 ## In an applet
 
-The kit's parts are drawn on these values, so they follow the theme with no work ([Components](/docs/build/components/)). For anything of your own, use the CSS variables, never your own colours or fonts: the palette `--bg`, `--surface`, `--text`, `--muted`, `--line`, `--accent`, `--danger`; `--serif`, `--sans`, `--mono`; `--pad`, `--gap`, `--radius`, `--size`, `--leading`; the type scale `--fs-title` … `--fs-label`; and the style tokens above. Motion: `--ease-out`, `--ease-in-out`, `--ease-drawer`, and `--t-press`, `--t-state`, `--t-sheet`, `--t-step`, all 0 when the theme or the device is still ([Make it feel good](/docs/build/make-it-feel-good/)).
+The kit's parts are drawn on these values, so they follow the theme with no work ([Components](/docs/build/components/)). For anything of your own, use the CSS variables, never your own colours or fonts: the palette `--bg`, `--surface`, `--text`, `--muted`, `--line`, `--accent`, `--danger`; `--display`, `--serif`, `--sans`, `--mono`; `--pad`, `--gap`, `--radius`, `--size`, `--leading`; the type scale `--fs-display` … `--fs-label`; and the style tokens above. Motion: `--ease-out`, `--ease-in-out`, `--ease-drawer`, and `--t-press`, `--t-state`, `--t-sheet`, `--t-step`, `--t-turn`, `--t-swap`, all 0 when the theme, the device or the screen is still; motion your own code makes asks the kit's `still()` first ([Make it feel good](/docs/build/make-it-feel-good/)).
 
 ## The order of styles
 
@@ -92,7 +93,7 @@ Every applet's frame gets the look in four steps, each over the one before:
 To override as an applet:
 
 - **A token for your applet only:** set it on `body` or your own wrapper (`body { --accent: #8a5a2b; }`), not on `:root`. The app sets the theme on the root, and sets it again when the theme changes, so name a variable of your own another way than a token (`--my-…`).
-- **Edge to edge** (a map, a board): `body { margin: 0 }`. The kit's column is the body's margin, in place of the browser's own 8px.
+- **Edge to edge** (a map, a board): `body { margin: 0 }`. The kit's column is the body's margin, in place of the browser's own 8px. A `Page` turns as pages; `<Page scroll>` (or `wide`) gives you a page that scrolls instead.
 - **Styles a later rule can still override:** put them in a layer of your own (`@layer mine { … }`).
 
 An embed in someone else's page gets the same look, with each colour as `#rrggbb` and the built-in fonts.
