@@ -12,7 +12,9 @@ Your AI gets one address, your Parachute's own with `/mcp` on the end:
 https://<your server>/mcp
 ```
 
-The first time an AI app connects, you sign in and approve it on your server's page; nothing else to paste. There you choose what it reaches: **All your vaults** (read and write in each, the ones you make later too, and it may make new vaults), or **Only these vaults**, each at None, Read or Write. It then names a vault on each call. In the app it is under **Connect** on the bar, with **Copy**.
+The first time an AI app connects, you sign in and approve it on your server's page; nothing else to paste. There you choose what it reaches: your vaults, and for each one Read or **Write**. **Give it Write on the vaults it should save to**: with Read it can look but can't remember anything for you. Where your server offers **All your vaults**, that is read and write in each, the ones you make later too. In the app the address is under **Connect**, with **Copy**.
+
+The AI connects as itself, with access of its own, not yours: Vault, your vault, **Sharing** lists it, and **End** there takes it back.
 
 **Just one vault:** to give an AI one vault and nothing else, use that vault's own address instead, `https://<your server>/vault/<vault name>/mcp`. Connect lists it under **Just one vault**.
 
