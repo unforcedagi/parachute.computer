@@ -106,11 +106,13 @@ async function applet() {
   });
   // a file this site has as a page of its own links there (the same parts, drawn live)
   const OURS = { "docs/COMPONENTS.md": "/docs/build/components/" };
-  const blob = (p) => OURS[p] ?? `https://github.com/ParachuteComputer/parachute/blob/${sha}/${p}`;
+  const blob = (p) => `https://github.com/ParachuteComputer/parachute/blob/${sha}/${p}`;
   const body = raw
     .replace(/^# .*\n+/, "") // the layout prints the title
     // links to the repo's own files go to them on GitHub, at this commit
-    .replace(/\]\((?!https?:|#|\/)([^)#]+)(#[^)]*)?\)/g, (_m, p, h = "") => `](${blob(new URL(p, "https://x/docs/").pathname.slice(1))}${h})`)
+    .replace(/\]\((?!https?:|#|\/)([^)#]+)(#[^)]*)?\)/g, (_m, p, h = "") => { const f = new URL(p, "https://x/docs/").pathname.slice(1); return OURS[f] ? `](${OURS[f]})` : `](${blob(f)}${h})`; })
+    // and a link to one of our pages is named as the page, not the file
+    .replace(/\[COMPONENTS\.md\]\(\/docs\/build\/components\/\)/g, "[Components](/docs/build/components/)")
     // and paths in backticks that name files stay as text
     ;
   // Three pages, cut at the guide's own headings, so each fits in one tool result for an AI (the docs tool hands over

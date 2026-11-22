@@ -12,7 +12,10 @@
   ];
   // what the frame needs on this page: the code is beside each part below, so not in the frame too
   var EXTRA = ".part > pre{display:none}";
-  var state = { look: "paper", scheme: matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light" };
+  // light or dark follows the reader's device until they choose
+  var dark = matchMedia("(prefers-color-scheme: dark)"), chosen = false;
+  var state = { look: "paper", scheme: dark.matches ? "dark" : "light" };
+  dark.addEventListener("change", function () { if (!chosen) { state.scheme = dark.matches ? "dark" : "light"; paint(); } });
   var data = null;
 
   var fig = document.createElement("figure");
@@ -29,7 +32,7 @@
       b.type = "button";
       b.textContent = it[1];
       b.dataset[key] = it[0];
-      b.addEventListener("click", function () { state[key] = it[0]; paint(); });
+      b.addEventListener("click", function () { state[key] = it[0]; if (key === "scheme") chosen = true; paint(); });
       g.appendChild(b);
     });
     bar.appendChild(g);
@@ -61,9 +64,12 @@
     fig.dataset.scheme = state.scheme;
     var doc = frame.contentDocument;
     if (!data || !doc || !doc.getElementById("taste")) return;
-    var t = data.looks[state.look][state.scheme];
+    var t = data.looks[state.look] && data.looks[state.look][state.scheme];
+    if (!t) return;
     doc.getElementById("taste").textContent = t.css + EXTRA;
     doc.documentElement.dataset.motion = t.motion;
+    // the window's own ground is the look's, so nothing else shows around the frame as it redraws
+    win.style.background = getComputedStyle(doc.body).backgroundColor;
   }
 
   // the two buttons in the drawing that would show a toast and a drawer: drawn with the parts' own classes, as the kit does
@@ -85,19 +91,20 @@
   function twoFrames(fn) { requestAnimationFrame(function () { requestAnimationFrame(fn); }); }
   function ms(doc, name) { return parseFloat(getComputedStyle(doc.documentElement).getPropertyValue(name)) || 0; }
   function toast(doc) {
-    var host = doc.createElement("div");
-    host.className = "pa-toasts";
-    host.setAttribute("role", "status");
+    // one host, as the kit keeps; a new toast takes the place of the one showing
+    var host = doc.querySelector(".pa-toasts");
+    if (!host) { host = doc.createElement("div"); host.className = "pa-toasts"; host.setAttribute("role", "status"); doc.body.appendChild(host); }
+    host.textContent = "";
     var t = doc.createElement("div");
     t.className = "pa-toast";
     t.dataset.state = "before";
     t.textContent = "Saved";
     host.appendChild(t);
-    doc.body.appendChild(host);
     twoFrames(function () { t.dataset.state = "in"; });
-    later(function () { t.dataset.state = "gone"; later(function () { host.remove(); }, ms(doc, "--t-sheet") + 50); }, 2000);
+    later(function () { t.dataset.state = "gone"; later(function () { t.remove(); }, ms(doc, "--t-sheet") + 50); }, 2000);
   }
   function drawer(doc, opener) {
+    if (doc.querySelector('.pa-drawer-scrim:not([data-state="gone"])')) return;
     var scrim = doc.createElement("div");
     scrim.className = "pa-drawer-scrim";
     scrim.dataset.state = "before";

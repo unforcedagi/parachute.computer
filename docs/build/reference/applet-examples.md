@@ -17,7 +17,7 @@ An applet looks like the rest of Parachute without any CSS of its own. Three ste
    switch places, `Table` and `Fields` show records, `Empty`, `Loading` and `Problem` say what state it is in,
    `Drawer` holds a detail or a short form, and `toast` says what an action did. Each part follows the person's
    theme and their look (paper, almanac, book, daylight), light and dark, on a phone and a computer. Every part,
-   drawn live with the code that draws it: [COMPONENTS.md](/docs/build/components/).
+   drawn live with the code that draws it: [Components](/docs/build/components/).
 2. **Plain HTML is drawn too.** `<h1>`, `<p>`, `<ul>`, `<table>`, `<blockquote>`, `<button>`, `<input>` and
    `<select>` come out in the theme. In an HTML applet, the parts' classes give the same look as the parts:
    `<button class="pa-button pa-primary">`, `<div class="pa-card">`.

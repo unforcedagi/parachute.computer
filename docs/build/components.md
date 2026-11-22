@@ -1,6 +1,6 @@
 ---
 title: "Components"
-summary: "Every part an applet imports from `parachute`, drawn live in each look, with the code that draws it."
+summary: "The parts an applet builds its screens from, drawn live in each look, with the code that draws them."
 door: build
 order: 4.2
 checked: "parachute docs/COMPONENTS.md, docs/WRITE-AN-APPLET.md (The parts), docs/THEME.md (looks), src/kit/base.css, src/kit/parts.css and src/theme/theme.ts at 5501d56; the drawing is the app's own Parts applet (scripts/components-gallery.mjs)"
