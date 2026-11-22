@@ -10,13 +10,13 @@ A **pack** adds a set of kinds of record to a vault, each with its fields and a 
 
 ## Add a pack
 
-In the app, open **Vault**, then your vault, then **Add a pack** (on a new vault, **Start here** leads there). Each pack lists what it adds before you tap **Add**, and says afterwards what it added and what it left as you had it:
+In the app, open **Vault**, then your vault, then **Add a pack** (on your own server, a new vault's **Start here** leads there). Each pack lists what it adds before you tap **Add**, and says afterwards what it added and what it left as you had it:
 
 - [**Core types**](/docs/build/packs/core-types/): people, projects, meetings and tasks, a template for each, and a view of open tasks.
 - [**Clients and sessions**](/docs/build/packs/clients/): for a practice (a coach, a tutor, a therapist): clients, a note for each session, the follow-ups you agreed, and a view of the open ones by client.
 - [**Reading list**](/docs/build/packs/reading/): books, with a template for notes and a view of what you're reading now.
 
-**Installed packs** shows what a vault has. Adding a pack again changes nothing. Coming from Notion? [Import your workspace](/docs/use/from-notion/): it lands the same way.
+**Installed packs** shows what a vault has. Adding a pack again changes nothing. A pack makes types, which the app can do today on [your own server](/docs/run/self-host/); on Parachute Cloud and your own Cloudflare it says it can't yet and changes nothing, until their next update. Your AI can add a pack there now (below). Coming from Notion? [Import your workspace](/docs/use/from-notion/): it lands the same way.
 
 Or ask your AI: "Apply the Core types pack from parachute.computer/docs/build/packs/core-types.md to my vault." It reads [the same pack](/docs/build/packs/core-types/) and adds the same things.
 

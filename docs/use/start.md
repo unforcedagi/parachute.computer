@@ -29,14 +29,14 @@ Android (8 or newer, 64-bit ARM) and Apple Silicon Macs. The Mac build isn't not
 The app's first screen has a way in for each:
 
 - **Parachute Cloud:** **Sign in with Parachute Cloud**, then the code it mails you.
-- **Your own computer, or someone else's:** **Sign in with its address**. Type the address its setup page showed (say `http://192.168.1.20:1939`), say whose it is (**Mine**), and sign in on its own page with the account you made there. It asks you to approve the Parachute app: that is this app, on your device.
+- **Your own computer, or someone else's:** **Sign in with its address**. On the computer it runs on, that is `http://localhost:1939`; on your phone, the https address `parachute setup expose` gives it (the app takes plain http only on the same computer). Say whose it is (**Mine**), and sign in on its own page with the account you made there. It asks you to approve the Parachute app: that is this app, on your device.
 - **Your own Cloudflare:** sign in with your key: **Make a new key** or **Pair from a device that has your key**, then your Parachute's address ([how](/docs/run/own-cloudflare/)).
 
 The first sign-in reads your **home vault**. Other vaults on the same server show in Settings as one line each, **Open**, and are read only after you tap it.
 
 ## 4. Make it yours
 
-A new vault opens on **Start here**:
+On your own server, the app opens on its list of applets, and a new vault's list starts with **Start here**. On Parachute Cloud the app opens on **Notes**, a smaller set of screens (**Settings**, **Your app**, switches to **Everything**); there, **Vault** and **Connect** on the bar lead to the same places (packs and the Notion import need your own server for now: [why](/docs/use/templates-and-packs/)):
 
 - **Bring in what you have.** [Import your Notion workspace](/docs/use/from-notion/), or start from a [pack](/docs/use/templates-and-packs/): clients and sessions, a reading list, or people, projects, meetings and tasks.
 - **Connect your AI.** One address for Claude or ChatGPT. When your server asks, give it **Write** on your vault so it can save what you tell it: [Connect your AI](/docs/use/connect-your-ai/).

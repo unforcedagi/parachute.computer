@@ -10,13 +10,17 @@ Your Notion workspace comes in as one file.
 
 ## 1. Export it from Notion
 
-On the web or the desktop app: **Settings**, under **Workspace** choose **General**, then **Export all workspace content**. Pick **Markdown & CSV**. For one page and what is inside it: **•••** at the top right of the page, **Export**, **Markdown & CSV**, and switch on **Include subpages**.
+The whole workspace, on the web or the desktop app: **Settings**, under **Workspace** choose **General**, then **Export all workspace content**, as Markdown & CSV. Notion emails you a link to the .zip (a big workspace can take hours); it lasts 7 days.
 
-Notion gives you a .zip. A big workspace can take a while: Notion emails a link, which lasts 7 days. Keep the .zip as it is, without unzipping it.
+One page and what is inside it: **•••** at the top right of the page, **Export**, **Markdown & CSV**, and switch on **Include subpages**. The .zip downloads.
+
+Keep the .zip as it is, without unzipping it.
 
 ## 2. Bring it in
 
-In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On a new vault the first screen leads there: **Start here**, **Bring in what you have**.
+In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, a new vault's first screen leads there: **Start here**, **Bring in what you have**.
+
+The import makes types, which today needs [your own server](/docs/run/self-host/). On Parachute Cloud and your own Cloudflare the app says the server doesn't let it make types yet, and changes nothing; that comes with their next update.
 
 ## What becomes what
 
@@ -28,7 +32,7 @@ In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose 
 | A link between pages | A link between records |
 | Images and attachments | Not yet. They stay in your export, and the app says which. |
 
-Everything lands under `Notion/`, so nothing of yours is touched. Importing the same export again changes nothing. It is listed in Vault under **Packs**, **Installed packs**.
+Your pages and tables land under `Notion/`, so nothing of yours is touched. Importing the same export again changes nothing. It is listed in Vault under **Packs**, **Installed packs**.
 
 ## Then
 
