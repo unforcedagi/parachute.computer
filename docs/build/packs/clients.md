@@ -149,10 +149,7 @@ create-record { "path": "Parachute/Receipts/clients", "tags": ["parachute-receip
         "view": {
           "contract": 1,
           "layout": "table",
-          "sort": {
-            "by": "due",
-            "dir": "asc"
-          },
+          "sort": null,
           "where": [
             {
               "field": "done",
