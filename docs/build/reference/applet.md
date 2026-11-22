@@ -4,9 +4,9 @@ summary: "The applet record in full: the manifest, what it opens, its servers, i
 door: "build"
 order: 21
 nav: "Reference: the applet record"
-checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 0c1f0af"
+checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 5501d56"
 ---
-*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/WRITE-AN-APPLET.md) at 0c1f0af; a bundle is still called an "app" there. The short version: [Make an applet](/docs/build/make-an-applet/). Next: [the kit](/docs/build/reference/kit/).*
+*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/WRITE-AN-APPLET.md) at 5501d56; a bundle is still called an "app" there. The short version: [Make an applet](/docs/build/make-an-applet/). Next: [the kit](/docs/build/reference/kit/).*
 
 For a chat AI with the Parachute MCP (Claude, ChatGPT or any other), and for people. An applet is **one record** in a
 Parachute vault. You make one by creating that record, and change it by updating it. There is no build step on your side:
@@ -21,7 +21,7 @@ the Parachute app reads the record, shows the person what it asks for, and runs 
 | `tags` | `["applet"]`. That tag is what makes it an applet. |
 | `fields.applet` | The manifest: what it is and what it may do (below). |
 | `fields.opens` | Optional: which kind of note opens in it when the person taps one. |
-| `fields.app` | Optional: what it asks of the app beyond its vault: any of `recent`, `pins`, `open`, `links`, `save`, `attach`, `storage` (below). Anything else is ignored, and the applet then asks nothing of the app. |
+| `fields.app` | Optional: what it asks of the app beyond its vault: any of `recent`, `pins`, `open`, `links`, `save`, `attach`, `storage`, `vaults`, `sharing`, `copy`, `changes` (below). Anything else is ignored, and the applet then asks nothing of the app. |
 | `fields.services` | Optional: the servers it talks to, through the app (below). |
 | `body` | The code: one self-contained file. |
 
@@ -45,7 +45,7 @@ screens:                     # optional: its screens; the first is the one that 
 reach: [voice]               # optional: the microphone, through the app's own recorder (voice.record below)
 ```
 
-What the person's hub is asked for follows from `access` ([design/SCOPES.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/design/SCOPES.md)): an applet whose
+What the person's hub is asked for follows from `access` ([design/SCOPES.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/design/SCOPES.md)): an applet whose
 verbs are all `read` needs the app to read its vault; any `create` or `update` needs it to change notes there. When the
 person allows the applet and the app doesn't hold that yet, the hub asks them for that one vault, after the card. Ask
 for the least that works: an applet that only reads never brings that second page. The hub can't narrow to a folder;
@@ -80,7 +80,7 @@ services:
   - id: rooms                       # what the code calls it
     kind: nostr-relay
     url: wss://relay.example
-    publish: [9, 7, 40003, 5, 20002]   # messages, reactions, edits, deletions of your own, typing: nothing else
+    publish: [9, 7, 40003, 5, 20002]   # the kinds the app may sign for it there: messages, reactions, edits, deletions of your own, typing
     media: true                     # files on the relay's media server
     private: [{ kind: 30078, d: "read-state:", t: read-state }]   # notes sealed to your key, under that prefix
   - id: mail
@@ -89,11 +89,18 @@ services:
     auth: nip98                     # none | nip98 (each request signed as you) | token (one you give the app)
 ```
 
+`publish` names any kind the applet needs (a note is 1, a comment 1111); the card says each, the five above and
+articles (30023) in words, any other by its number. Only those five stay in its rooms; any other kind goes anywhere on
+the relay, and the card says so. Of the addressable kinds (30000–39999) only articles may be declared. A few the app never signs, declared or not, because they would hand over the
+person's identity, money or an authority they hold: the profile, contacts and relay lists, plain-text DMs, labels,
+sign-ins, wallets, zaps, bids and paid jobs, room, relay and community admin, git maintainers' status, settings sets,
+Buzz's commands, and the app's own approvals. A declaration that names one is refused.
+
 A Parachute hub is never a server here (the app refuses it), and an applet in someone else's vault reaches none. The
-rules, and why, are in [design/SERVICES.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/design/SERVICES.md). Applets that do it: `applets/rooms.tsx`,
+rules, the deny list, and why, are in [design/SERVICES.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/design/SERVICES.md). Applets that do it: `applets/rooms.tsx`,
 `applets/area.tsx` and `applets/mail.tsx` in this repository.
 
-A relay service may also name (all optional, each a line on the card; [design/KEYRING.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/design/KEYRING.md)):
+A relay service may also name (all optional, each a line on the card; [design/KEYRING.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/design/KEYRING.md)):
 
 ```yaml
     rooms: [{ id: <room id>, name: Garden }]   # only these rooms: posts, reads and reactions stay in them

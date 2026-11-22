@@ -104,7 +104,9 @@ async function applet() {
     if (!r.ok) throw new Error(`WRITE-AN-APPLET.md at ${sha}: ${r.status}`);
     return r.text();
   });
-  const blob = (p) => `https://github.com/ParachuteComputer/parachute/blob/${sha}/${p}`;
+  // a file this site has as a page of its own links there (the same parts, drawn live)
+  const OURS = { "docs/COMPONENTS.md": "/docs/build/components/" };
+  const blob = (p) => OURS[p] ?? `https://github.com/ParachuteComputer/parachute/blob/${sha}/${p}`;
   const body = raw
     .replace(/^# .*\n+/, "") // the layout prints the title
     // links to the repo's own files go to them on GitHub, at this commit
@@ -122,8 +124,8 @@ async function applet() {
   const note = (short) => `*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](${blob("docs/WRITE-AN-APPLET.md")}) at ${sha.slice(0, 7)}; a bundle is still called an "app" there. ${short}*\n\n`;
   const pages = [
     ["applet", "Applet reference: the record", "The applet record in full: the manifest, what it opens, its servers, its signals.", 21, "Reference: the applet record", null, "The code", "The short version: [Make an applet](/docs/build/make-an-applet/). Next: [the kit](/docs/build/reference/kit/)."],
-    ["kit", "Applet reference: the kit", "Every call and part an applet imports from \"parachute\", saved state, and links.", 22, "Reference: the kit", "The code", "A worked example", "Before: [the record](/docs/build/reference/applet/). Next: [worked examples](/docs/build/reference/applet-examples/)."],
-    ["applet-examples", "Applet reference: worked examples", "Three whole applets: recipe cards, a home applet, and an area with its room.", 23, "Reference: worked examples", "A worked example", null, "Before: [the kit](/docs/build/reference/kit/)."],
+    ["kit", "Applet reference: the kit", "Every call and part an applet imports from \"parachute\", saved state, and links.", 22, "Reference: the kit", "The code", "Make it look like Parachute", "Before: [the record](/docs/build/reference/applet/). Next: [worked examples](/docs/build/reference/applet-examples/)."],
+    ["applet-examples", "Applet reference: worked examples", "Make it look like Parachute, then three whole applets: recipe cards, a home applet, and an area with its room.", 23, "Reference: worked examples", "Make it look like Parachute", null, "Before: [the kit](/docs/build/reference/kit/)."],
   ];
   for (const [file, title, summary, order, nav, from, to, links] of pages) {
     const text = front({ title, summary, door: "build", order, nav, checked: `copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at ${sha.slice(0, 7)}` }) + note(links) + cut(from, to);

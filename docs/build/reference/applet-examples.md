@@ -1,12 +1,43 @@
 ---
 title: "Applet reference: worked examples"
-summary: "Three whole applets: recipe cards, a home applet, and an area with its room."
+summary: "Make it look like Parachute, then three whole applets: recipe cards, a home applet, and an area with its room."
 door: "build"
 order: 23
 nav: "Reference: worked examples"
-checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 0c1f0af"
+checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 5501d56"
 ---
-*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/WRITE-AN-APPLET.md) at 0c1f0af; a bundle is still called an "app" there. Before: [the kit](/docs/build/reference/kit/).*
+*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/WRITE-AN-APPLET.md) at 5501d56; a bundle is still called an "app" there. Before: [the kit](/docs/build/reference/kit/).*
+
+## Make it look like Parachute
+
+An applet looks like the rest of Parachute without any CSS of its own. Three steps, in this order:
+
+1. **Draw it with the parts.** `Page` is the screen (its title, width and margins). `List` holds rows, `Card` a block
+   that stands apart, `Field`, `Search` and `Write` take words, `Button` acts (one `primary` on a screen), `Tabs`
+   switch places, `Table` and `Fields` show records, `Empty`, `Loading` and `Problem` say what state it is in,
+   `Drawer` holds a detail or a short form, and `toast` says what an action did. Each part follows the person's
+   theme and their look (paper, almanac, book, daylight), light and dark, on a phone and a computer. Every part,
+   drawn live with the code that draws it: [COMPONENTS.md](/docs/build/components/).
+2. **Plain HTML is drawn too.** `<h1>`, `<p>`, `<ul>`, `<table>`, `<blockquote>`, `<button>`, `<input>` and
+   `<select>` come out in the theme. In an HTML applet, the parts' classes give the same look as the parts:
+   `<button class="pa-button pa-primary">`, `<div class="pa-card">`.
+3. **Your own CSS only for what is yours** (a board, a chart, a grid of days), written on the tokens, never on fixed
+   values: colours `var(--text)`, `var(--muted)`, `var(--line)`, `var(--accent)`, `var(--surface)`; space
+   `var(--pad)` and `var(--gap)`; rules `var(--line-row)` and `var(--line-head)`; corners `var(--radius-card)`,
+   `var(--radius-field)`; type `var(--fs-title)` … `var(--fs-label)` in `var(--serif)` or `var(--sans)`. A fixed
+   colour or size breaks in dark mode and on an e-paper screen. The tokens: [THEME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/THEME.md#in-an-applet).
+   What you write wins over the kit's own rules ([THEME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/THEME.md#the-order-of-styles)).
+
+Before you hand it over, check it the way a person sees it:
+
+- One title (the `Page`'s), and the content starts at the top of the screen: no empty hero, no big gaps.
+- One main action, as `kind="primary"`; the rest plain or quiet.
+- Rows, not boxes: a `List` for things of a kind; a `Card` only for a block that stands apart.
+- Every state has words: `Loading` while reading, `Empty` with what to do next, `Problem` with Try again, a `toast`
+  after an action.
+- It works at 390 px (a phone) and 1600 px (a computer): `Page` holds the width; `wide` gives two columns on a
+  computer.
+- No fixed colour, size or font anywhere: it reads in light, in dark and on the Daylight's black and white.
 
 ## A worked example
 
@@ -111,7 +142,7 @@ export default function RecipeCards() {
 
 ## A home applet
 
-The applet the app opens on start, which the person or their agent chooses ([NAVIGATION.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/NAVIGATION.md)). Any
+The applet the app opens on start, which the person or their agent chooses ([NAVIGATION.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/NAVIGATION.md)). Any
 applet can be one; this one shows what changed lately across all the person's vaults, a day at a time, and their
 pinned applets. It reads no folder of its own vault, so it has no `access`; it asks the app for the three things in
 `fields.app`, and its card says so. Create it with `create-record`:
@@ -128,7 +159,7 @@ pinned applets. It reads no folder of its own vault, so it has no `access`; it a
       "contract": 2,
       "id": "home",
       "name": "Home",
-      "glyph": "◠",
+      "glyph": "⌂",
       "note": "what changed lately, and your pins"
     },
     "app": [
@@ -151,8 +182,9 @@ The next time the app starts, it opens on Home and shows its card; once the pers
 They can also long-press it in the list and tap **Open on start**, and pin it first on the bar.
 
 Two home applets ship with the app, in `applets/`: `home` (Parachute Simplified's starter: a line into `Inbox/`, the
-newest notes, the pins) and `today` (for a person with rooms and a journal: what wants you in your rooms, the latest
-from one key, today's journal and a line for it; `--set relay=… --set uni=<hex key>`). `app.open` also takes an applet
+newest notes, the pins) and `today` (for a person with rooms and a journal: what wants you in your rooms (an open ask, or
+a line that names you since you last read or wrote there, by the read state Rooms keeps), the latest from one key,
+today's journal and a line for it; it reads again each time it is shown; `--set relay=… --set uni=<hex key>`). `app.open` also takes an applet
 at a room, `/v/<vault>/a/<applet>?room=<id>[&event=<id>]`: the applet hears it as its launch (`onLaunch`), as from a
 notification's tap. The installer fills a quoted `"{{name}}"` in an applet's code from `--set` (`applets/record.ts`), so
 such a value is part of the code the person approves.
@@ -270,7 +302,7 @@ the page keeps nothing of its own that could drift from its card.
 ### What the card says
 
 The card's face says it short, by what it means to a person (one line per server, the approval key on its own line,
-the small asks on one "Also" line: [design/PERMISSIONS.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/design/PERMISSIONS.md)). Under **Show details**, each line
+the small asks on one "Also" line: [design/PERMISSIONS.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/design/PERMISSIONS.md)). Under **Show details**, each line
 in the app's own words, from the declaration:
 
 > Read notes outside its own folder, in Areas/Garden/ ·
@@ -311,4 +343,4 @@ If the code doesn't compile, the app says so, with the reason, and runs nothing.
 provide, or throws while starting, the applet shows one line saying why.
 
 To change the screens around the notes instead (the list, a vault, a note), see
-[CHANGE-YOUR-FRAME.md](https://github.com/ParachuteComputer/parachute/blob/0c1f0af2ff5575e22a8aa34669474f8c88c8e663/docs/CHANGE-YOUR-FRAME.md).
+[CHANGE-YOUR-FRAME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/CHANGE-YOUR-FRAME.md).
