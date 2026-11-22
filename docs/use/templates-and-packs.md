@@ -1,16 +1,22 @@
 ---
 title: "Start from a pack"
-summary: "Add people, projects, meetings and tasks to a vault with one tap; new records start from a template, and any record can become one."
+summary: "Start a vault with one tap: people and projects, clients and sessions, or a reading list; new records start from a template, and any record can become one."
 door: use
 order: 3.5
-checked: "parachute applets/vault.tsx (Packs, New from the template, Make this a template), docs/PACKS.md, e2e/packs.spec.ts"
+checked: "parachute applets/vault.tsx (Packs, New from the template, Make this a template), docs/PACKS.md, src/kit/packs/*.json, e2e/packs.spec.ts, e2e/start.spec.ts"
 ---
 
 A **pack** adds a set of kinds of record to a vault, each with its fields and a template. A **template** is how a new record starts.
 
 ## Add a pack
 
-In the app, open **Vault**, then your vault, then **Add a pack**. **Core types** adds people, projects, meetings and tasks, a template for each, and a view of open tasks. It lists what it adds before you tap **Add Core types**, and says afterwards what it added and what it left as you had it. **Installed packs** shows what a vault has. Adding a pack again changes nothing.
+In the app, open **Vault**, then your vault, then **Add a pack** (on your own server, **Start here** leads there while your home vault holds nothing of yours). Each pack lists what it adds before you tap **Add**, and says afterwards what it added and what it left as you had it:
+
+- [**Core types**](/docs/build/packs/core-types/): people, projects, meetings and tasks, a template for each, and a view of open tasks.
+- [**Clients and sessions**](/docs/build/packs/clients/): for a practice (a coach, a tutor, a therapist): clients, a note for each session, the follow-ups you agreed, and a view of the open ones by client.
+- [**Reading list**](/docs/build/packs/reading/): books, with a template for notes and a view of what you're reading now.
+
+**Installed packs** shows what a vault has. Adding a pack again changes nothing. A pack makes types, which the app can do today on [your own server](/docs/run/self-host/); on Parachute Cloud and your own Cloudflare it says it can't yet and changes nothing, until their next update. Coming from Notion? [Import your workspace](/docs/use/from-notion/): it lands the same way.
 
 Or ask your AI: "Apply the Core types pack from parachute.computer/docs/build/packs/core-types.md to my vault." It reads [the same pack](/docs/build/packs/core-types/) and adds the same things.
 
