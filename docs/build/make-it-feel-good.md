@@ -3,7 +3,7 @@ title: "Make it feel good"
 summary: "Build from the kit's parts and the applet feels like the rest of the app: calm, quick, nothing jumping. The short rules, for you and your AI."
 door: build
 order: 4.5
-checked: "parachute docs/DESIGN-RULES.md, docs/THEME.md (motion), docs/WRITE-AN-APPLET.md (Drawer, toast), src/kit/conformance.ts (motion, layout)"
+checked: "parachute docs/DESIGN-RULES.md (rule 4 at 5501d56), docs/THEME.md (motion), docs/WRITE-AN-APPLET.md (Drawer, toast), src/kit/conformance.ts (motion, layout)"
 ---
 
 An applet built from the kit's parts (`Page`, `List`, `Field`, `Button`, `Drawer`, `toast` and the rest) already feels
@@ -15,9 +15,12 @@ The full list is [the design rules](https://github.com/ParachuteComputer/parachu
 short rules an AI can check its work against. Give it that page with the applet guide. The short version:
 
 - **Use the parts.** Reach for `Loading`, `Empty` and `Problem` for a screen's states, `toast` after an action,
-  `Drawer` for a choice or a short form over the page.
+  `Drawer` for a choice or a short form over the page ([Components](/docs/build/components/)).
 - **Colours, type and space from the theme:** `var(--accent)`, `var(--fs-body)`, `var(--gap)` and the rest
   ([Change the look](/docs/build/change-the-look/)). Never a colour or a size of your own.
+- **Lines, corners and depth from the look:** `var(--line-row)` between rows, `var(--radius-card)` and
+  `var(--shadow-card)` for a block that stands apart. Each look draws these its own way; a fixed `1px solid #ccc` or a
+  shadow of your own breaks three of them.
 - **Most things don't move.** What is used all day (a tab, a row, typing) changes at once. Only what arrives moves.
 - **If you move something,** move only `transform` and `opacity`, on the theme's curves and times: `--ease-out`,
   `--ease-in-out`, `--ease-drawer`; `--t-press` (160 ms), `--t-state` (200 ms), `--t-sheet` (300 ms), `--t-step`
