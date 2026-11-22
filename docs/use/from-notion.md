@@ -18,7 +18,7 @@ Keep the .zip as it is, without unzipping it.
 
 ## 2. Bring it in
 
-In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, while your home vault is empty, the first screen leads there: **Start here**, **Bring in what you have**.
+In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, while your home vault holds nothing of yours, the first screen leads there: **Start here**, **Bring in what you have**.
 
 An export with databases makes types, which today needs [your own server](/docs/run/self-host/). On Parachute Cloud and your own Cloudflare the app says the server doesn't let it make types yet, and changes nothing; that comes with their next update. An export of pages only comes in anywhere.
 
