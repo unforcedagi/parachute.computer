@@ -3,7 +3,7 @@ title: "Change the look"
 summary: "One theme record sets the look of the whole app and every applet: one of four built-in looks, and any of its colours, fonts and style tokens."
 door: build
 order: 6
-checked: "parachute docs/THEME.md, docs/CHANGE-YOUR-FRAME.md, docs/WRITE-AN-APPLET.md (Make it look like Parachute) and src/theme/theme.ts (LOOKS, STYLE_TOKENS) at 5501d56"
+checked: "parachute docs/THEME.md, docs/CHANGE-YOUR-FRAME.md, docs/WRITE-AN-APPLET.md (Make it look like Parachute) and src/theme/theme.ts (LOOKS, STYLE_TOKENS) at 8588af2"
 ---
 
 *On a 0.8 server (Parachute Cloud today):* `create-note`, with `metadata.theme` for `fields.theme`.
@@ -85,14 +85,14 @@ The kit's parts are drawn on these values, so they follow the theme with no work
 Every applet's frame gets the look in four steps, each over the one before:
 
 1. **The tokens**, as CSS variables on the root.
-2. **The base**: plain HTML drawn in the theme. A bare `<h1>`, `<p>`, `<button>`, `<input>`, `<table>` or `<blockquote>` comes out as the kit draws it, in the kit's column and margins.
+2. **The base**: plain HTML drawn in the theme. A bare `<h1>`, `<p>`, `<button>`, `<input>`, `<table>` or `<blockquote>` comes out as the kit draws it, in the kit's column and margins (not in an embed, nor in a page with embeds: each is sized to what it draws).
 3. **The parts**: the `pa-` classes the kit's parts are drawn with. An HTML applet can use them too: `<button class="pa-button pa-primary">`.
 4. **The applet's own CSS**, in no layer. It wins over all of the above, whatever its specificity: `button { border-radius: 4px }` changes every button in the applet, the kit's included.
 
 To override as an applet:
 
-- **A token for your applet only:** set it on `body` or your own wrapper (`body { --accent: #8a5a2b; }`), not on `:root`. The app sets the theme on the root, and sets it again when the theme changes.
-- **Edge to edge** (a map, a board): `body { padding: 0 }`.
+- **A token for your applet only:** set it on `body` or your own wrapper (`body { --accent: #8a5a2b; }`), not on `:root`. The app sets the theme on the root, and sets it again when the theme changes, so name a variable of your own another way than a token (`--my-…`).
+- **Edge to edge** (a map, a board): `body { margin: 0 }`. The kit's column is the body's margin, in place of the browser's own 8px.
 - **Styles a later rule can still override:** put them in a layer of your own (`@layer mine { … }`).
 
 An embed in someone else's page gets the same look, with each colour as `#rrggbb` and the built-in fonts.

@@ -4,9 +4,9 @@ summary: "Make it look like Parachute, then three whole applets: recipe cards, a
 door: "build"
 order: 23
 nav: "Reference: worked examples"
-checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 5501d56"
+checked: "copied by scripts/docs-sync.mjs from ParachuteComputer/parachute docs/WRITE-AN-APPLET.md at 8588af2"
 ---
-*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/WRITE-AN-APPLET.md) at 5501d56; a bundle is still called an "app" there. Before: [the kit](/docs/build/reference/kit/).*
+*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/WRITE-AN-APPLET.md) at 8588af2; a bundle is still called an "app" there. Before: [the kit](/docs/build/reference/kit/).*
 
 ## Make it look like Parachute
 
@@ -25,18 +25,19 @@ An applet looks like the rest of Parachute without any CSS of its own. Three ste
    values: colours `var(--text)`, `var(--muted)`, `var(--line)`, `var(--accent)`, `var(--surface)`; space
    `var(--pad)` and `var(--gap)`; rules `var(--line-row)` and `var(--line-head)`; corners `var(--radius-card)`,
    `var(--radius-field)`; type `var(--fs-title)` … `var(--fs-label)` in `var(--serif)` or `var(--sans)`. A fixed
-   colour or size breaks in dark mode and on an e-paper screen. The tokens: [THEME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/THEME.md#in-an-applet).
-   What you write wins over the kit's own rules ([THEME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/THEME.md#the-order-of-styles)).
+   colour or size breaks in dark mode and on an e-paper screen. The tokens: [THEME.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/THEME.md#in-an-applet).
+   What you write wins over the kit's own rules ([THEME.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/THEME.md#the-order-of-styles)).
 
 Before you hand it over, check it the way a person sees it:
 
-- One title (the `Page`'s), and the content starts at the top of the screen: no empty hero, no big gaps.
+- One title (the `Page`'s, the applet's own name), and the content starts at the top of the screen: no empty hero, no
+  big gaps.
 - One main action, as `kind="primary"`; the rest plain or quiet.
 - Rows, not boxes: a `List` for things of a kind; a `Card` only for a block that stands apart.
 - Every state has words: `Loading` while reading, `Empty` with what to do next, `Problem` with Try again, a `toast`
   after an action.
-- It works at 390 px (a phone) and 1600 px (a computer): `Page` holds the width; `wide` gives two columns on a
-  computer.
+- It works at 390 px (a phone) and 1600 px (a computer): `Page` holds the width; `wide` lets a board grow on a
+  computer, and `pa-grid` makes its columns.
 - No fixed colour, size or font anywhere: it reads in light, in dark and on the Daylight's black and white.
 
 ## A worked example
@@ -82,7 +83,7 @@ rather than `tags`: `"types": ["applet"]`. The note-named calls in the kit (`que
       }
     ]
   },
-  "body": "import { useEffect, useRef, useState } from \"react\";\nimport { Button, Days, Empty, Field, List, Loading, Note, onOpen, Page, ready, vault, when } from \"parachute\";\n\ntype Recipe = { id: string; path: string; updatedAt: string | null; tags?: string[]; body?: string };\nconst nameOf = (r: Recipe) => r.path.replace(\"Recipes/\", \"\");\n\nconst CSS = `\n.cols { display: grid; gap: calc(var(--gap) * 2); }\n@media (min-width: 900px) { .cols { grid-template-columns: 2fr 3fr; gap: 64px; } }\n`;\n\nexport default function RecipeCards() {\n  const [recipes, setRecipes] = useState<Recipe[] | null>(null);\n  const [open, setOpen] = useState<Recipe | null>(null);\n  const shown = useRef<HTMLElement>(null);\n  const load = () => vault.queryRecords({ pathPrefix: \"Recipes/\", tag: \"recipe\", includeBody: true }).then((rows: Recipe[]) => setRecipes(rows));\n  useEffect(() => {\n    ready().then(load);\n    return onOpen((o: { note: { id: string } }) => vault.getRecord(o.note.id).then(setOpen));\n  }, []);\n  // a recipe opened (or followed from a link) comes into view: below the list on a phone\n  useEffect(() => { if (open) shown.current?.scrollIntoView({ block: \"start\" }); }, [open]);\n  const add = async (name: string) => {\n    const made: Recipe = await vault.createRecord({ path: `Recipes/${name}`, body: `# ${name}\\n\\n## Ingredients\\n\\n## Steps\\n` });\n    await load();\n    setOpen(await vault.getRecord(made.id));\n  };\n  const follow = (target: string) => { const r = recipes?.find((x) => nameOf(x) === target || x.path === target); if (r) setOpen(r); };\n  return (\n    <Page title=\"Recipe cards\" wide onRefresh={load}>\n      <style>{CSS}</style>\n      <div className=\"cols\">\n        <section>\n          <Days times={(recipes ?? []).map((r) => r.updatedAt)} label=\"changed, the last four weeks\" />\n          <Field label=\"New recipe\" placeholder=\"A name\" action=\"Add\" onAction={add} />\n          {recipes === null ? <Loading /> : recipes.length\n            ? <List label=\"Recipes\" rows={recipes.map((r) => ({ key: r.id, title: nameOf(r), aside: when.short(r.updatedAt), onPress: () => setOpen(r) }))} />\n            : <Empty>No recipes yet. Add one above, or ask your AI to.</Empty>}\n        </section>\n        {open && (\n          <section aria-label=\"Recipe\" ref={shown}>\n            <Button kind=\"quiet\" onClick={() => setOpen(null)}>Close</Button>\n            <Note body={open.body ?? \"\"} path={open.path} tags={open.tags} onLink={follow} />\n          </section>\n        )}\n      </div>\n    </Page>\n  );\n}\n"
+  "body": "import { useEffect, useRef, useState } from \"react\";\nimport { Button, Days, Empty, Field, List, Loading, Note, onOpen, Page, ready, vault, when } from \"parachute\";\n\ntype Recipe = { id: string; path: string; updatedAt: string | null; tags?: string[]; body?: string };\nconst nameOf = (r: Recipe) => r.path.replace(\"Recipes/\", \"\");\n\nexport default function RecipeCards() {\n  const [recipes, setRecipes] = useState<Recipe[] | null>(null);\n  const [open, setOpen] = useState<Recipe | null>(null);\n  const shown = useRef<HTMLElement>(null);\n  const load = () => vault.queryRecords({ pathPrefix: \"Recipes/\", tag: \"recipe\", includeBody: true }).then((rows: Recipe[]) => setRecipes(rows));\n  useEffect(() => {\n    ready().then(load);\n    return onOpen((o: { note: { id: string } }) => vault.getRecord(o.note.id).then(setOpen));\n  }, []);\n  // a recipe opened (or followed from a link) comes into view: below the list on a phone\n  useEffect(() => { if (open) shown.current?.scrollIntoView({ block: \"start\" }); }, [open]);\n  const add = async (name: string) => {\n    const made: Recipe = await vault.createRecord({ path: `Recipes/${name}`, body: `# ${name}\\n\\n## Ingredients\\n\\n## Steps\\n` });\n    await load();\n    setOpen(await vault.getRecord(made.id));\n  };\n  const follow = (target: string) => { const r = recipes?.find((x) => nameOf(x) === target || x.path === target); if (r) setOpen(r); };\n  return (\n    <Page title=\"Recipe cards\" wide onRefresh={load}>\n      <div className=\"pa-grid\">\n        <section>\n          <Days times={(recipes ?? []).map((r) => r.updatedAt)} label=\"changed, the last four weeks\" />\n          <Field label=\"New recipe\" placeholder=\"A name\" action=\"Add\" onAction={add} />\n          {recipes === null ? <Loading /> : recipes.length\n            ? <List label=\"Recipes\" rows={recipes.map((r) => ({ key: r.id, title: nameOf(r), aside: when.short(r.updatedAt), onPress: () => setOpen(r) }))} />\n            : <Empty>No recipes yet. Add one above, or ask your AI to.</Empty>}\n        </section>\n        {open && (\n          <section aria-label=\"Recipe\" ref={shown}>\n            <Button kind=\"quiet\" onClick={() => setOpen(null)}>Close</Button>\n            <Note body={open.body ?? \"\"} path={open.path} tags={open.tags} onLink={follow} />\n          </section>\n        )}\n      </div>\n    </Page>\n  );\n}\n"
 }
 ```
 
@@ -94,11 +95,6 @@ import { Button, Days, Empty, Field, List, Loading, Note, onOpen, Page, ready, v
 
 type Recipe = { id: string; path: string; updatedAt: string | null; tags?: string[]; body?: string };
 const nameOf = (r: Recipe) => r.path.replace("Recipes/", "");
-
-const CSS = `
-.cols { display: grid; gap: calc(var(--gap) * 2); }
-@media (min-width: 900px) { .cols { grid-template-columns: 2fr 3fr; gap: 64px; } }
-`;
 
 export default function RecipeCards() {
   const [recipes, setRecipes] = useState<Recipe[] | null>(null);
@@ -119,8 +115,7 @@ export default function RecipeCards() {
   const follow = (target: string) => { const r = recipes?.find((x) => nameOf(x) === target || x.path === target); if (r) setOpen(r); };
   return (
     <Page title="Recipe cards" wide onRefresh={load}>
-      <style>{CSS}</style>
-      <div className="cols">
+      <div className="pa-grid">
         <section>
           <Days times={(recipes ?? []).map((r) => r.updatedAt)} label="changed, the last four weeks" />
           <Field label="New recipe" placeholder="A name" action="Add" onAction={add} />
@@ -142,7 +137,7 @@ export default function RecipeCards() {
 
 ## A home applet
 
-The applet the app opens on start, which the person or their agent chooses ([NAVIGATION.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/NAVIGATION.md)). Any
+The applet the app opens on start, which the person or their agent chooses ([NAVIGATION.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/NAVIGATION.md)). Any
 applet can be one; this one shows what changed lately across all the person's vaults, a day at a time, and their
 pinned applets. It reads no folder of its own vault, so it has no `access`; it asks the app for the three things in
 `fields.app`, and its card says so. Create it with `create-record`:
@@ -168,7 +163,7 @@ pinned applets. It reads no folder of its own vault, so it has no `access`; it a
       "open"
     ]
   },
-  "body": "import { useEffect, useState } from \"react\";\nimport { app, Days, Empty, List, Loading, Page, ready, when } from \"parachute\";\n\ntype Recent = { vaultName: string; title: string; updatedAt: string | null; href: string };\ntype Place = { name: string; glyph: string; href: string; home: boolean };\n\nconst CSS = `\n.head { display: grid; gap: 12px 32px; align-items: end; padding-bottom: var(--gap); border-bottom: 1px solid var(--text); }\n@media (min-width: 900px) { .head { grid-template-columns: 1fr minmax(240px, 380px); } .cols { grid-template-columns: 3fr 2fr; gap: 64px; } }\n.sum { margin: 0; font: var(--fs-lead)/1.5 var(--serif); }\n.cols { display: grid; gap: calc(var(--gap) * 1.5); padding-top: var(--gap); }\n.river { border-left: 2px solid var(--text); padding-left: 20px; }\n`;\n\nexport default function Home() {\n  const [recent, setRecent] = useState<Recent[] | null>(null);\n  const [pins, setPins] = useState<Place[]>([]);\n  const load = () => Promise.all([app.recent({ limit: 40 }), app.pins()])\n    .then(([r, p]: [Recent[], Place[]]) => { setRecent(r); setPins(p.filter((x) => !x.home)); }, () => setRecent([]));\n  useEffect(() => { ready().then(load); }, []);\n  const days: { label: string; notes: Recent[] }[] = [];\n  for (const n of (recent ?? []).slice(0, 12)) {\n    const label = when.day(n.updatedAt) || \"Earlier\";\n    if (days.at(-1)?.label !== label) days.push({ label, notes: [] });\n    days.at(-1)!.notes.push(n);\n  }\n  const vaults = new Set((recent ?? []).map((n) => n.vaultName)).size;\n  return (\n    <Page kicker={when.date(new Date())} title=\"Lately\" wide onRefresh={load}>\n      <style>{CSS}</style>\n      <header className=\"head\">\n        {recent === null ? <Loading /> : <p className=\"sum\">{`${recent.length} notes lately, in ${vaults} ${vaults === 1 ? \"vault\" : \"vaults\"}.`}</p>}\n        <Days times={(recent ?? []).map((n) => n.updatedAt)} days={14} label=\"the last two weeks\" />\n      </header>\n      <div className=\"cols\">\n        <section className=\"river\" aria-label=\"Lately\">\n          {days.map((d) => <List key={d.label} label={d.label} rows={d.notes.map((n) => ({ key: n.href, title: n.title, meta: n.vaultName, aside: when.time(n.updatedAt), onPress: () => app.open(n.href) }))} />)}\n          {recent !== null && !recent.length && <Empty>Nothing written yet.</Empty>}\n        </section>\n        {pins.length > 0 && <List label=\"Pinned\" rows={pins.map((p) => ({ key: p.href, title: p.name, glyph: p.glyph, onPress: () => app.open(p.href) }))} />}\n      </div>\n    </Page>\n  );\n}\n"
+  "body": "import { useEffect, useState } from \"react\";\nimport { app, Days, Empty, List, Loading, Page, ready, when } from \"parachute\";\n\ntype Recent = { vaultName: string; title: string; updatedAt: string | null; href: string };\ntype Place = { name: string; glyph: string; href: string; home: boolean };\n\nexport default function Home() {\n  const [recent, setRecent] = useState<Recent[] | null>(null);\n  const [pins, setPins] = useState<Place[]>([]);\n  const load = () => Promise.all([app.recent({ limit: 40 }), app.pins()])\n    .then(([r, p]: [Recent[], Place[]]) => { setRecent(r); setPins(p.filter((x) => !x.home)); }, () => setRecent([]));\n  useEffect(() => { ready().then(load); }, []);\n  const days: { label: string; notes: Recent[] }[] = [];\n  for (const n of (recent ?? []).slice(0, 12)) {\n    const label = when.day(n.updatedAt) || \"Earlier\";\n    if (days.at(-1)?.label !== label) days.push({ label, notes: [] });\n    days.at(-1)!.notes.push(n);\n  }\n  const vaults = new Set((recent ?? []).map((n) => n.vaultName)).size;\n  return (\n    <Page kicker={when.date(new Date())} title=\"Lately\" wide onRefresh={load}>\n      {recent === null ? <Loading /> : <p>{`${recent.length} notes lately, in ${vaults} ${vaults === 1 ? \"vault\" : \"vaults\"}.`}</p>}\n        <Days times={(recent ?? []).map((n) => n.updatedAt)} days={14} label=\"the last two weeks\" />\n      <div className=\"pa-grid\">\n        <section aria-label=\"Lately\">\n          {days.map((d) => <List key={d.label} label={d.label} rows={d.notes.map((n) => ({ key: n.href, title: n.title, meta: n.vaultName, aside: when.time(n.updatedAt), onPress: () => app.open(n.href) }))} />)}\n          {recent !== null && !recent.length && <Empty>Nothing written yet.</Empty>}\n        </section>\n        {pins.length > 0 && <List label=\"Pinned\" rows={pins.map((p) => ({ key: p.href, title: p.name, glyph: p.glyph, onPress: () => app.open(p.href) }))} />}\n      </div>\n    </Page>\n  );\n}\n"
 }
 ```
 
@@ -198,14 +193,6 @@ import { app, Days, Empty, List, Loading, Page, ready, when } from "parachute";
 type Recent = { vaultName: string; title: string; updatedAt: string | null; href: string };
 type Place = { name: string; glyph: string; href: string; home: boolean };
 
-const CSS = `
-.head { display: grid; gap: 12px 32px; align-items: end; padding-bottom: var(--gap); border-bottom: 1px solid var(--text); }
-@media (min-width: 900px) { .head { grid-template-columns: 1fr minmax(240px, 380px); } .cols { grid-template-columns: 3fr 2fr; gap: 64px; } }
-.sum { margin: 0; font: var(--fs-lead)/1.5 var(--serif); }
-.cols { display: grid; gap: calc(var(--gap) * 1.5); padding-top: var(--gap); }
-.river { border-left: 2px solid var(--text); padding-left: 20px; }
-`;
-
 export default function Home() {
   const [recent, setRecent] = useState<Recent[] | null>(null);
   const [pins, setPins] = useState<Place[]>([]);
@@ -221,13 +208,10 @@ export default function Home() {
   const vaults = new Set((recent ?? []).map((n) => n.vaultName)).size;
   return (
     <Page kicker={when.date(new Date())} title="Lately" wide onRefresh={load}>
-      <style>{CSS}</style>
-      <header className="head">
-        {recent === null ? <Loading /> : <p className="sum">{`${recent.length} notes lately, in ${vaults} ${vaults === 1 ? "vault" : "vaults"}.`}</p>}
+      {recent === null ? <Loading /> : <p>{`${recent.length} notes lately, in ${vaults} ${vaults === 1 ? "vault" : "vaults"}.`}</p>}
         <Days times={(recent ?? []).map((n) => n.updatedAt)} days={14} label="the last two weeks" />
-      </header>
-      <div className="cols">
-        <section className="river" aria-label="Lately">
+      <div className="pa-grid">
+        <section aria-label="Lately">
           {days.map((d) => <List key={d.label} label={d.label} rows={d.notes.map((n) => ({ key: n.href, title: n.title, meta: n.vaultName, aside: when.time(n.updatedAt), onPress: () => app.open(n.href) }))} />)}
           {recent !== null && !recent.length && <Empty>Nothing written yet.</Empty>}
         </section>
@@ -302,7 +286,7 @@ the page keeps nothing of its own that could drift from its card.
 ### What the card says
 
 The card's face says it short, by what it means to a person (one line per server, the approval key on its own line,
-the small asks on one "Also" line: [design/PERMISSIONS.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/design/PERMISSIONS.md)). Under **Show details**, each line
+the small asks on one "Also" line: [design/PERMISSIONS.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/design/PERMISSIONS.md)). Under **Show details**, each line
 in the app's own words, from the declaration:
 
 > Read notes outside its own folder, in Areas/Garden/ ·
@@ -343,4 +327,4 @@ If the code doesn't compile, the app says so, with the reason, and runs nothing.
 provide, or throws while starting, the applet shows one line saying why.
 
 To change the screens around the notes instead (the list, a vault, a note), see
-[CHANGE-YOUR-FRAME.md](https://github.com/ParachuteComputer/parachute/blob/5501d56a482626fc03a344629e59a4b46f824f1c/docs/CHANGE-YOUR-FRAME.md).
+[CHANGE-YOUR-FRAME.md](https://github.com/ParachuteComputer/parachute/blob/8588af2191bab196c8047b46c4f4b197b3764a05/docs/CHANGE-YOUR-FRAME.md).

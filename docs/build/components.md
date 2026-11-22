@@ -3,7 +3,7 @@ title: "Components"
 summary: "The parts an applet builds its screens from, drawn live in each look, with the code that draws them."
 door: build
 order: 4.2
-checked: "parachute docs/COMPONENTS.md, docs/WRITE-AN-APPLET.md (The parts), docs/THEME.md (looks), src/kit/base.css, src/kit/parts.css and src/theme/theme.ts at 5501d56; the drawing is the app's own Parts applet (scripts/components-gallery.mjs)"
+checked: "parachute docs/COMPONENTS.md, docs/WRITE-AN-APPLET.md (The parts), docs/THEME.md (looks), src/kit/base.css, src/kit/parts.css and src/theme/theme.ts at 8588af2; the drawing is the app's own Parts applet (scripts/components-gallery.mjs)"
 gallery: true
 ---
 
@@ -27,7 +27,7 @@ export default function Shelf() {
 }
 ```
 
-`Page` gives the screen its title, one width and one margin, a way back (`back`), pull to read again (`onRefresh`) and room for two columns on a computer (`wide`). Start every applet with it.
+`Page` gives the screen its title, one width and one margin, a way back (`back`), pull to read again (`onRefresh`), and with `wide` room for a board on a computer (lay its columns out with `pa-grid`, below). Start every applet with it; the frame adds no margin of its own around a `Page`.
 
 ## Button
 
@@ -58,14 +58,14 @@ Places to switch between on one screen. The one shown is marked; `count` sits be
 ]} />
 ```
 
-Things of a kind, as rows under a rule: a title, a line under it (`meta`), something at the right (`aside`), a mark (`glyph`), a count (`badge`), bold for what is new (`strong`), the row open now (`current`). A row with `onPress` is a button.
+Things of a kind, as rows under a rule: a title, a line under it (`meta`), something at the right (`aside`), a mark (`glyph`), a count (`badge`), bold for what is new (`strong`), the row open now (`current`). A row with `onPress` is a button. A count goes in the label (``label={`Active · ${active.length}`}``); under `Tabs` that already name the list, give `hideLabel` so the name isn't said twice.
 
 ## Card
 
 ```tsx
 <Card title="Seed order">
   <p>Rye, late kale, the striped beans from last year.</p>
-  <Button small kind="primary">Send it</Button>
+  <div className="pa-actions"><Button small kind="primary">Send it</Button><Button small>Later</Button></div>
 </Card>
 ```
 
@@ -103,11 +103,18 @@ Records as rows and columns; a record's fields, each changed where it stands.
 
 What changed, a day at a time: a column of marks per day, weeks set apart, today marked. Give `times`, or `counts` (one number a day; `1` and `0` for done or not).
 
+One strip for each thing in a list (a habit's last four weeks): put it in the row, `inline`, as the row's `meta`:
+
+```tsx
+<List label="Habits" rows={habits.map((h) => ({ key: h.id, title: h.name, aside: `${h.streak}-day streak`,
+  meta: <Days inline counts={h.lastFourWeeks} />, onPress: () => tick(h) }))} />
+```
+
 ## Empty, Loading and Problem
 
 ```tsx
 <Empty>No books yet. Add one above, or ask your AI.</Empty>
-<Loading />
+<Loading>Reading the shelf…</Loading>
 <Problem error={err} onRetry={load}>Couldn't read the shelf.</Problem>
 ```
 
@@ -121,7 +128,15 @@ Every state has words: what to do next, what is being read, what failed and Try 
 toast("Saved");
 ```
 
-A detail or a short form rises from the foot of the screen; a toast says what an action did.
+A detail or a short form rises from the foot of the screen; a toast says what an action did. A short form in a drawer, with no CSS:
+
+```tsx
+<Drawer open={!!book} onClose={() => setBook(null)} title={book?.title}>
+  <Fields label="This book" fields={[{ name: "status", kind: "choice", choices: ["want", "reading", "done"], value: book?.status }]} onSave={save} />
+  <Write label="A line about it" labelled value={line} onChange={setLine} onSend={keepLine} send="Keep" />
+  <div className="pa-actions"><Button kind="primary" onClick={finish}>Finished</Button><Button kind="quiet" onClick={() => setBook(null)}>Close</Button></div>
+</Drawer>
+```
 
 ## Laying them out
 

@@ -40,9 +40,12 @@ let doc = unescape(m[1]);
 // the kit's sheets of the checkout, as frameCss.ts puts them together for an applet's frame (a page)
 const frameCss = readFileSync(join(app, "src/kit/frameCss.ts"), "utf8");
 const layers = /export const LAYERS = "([^"]+)"/.exec(frameCss)?.[1];
-const page = /const FRAME_PAGE = ("[^"]+")\s*\+\s*("[^"]+");/.exec(frameCss);
+// FRAME_PAGE is a template on strings of its own (const NAME = "…"): filled in here as the module does
+const strings = Object.fromEntries([...frameCss.matchAll(/^const ([A-Z_]+) = ("(?:[^"\\]|\\.)*");$/gm)].map((m) => [m[1], JSON.parse(m[2])]));
+const tpl = /^const FRAME_PAGE = `([^`]+)`;$/m.exec(frameCss)?.[1];
+const page = tpl?.replace(/\$\{([A-Z_]+)\}/g, (_m, n) => { if (!(n in strings)) throw new Error(`frameCss.ts: ${n} not found`); return strings[n]; });
 if (!layers || !page) throw new Error("src/kit/frameCss.ts: LAYERS or FRAME_PAGE not found; update this script");
-const kit = layers + readFileSync(join(app, "src/kit/base.css"), "utf8") + readFileSync(join(app, "src/kit/parts.css"), "utf8") + JSON.parse(page[1]) + JSON.parse(page[2]);
+const kit = layers + readFileSync(join(app, "src/kit/base.css"), "utf8") + readFileSync(join(app, "src/kit/parts.css"), "utf8") + page;
 if (kit.includes("<")) throw new Error("the kit's CSS holds a <");
 const styles = [...doc.matchAll(/<style>([\s\S]*?)<\/style>/g)];
 const old = styles.find((s) => s[1].startsWith(`${layers}@layer parachute.base`));
