@@ -126,7 +126,7 @@ async function applet() {
   const note = (short) => `*Copied as it is from the app's own guide, [docs/WRITE-AN-APPLET.md](${blob("docs/WRITE-AN-APPLET.md")}) at ${sha.slice(0, 7)}; a bundle is still called an "app" there. ${short}*\n\n`;
   const pages = [
     ["applet", "Applet reference: the record", "The applet record in full: the manifest, what it opens, its servers, its signals.", 21, "Reference: the applet record", null, "The code", "The short version: [Make an applet](/docs/build/make-an-applet/). Next: [the kit](/docs/build/reference/kit/)."],
-    ["kit", "Applet reference: the kit", "Every call and part an applet imports from \"parachute\", saved state, and links.", 22, "Reference: the kit", "The code", "Make it look like Parachute", "Before: [the record](/docs/build/reference/applet/). Next: [worked examples](/docs/build/reference/applet-examples/)."],
+    ["kit", "Applet reference: the kit", "Every call and part an applet imports, saved state, and links.", 22, "Reference: the kit", "The code", "Make it look like Parachute", "Before: [the record](/docs/build/reference/applet/). Next: [worked examples](/docs/build/reference/applet-examples/)."],
     ["applet-examples", "Applet reference: worked examples", "Make it look like Parachute, then three whole applets: recipe cards, a home applet, and an area with its room.", 23, "Reference: worked examples", "Make it look like Parachute", null, "Before: [the kit](/docs/build/reference/kit/)."],
   ];
   for (const [file, title, summary, order, nav, from, to, links] of pages) {
