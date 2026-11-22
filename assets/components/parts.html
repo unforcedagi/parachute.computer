@@ -1,0 +1,369 @@
+<!doctype html>
+<!-- The app's Parts applet as the app drew it (made-up content), with the kit's sheets from ParachuteComputer/parachute 5501d56. Written by scripts/components-gallery.mjs: don't edit by hand. -->
+<html data-motion="flowing"><head><link rel="stylesheet" href="fonts.css"><style>@layer parachute.base, parachute.parts, parachute.app;:root{--bg:#f2ede2;--surface:#fbf8f1;--text:#1d1a16;--muted:#6d665a;--line:#d9d1c1;--accent:#4f6b3a;--danger:#9a3324;--serif:"Literata", "Literata fallback", "Iowan Old Style", "Palatino Linotype", Palatino, "Noto Serif", Georgia, serif;--sans:"Instrument Sans", "Instrument Sans fallback", system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;--mono:ui-monospace, "SF Mono", Menlo, Consolas, monospace;--pad:14px;--gap:14px;--radius:10px;--size:16px;--leading:1.45;--primary:var(--accent);--on-primary:var(--surface);--tint:color-mix(in srgb, var(--text) 5%, transparent);--card-fill:var(--surface);--field-fill:var(--surface);--entry-fill:var(--surface);--button-fill:var(--surface);--label-ink:var(--muted);--line-head:1px solid var(--line);--line-row:1px solid color-mix(in srgb, var(--line) 75%, transparent);--line-card:1px solid var(--line);--line-quote:2px solid var(--line);--field-line:1px solid var(--line);--entry-line:1px solid var(--line);--button-line:1px solid var(--line);--card-edges:1px;--field-edges:1px;--field-pad:9px 12px;--radius-card:calc(var(--radius) * 1.4);--radius-field:var(--radius);--radius-entry:var(--radius);--radius-button:999px;--shadow-card:0 1px 0 rgb(60 45 30 / .05), 0 8px 22px -16px rgb(60 45 30 / .22);--shadow-sheet:0 -1px 0 var(--line), 0 -16px 40px -24px rgb(40 30 20 / .35);--label-transform:none;--label-caps:normal;--label-track:0em;--title-weight:400;--measure:760px;--fs-title:calc(var(--size) * 2);--fs-head:calc(var(--size) * 1.35);--fs-lead:calc(var(--size) * 1.12);--fs-body:calc(var(--size) * 1);--fs-small:calc(var(--size) * 0.875);--fs-label:calc(var(--size) * 0.75);color-scheme:light;}:root{--ease-out:cubic-bezier(0.23, 1, 0.32, 1);--ease-in-out:cubic-bezier(0.77, 0, 0.175, 1);--ease-drawer:cubic-bezier(0.32, 0.72, 0, 1);--t-press:160ms;--t-state:200ms;--t-sheet:300ms;--t-step:40ms;}@media (prefers-reduced-motion: reduce),(update: slow){:root{--t-press:0ms;--t-state:0ms;--t-sheet:0ms;--t-step:0ms;}}:root[data-motion="still"]{--t-press:0ms;--t-state:0ms;--t-sheet:0ms;--t-step:0ms;}</style><style>@layer parachute.base, parachute.parts, parachute.app;/* The base: plain HTML drawn in the theme, so an applet with no CSS of its own (or a TSX applet's own markup) looks like
+   Parachute from its first line. Every rule is on the theme's tokens (src/theme/theme.ts) and inside :where(), so it
+   weighs nothing; and it sits in the first cascade layer, so the parts (parts.css), the app's own screens (styles.css) and
+   above all an applet's own CSS, which is in no layer, win over it whatever their specificity (docs/THEME.md, "The order
+   of styles"). The order of the layers is said once, here and at the top of each sheet that uses one.
+   Every rule but the page's own (box sizing, the body, a control's accent, an image's width) skips what the kit draws: an element with a part's class (`pa-…`), a note the kit's
+   Note or the note view draws (`.pa-note`, the renderer's `.rn`) and all inside it. Those are drawn by their own sheets
+   alone, from the browser's defaults, as they always were. */
+@layer parachute.base, parachute.parts, parachute.app;
+
+@layer parachute.base {
+  :where(*, *::before, *::after) { box-sizing: border-box; }
+  :where(html) { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  /* on each control, so an applet's own --accent (set on body or a wrapper) reaches it */
+  :where(input, progress, meter) { accent-color: var(--accent); }
+  :where(body) { box-sizing: content-box; margin: 0; background: var(--bg); color: var(--text); font: var(--fs-body)/var(--leading) var(--sans); -webkit-tap-highlight-color: transparent; }
+
+  /* type: titles in the serif, on the scale; reading text that breaks well */
+  :where(h1, h2, h3, h4):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin: 0 0 calc(var(--gap) * .5); font-family: var(--serif); font-weight: var(--title-weight); line-height: 1.2; text-wrap: balance; }
+  :where(h1):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font-size: var(--fs-title); line-height: 1.1; letter-spacing: -.01em; }
+  :where(h2):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin-top: calc(var(--gap) * 1.4); font-size: var(--fs-head); }
+  :where(h3):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin-top: var(--gap); font-size: var(--fs-lead); font-weight: 600; }
+  :where(h4):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin-top: var(--gap); font: 600 var(--fs-small) var(--sans); }
+  :where(h1, h2, h3, h4):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)):first-child { margin-top: 0; }
+  /* paragraphs and lists keep the browser's spacing (1em above and below), which applets have always been drawn with */
+  :where(blockquote, figure):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin: 1em 0; }
+  :where(pre, table, fieldset, details):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin: 0 0 var(--gap); }
+  :where(p, li, dd):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { text-wrap: pretty; }
+  :where(ul, ol):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding-left: 1.3em; }
+  :where(small):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font-size: var(--fs-small); color: var(--muted); }
+  :where(a):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { color: var(--accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; overflow-wrap: anywhere; }
+  :where(hr):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin: calc(var(--gap) * 1.4) 0; border: 0; border-top: 1px solid var(--line); }
+  :where(blockquote):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding: 0 0 0 14px; border-left: var(--line-quote); font: italic var(--fs-lead)/1.5 var(--serif); color: var(--muted); }
+  :where(code, kbd, samp, pre):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font-family: var(--mono); font-size: .9em; }
+  :where(:not(pre) > code):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding: 1px 5px; border-radius: 4px; background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+  :where(pre):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { overflow-x: auto; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-field); background: var(--surface); line-height: 1.5; }
+  :where(mark):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { background: color-mix(in srgb, var(--accent) 22%, transparent); color: inherit; }
+  :where(img, video, canvas, svg) { max-width: 100%; }
+  :where(img, video) { height: auto; }
+  :where(dt):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font: italic var(--fs-small) var(--serif); color: var(--muted); }
+  :where(dd):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin: 0 0 calc(var(--gap) * .6); }
+  :where(figcaption):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin-top: 4px; font: italic var(--fs-small) var(--serif); color: var(--muted); }
+
+  /* tables: rows under rules, figures that don't jitter */
+  :where(table):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  :where(th, td):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding: calc(var(--gap) * .45) 12px calc(var(--gap) * .45) 0; border-bottom: var(--line-row); text-align: left; vertical-align: top; }
+  :where(th):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font: 600 var(--fs-small) var(--sans); color: var(--muted); border-bottom: var(--line-head); }
+
+  /* controls: the kit's button and field, drawn on bare elements */
+  :where(button, input, select, textarea):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { font: inherit; color: inherit; }
+  :where(button, input[type="button"], input[type="submit"], input[type="reset"]):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 36px; max-width: 100%; padding: 6px 16px;
+    border: var(--button-line); border-radius: var(--radius-button); background: var(--button-fill); color: var(--text);
+    font: 500 var(--fs-body) var(--sans); text-align: center; cursor: pointer; }
+  :where(button[type="submit"], input[type="submit"]):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { border-color: var(--primary); background: var(--primary); color: var(--on-primary); font-weight: 600; }
+  :where(button:disabled, input:disabled, select:disabled, textarea:disabled):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { opacity: .55; cursor: default; }
+  :where(input:not([type="checkbox"], [type="radio"], [type="range"], [type="color"], [type="file"], [type="button"], [type="submit"], [type="reset"]), select, textarea):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) {
+    max-width: 100%; min-height: 40px; padding: 8px 12px; border: var(--field-line); border-radius: var(--radius-field);
+    background: var(--field-fill); color: var(--text); font-size: max(16px, var(--fs-body)); }
+  :where(textarea):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { display: block; width: 100%; min-height: 6em; font: var(--fs-lead)/1.5 var(--serif); resize: vertical; }
+  :where(input, select, textarea):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)):focus { outline: none; border-color: var(--text); }
+  :where(input[type="checkbox"], input[type="radio"]):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { width: 18px; height: 18px; margin: 0 6px 0 0; vertical-align: -3px; }
+  :where(label):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { cursor: default; }
+  :where(fieldset):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding: 0; border: 0; min-width: 0; }
+  :where(legend):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { padding: 0; margin-bottom: 4px; font: italic var(--fs-small) var(--serif); color: var(--muted); }
+  :where(details > summary):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { cursor: pointer; color: var(--muted); }
+  :where(details[open] > summary):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { margin-bottom: 6px; }
+  :where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *))::placeholder { color: var(--muted); opacity: .8; }
+
+  /* focus from the keyboard: the one ring, in the accent */
+  :where(a, button, input, select, textarea, summary, [tabindex]):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* a press gives; a pointer's hover only where there is one (docs/DESIGN-RULES.md) */
+  :where(button):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { transition: transform var(--t-press, 0ms) var(--ease-out, ease), background-color var(--t-press, 0ms) ease, border-color var(--t-press, 0ms) ease; }
+  :where(button:active:not(:disabled)):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { transform: scale(.97); }
+  @media (hover: hover) and (pointer: fine) { :where(button:hover:not(:disabled)):where(:not([class^="pa-"], [class*=" pa-"], .rn, .rn *, .pa-note *)) { border-color: var(--muted); } }
+}
+/* The parts (src/kit/parts.tsx), built only on the theme's tokens (src/theme/theme.ts): the palette, the faces, the
+   density, and the style tokens a look sets (how rules, corners, depth and labels are drawn: theme.ts STYLE_TOKENS,
+   LOOKS). Every class starts `pa-`, so an applet's own CSS can sit beside it. How the parts move is at the end ("Motion"), on the theme's curves and times only. */
+/* In the parts layer (base.css says the order): above the base and the note renderer, below the app's own screens and any
+   applet's own CSS, which wins over a part whatever its specificity. */
+@layer parachute.base, parachute.parts, parachute.app;
+@layer parachute.parts {
+.pa-days { display: block; margin: 0 0 var(--gap); color: var(--text); }
+.pa-days svg { display: block; height: calc(var(--size) * 3.6 * var(--pa-days-h, 1)); width: auto; max-width: 100%; }
+.pa-days .pa-mark { fill: var(--text); }
+.pa-days .pa-base { fill: var(--muted); }
+.pa-days .pa-today { fill: var(--accent); }
+.pa-days figcaption, .pa-days-label { margin-top: 2px; font: italic var(--fs-small) var(--serif); color: var(--muted); }
+
+.pa-list { margin: 0 0 var(--gap); }
+.pa-list-label { margin: 0 0 4px; font: italic 400 var(--fs-body) var(--serif); color: var(--muted); }
+.pa-list ul { list-style: none; margin: 0; padding: 0; border-top: var(--line-head); }
+.pa-row { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0 12px; width: 100%; padding: calc(var(--gap) * .6) 0;
+  border: 0; border-bottom: var(--line-row); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+button.pa-row:active, a.pa-row:active { background: var(--tint); }
+/* a row that is a link (the app's own lists of notes): no underline, and a held finger doesn't select or preview */
+a.pa-row { text-decoration: none; -webkit-touch-callout: none; user-select: none; }
+div.pa-row { cursor: default; }
+.pa-row-mark { grid-row: 1 / 3; display: inline-grid; place-items: center; width: 2.3em; height: 2.3em; border: 1px solid var(--text); border-radius: 50%;
+  box-shadow: inset 0 0 0 3px var(--surface), inset 0 0 0 4px var(--line); background: var(--surface); font: var(--fs-lead) var(--serif); font-variant-emoji: text; }
+.pa-row-title { grid-column: 2; font: 500 var(--fs-lead)/1.3 var(--serif); overflow-wrap: anywhere; }
+.pa-row-meta { grid-column: 2; font-size: var(--fs-small); color: var(--muted); overflow-wrap: anywhere; }
+.pa-row-aside { grid-column: 3; grid-row: 1; font: italic var(--fs-small) var(--serif); color: var(--muted); white-space: nowrap; }
+.pa-row:not(:has(.pa-row-mark)) { grid-template-columns: 1fr auto; }
+.pa-row:not(:has(.pa-row-mark)) .pa-row-title, .pa-row:not(:has(.pa-row-mark)) .pa-row-meta { grid-column: 1; }
+.pa-row:not(:has(.pa-row-mark)) .pa-row-aside { grid-column: 2; }
+
+.pa-card { margin: 0 0 var(--gap); padding: calc(var(--pad) * .8) var(--pad); background: var(--card-fill); border: var(--line-card); border-width: var(--card-edges);
+  border-radius: var(--radius-card); box-shadow: var(--shadow-card); }
+.pa-card-title { margin: 0 0 2px; font: 600 var(--fs-lead) var(--serif); }
+.pa-card > :last-child { margin-bottom: 0; }
+.pa-card p { margin: 0 0 6px; color: var(--muted); }
+
+.pa-field { display: grid; gap: 2px; margin: 0 0 var(--gap); }
+.pa-field-label { font: italic var(--fs-small) var(--serif); color: var(--muted); }
+.pa-field-row { display: flex; align-items: stretch; gap: 12px; }
+.pa-field input { flex: 1; min-width: 0; padding: var(--field-pad); border: var(--entry-line); border-width: var(--field-edges); border-radius: var(--radius-entry);
+  background: var(--entry-fill); font: var(--fs-lead) var(--serif); color: var(--text); outline: none; }
+/* focused: the line darkens and thickens below (a box keeps its edge) */
+.pa-field input:focus { border-color: var(--text); box-shadow: 0 1px 0 var(--text); }
+.pa-field-action { padding: 6px 16px; border: 1px solid var(--primary); border-radius: var(--radius-button); background: var(--primary); color: var(--on-primary);
+  font: 600 var(--fs-small) var(--sans); cursor: pointer; }
+/* not yet (nothing written): a quiet outline, not a grey block */
+.pa-field-action:disabled { border-color: var(--line); background: none; color: var(--muted); cursor: default; }
+
+.pa-empty { display: grid; justify-items: center; gap: 4px; padding: var(--gap) 0; color: var(--muted); font: italic var(--fs-lead) var(--serif); text-align: center; }
+.pa-empty p { margin: 0; }
+.pa-sprig { width: 110px; height: 36px; color: var(--accent); }
+
+.pa-note { font: var(--fs-lead)/1.6 var(--serif); color: var(--text); overflow-wrap: anywhere; }
+.pa-note h1 { margin: 0 0 6px; font: var(--title-weight) var(--fs-title)/1.1 var(--serif); }
+.pa-note h1::first-letter { color: var(--accent); }
+.pa-note h2 { margin: calc(var(--gap) * 1.3) 0 4px; font: 600 var(--fs-label) var(--sans); letter-spacing: var(--label-track); text-transform: var(--label-transform);
+  font-variant-caps: var(--label-caps); color: var(--label-ink); }
+.pa-note h3 { margin: var(--gap) 0 2px; font: 600 var(--fs-lead) var(--serif); }
+.pa-note ul, .pa-note ol { padding-left: 1.4em; }
+.pa-note a { color: var(--text); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; cursor: pointer; }
+.pa-note blockquote { margin: var(--gap) 0; padding: 0 0 0 14px; border-left: var(--line-quote); font-style: italic; color: var(--muted); }
+.pa-note code, .pa-note pre { font-family: var(--mono); font-size: .88em; }
+.pa-note pre { overflow-x: auto; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-field); }
+.pa-note table { border-collapse: collapse; } .pa-note td, .pa-note th { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: left; }
+.pa-note img { max-width: 100%; }
+
+/* Link and Linked (links.tsx): a link in the accent; held, it asks Open with…, so the webview's own menu stays away */
+.pa-link { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; overflow-wrap: anywhere; cursor: pointer;
+  -webkit-touch-callout: none; }
+.pa-note-link { text-decoration-style: dotted; }
+
+/* List's newer parts: a long list draws only the rows near the screen (content-visibility), a count after the title,
+   a row in bold for what is new, the row open now, a line in the accent under it, and More under the last row */
+.pa-list li { content-visibility: auto; contain-intrinsic-size: auto 3.6em; }
+.pa-row:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.pa-strong .pa-row-title { font-weight: 700; }
+.pa-unseen { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.pa-row[aria-current="true"] { box-shadow: inset 3px 0 0 var(--accent); padding-left: 10px; background: var(--tint); }
+.pa-badge { margin-left: 8px; padding: 0 7px; border: 1.5px solid var(--text); border-radius: 999px; font: 600 var(--fs-label) var(--sans); vertical-align: .15em; }
+.pa-row-under { grid-column: 1 / -1; font-size: var(--fs-small); color: var(--accent); }
+.pa-row:not(:has(.pa-row-mark)) .pa-row-under { grid-column: 1 / -1; }
+.pa-more { display: block; margin: var(--gap) auto 0; padding: 5px 16px; border: var(--button-line); border-radius: var(--radius-button); background: var(--button-fill);
+  color: var(--text); font: var(--fs-small) var(--sans); cursor: pointer; }
+
+/* The screen parts (screen.tsx). A page: one width, one margin, its title in the scale */
+:root:has(.pa-page) body { margin: 0; background: var(--bg); color: var(--text); font: var(--fs-body)/var(--leading) var(--sans); }
+.pa-page { box-sizing: border-box; max-width: var(--measure); margin: 0 auto; padding: calc(var(--pad) * 1.2) var(--pad) calc(var(--pad) * 4); color: var(--text); }
+.pa-page.pa-wide { max-width: 1240px; }
+/* an applet's own controls in the page's type (no weight at all: every part's own rule still wins) */
+:where(.pa-page) :where(button, input, textarea) { font: inherit; color: inherit; }
+.pa-page-head { display: flex; align-items: end; justify-content: space-between; gap: var(--gap); margin: 0 0 var(--gap); }
+.pa-page-aside { display: flex; gap: 8px; flex-wrap: wrap; justify-content: end; }
+.pa-title { margin: 0; font: var(--title-weight) var(--fs-title)/1.1 var(--serif); letter-spacing: -.01em; }
+.pa-kicker { margin: 0 0 2px; font: 600 var(--fs-label) var(--sans); letter-spacing: var(--label-track); text-transform: var(--label-transform); font-variant-caps: var(--label-caps);
+  color: var(--label-ink); }
+.pa-pull { display: grid; place-items: end center; overflow: hidden; font: italic var(--fs-small) var(--serif); color: var(--muted); }
+
+.pa-loading { margin: var(--gap) 0; font: italic var(--fs-body) var(--serif); color: var(--muted); }
+.pa-problem { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin: var(--gap) 0; color: var(--danger); }
+.pa-problem p { margin: 0; overflow-wrap: anywhere; }
+
+.pa-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 18px; border: var(--button-line); border-radius: var(--radius-button);
+  background: var(--button-fill); color: var(--text); font: 500 var(--fs-body) var(--sans); white-space: nowrap; cursor: pointer; }
+.pa-button.pa-primary { border-color: var(--primary); background: var(--primary); color: var(--on-primary); font-weight: 600; }
+.pa-button.pa-quiet { border-color: transparent; background: none; padding-inline: 4px; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+.pa-button.pa-small { padding: 2px 12px; font-size: var(--fs-small); }
+.pa-button.pa-quiet.pa-small { padding-inline: 0; }
+.pa-button:disabled { opacity: .5; cursor: default; }
+.pa-button.pa-primary:disabled:not([aria-busy="true"]) { opacity: 1; border-color: var(--line); background: none; color: var(--muted); }
+.pa-button[aria-busy="true"] { opacity: .7; }
+/* Page's way back: a quiet button, in the serif, above the title */
+.pa-button.pa-back { display: flex; justify-content: start; margin: 0 0 2px; padding-left: 0; font: italic var(--fs-body) var(--serif); text-decoration: none; }
+
+/* one line: more places than fit scroll sideways (the one shown is kept in view), never a second row */
+.pa-tabs { position: relative; display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 4px; margin: 6px 0 4px; border-bottom: 1px solid var(--line); }
+.pa-tabs::-webkit-scrollbar { display: none; }
+/* more past an end: that end fades (the row scrolls); a tab focused or shown is kept clear of the fade (screen.tsx) */
+.pa-tabs[data-more="end"] { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.pa-tabs[data-more="start"] { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent); }
+.pa-tabs[data-more="start end"] { -webkit-mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent); }
+.pa-tabs[data-more="end"]:dir(rtl) { -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to left, #000 calc(100% - 32px), transparent); }
+.pa-tabs[data-more="start"]:dir(rtl) { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+/* the focus ring inside the tab: the row clips what is drawn outside it */
+.pa-tabs .pa-tab:focus-visible { outline-offset: -2px; }
+.pa-tab { flex: none; white-space: nowrap; padding: 6px 10px; border: 0; border-bottom: 2px solid transparent; background: none; color: var(--muted); font: var(--fs-body) var(--sans); cursor: pointer; }
+.pa-tab[aria-current="page"] { border-bottom-color: var(--text); color: var(--text); font-weight: 600; }
+.pa-write > .pa-field-label { display: block; margin-bottom: 2px; }
+
+.pa-search { display: block; width: 100%; box-sizing: border-box; margin: 0 0 var(--gap); padding: 8px 14px; border: var(--field-line); border-radius: var(--radius-button);
+  background: var(--field-fill); color: var(--text); font: var(--fs-body) var(--sans); }
+.pa-search:focus { outline: none; border-color: var(--text); }
+
+.pa-write { margin: 0 0 var(--gap); }
+.pa-write-box { display: block; width: 100%; box-sizing: border-box; min-height: 6em; padding: 12px 14px; border: var(--field-line); border-radius: var(--radius-field);
+  background: var(--field-fill); color: var(--text); font: var(--fs-lead)/1.5 var(--serif); resize: vertical; }
+.pa-write-box:focus { outline: none; border-color: var(--text); }
+.pa-write-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 8px; }
+.pa-write.pa-line { display: flex; align-items: end; gap: 8px; margin: 0; }
+.pa-line .pa-write-box { flex: 1; min-width: 0; min-height: 2.4em; max-height: 9em; padding: 8px 10px; font: var(--fs-body)/1.4 var(--sans); resize: none; }
+
+
+/* Laying parts out, with no CSS of the applet's own: buttons side by side (a card's actions, a drawer's), and
+   groups side by side on a wide screen (lists by status, cards in a grid), one under another on a phone */
+.pa-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 var(--gap); }
+.pa-actions:last-child { margin-bottom: 0; }
+.pa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: var(--gap) calc(var(--gap) * 1.6); align-items: start; margin: 0 0 var(--gap); }
+.pa-grid > * { min-width: 0; margin-bottom: 0; }
+
+/* Table and Fields (parts-data.tsx): records as rows and columns, ink rules as List's; the first column stays in view
+   as the rest scroll across; a row off screen isn't drawn */
+.pa-table { margin: 0 0 var(--gap); }
+.pa-tgrid { display: grid; grid-template-columns: var(--pa-cols); overflow-x: auto; border-top: var(--line-head); overscroll-behavior-x: contain; }
+.pa-tgrid > [role="rowgroup"], .pa-trow, .pa-thead, .pa-tgroup { display: contents; }
+.pa-tcell { min-width: 0; padding: calc(var(--gap) * .45) 10px calc(var(--gap) * .45) 0; border-bottom: var(--line-row); background: var(--bg);
+  font: var(--fs-body)/1.35 var(--sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; content-visibility: auto; contain-intrinsic-size: auto 2.4em; }
+.pa-tcell:first-child { position: sticky; left: 0; z-index: 1; padding-left: 2px; }
+.pa-tend { text-align: right; font-variant-numeric: tabular-nums; }
+.pa-thead .pa-tcell { position: sticky; top: 0; z-index: 2; border-bottom: var(--line-head); font: 600 var(--fs-label) var(--sans); letter-spacing: var(--label-track);
+  text-transform: var(--label-transform); font-variant-caps: var(--label-caps); color: var(--muted); content-visibility: visible; }
+.pa-thead .pa-tcell:first-child { z-index: 3; }
+.pa-tsort { padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.pa-thead [aria-sort] { color: var(--text); }
+.pa-tgroup .pa-tcell { grid-column: 1 / -1; position: static; padding-top: var(--gap); font: italic var(--fs-body) var(--serif); color: var(--muted); border-bottom: 1px solid var(--line); }
+.pa-tcount { margin-left: 8px; font: var(--fs-small) var(--sans); }
+.pa-topen { display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: 500 var(--fs-body) var(--serif); text-align: left;
+  overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
+/* the wash over the cell's own opaque ground (the first column scrolls over the rest), as an inset that can ease */
+.pa-trow[aria-current="true"] .pa-tcell { box-shadow: inset 0 0 0 100vmax var(--tint); }
+.pa-trow:hover .pa-tcell { box-shadow: inset 0 0 0 100vmax var(--tint); }
+.pa-topen:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.pa-fields { display: grid; grid-template-columns: minmax(7em, max-content) 1fr; gap: 0 16px; margin: 0 0 var(--gap); border-top: var(--line-head); }
+.pa-fname, .pa-fvalue { margin: 0; padding: 6px 0; border-bottom: var(--line-row); }
+.pa-fname { font: italic var(--fs-body) var(--serif); color: var(--muted); }
+.pa-fvalue { min-width: 0; overflow-wrap: anywhere; font: var(--fs-body) var(--sans); }
+.pa-finput { width: 100%; box-sizing: border-box; padding: 3px 6px; margin: -3px 0; border: 1px solid transparent; border-radius: 4px; background: none;
+  color: var(--text); font: var(--fs-body) var(--sans); }
+.pa-finput:hover { border-color: var(--line); }
+.pa-finput:focus { outline: none; border-color: var(--text); background: var(--surface); }
+select.pa-finput { appearance: auto; }
+.pa-fcheck { width: auto; accent-color: var(--accent); }
+
+/* ── Motion (docs/DESIGN-RULES.md) ──
+   On the theme's curves and times only (theme.ts MOTION: --ease-*, --t-*), which are all 0 under the device's
+   reduce-motion setting or a still theme, so nothing here moves then. Only transform and opacity move. What is used
+   tens of times a day (a tab, a row, typing) changes at once; what arrives (a page, what was read, a new row, a sheet,
+   a toast) rises a few pixels in under 250 ms, and never holds a tap back. What arrives is READABLE ON ITS FIRST FRAME:
+   it starts from a light opacity (.85), never from blank, and nothing waits for its turn (no delay), so what was
+   already read (the copy kept of it) is on the screen at once. */
+@keyframes pa-in { from { opacity: .85; transform: translateY(var(--pa-rise, 6px)); } }
+/* "Reading…" alone starts from blank: it is the wait's own word, shown only once the wait runs long */
+@keyframes pa-fade { from { opacity: 0; } }
+/* a page's title and what is under it arrive together, the title from a little nearer */
+.pa-page-head { --pa-rise: 3px; animation: pa-in var(--t-state) var(--ease-out) both; }
+:is(.pa-list, .pa-card, .pa-table, .pa-fields, .pa-note, .pa-empty, .pa-days, .pa-problem) { animation: pa-in var(--t-state) var(--ease-out) both; }
+/* a row that arrives after the list was drawn (a book added, a message come in) */
+.pa-list li.pa-fresh { animation: pa-in var(--t-state) var(--ease-out) both; }
+/* "Reading…" only once reading takes a while (the kit's own wait, not a motion: it holds under reduce-motion too): a
+   quick read (from the cache) never flashes it, and it holds its place */
+:root { --pa-wait: 300ms; }
+.pa-loading { animation: pa-fade var(--t-state) var(--ease-out) var(--pa-wait) both; }
+
+/* a press gives under the finger at once, and comes back; a pointer's hover only where there is one */
+.pa-button, .pa-field-action, .pa-more, .pa-drawer-grip { transition: transform var(--t-press) var(--ease-out), background-color var(--t-press) ease, border-color var(--t-press) ease, opacity var(--t-press) ease; }
+:is(.pa-button, .pa-field-action, .pa-more):active:not(:disabled) { transform: scale(.97); }
+.pa-row, .pa-tab, .pa-trow .pa-tcell { transition: background-color var(--t-press) ease, color var(--t-press) ease, box-shadow var(--t-press) ease; }
+@media (hover: hover) and (pointer: fine) {
+  .pa-button.pa-plain:hover:not(:disabled), .pa-more:hover { border-color: var(--muted); }
+  .pa-button.pa-primary:hover:not(:disabled), .pa-field-action:hover:not(:disabled) { background: color-mix(in srgb, var(--primary) 86%, var(--bg)); }
+  .pa-button.pa-quiet:hover:not(:disabled) { color: var(--text); }
+  button.pa-row:hover, a.pa-row:hover { background: var(--tint); }
+  .pa-tab:hover { color: var(--text); }
+}
+/* on a touch screen a small button is still a finger's size to hit (44 px), with no change to how it looks */
+@media (pointer: coarse) {
+  :is(.pa-button, .pa-field-action, .pa-more) { position: relative; }
+  :is(.pa-button, .pa-field-action, .pa-more)::after { content: ""; position: absolute; inset: min(0px, calc(50% - 22px)) 0; }
+  /* buttons stacked with no gap between (a picker's choices): each only its own height, so none takes its neighbour's tap */
+  .pa-tight :is(.pa-button, .pa-field-action, .pa-more)::after { inset: 0; }
+  .pa-drawer-grip { height: 40px; }
+  .pa-drawer-grip::before { margin: 18px auto; }
+}
+/* focus from the keyboard: one ring, in the accent, on every part */
+:is(.pa-button, .pa-field-action, .pa-more, .pa-tab, .pa-link, .pa-tsort, .pa-drawer-grip):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+:is(.pa-search, .pa-write-box):focus-visible { outline: 2px solid color-mix(in srgb, var(--accent) 45%, transparent); outline-offset: 1px; }
+
+/* type: titles that break evenly, reading text without a lonely last word, figures that don't jump as they change */
+.pa-title, .pa-card-title, .pa-note h1, .pa-note h2, .pa-note h3 { text-wrap: balance; }
+.pa-note p, .pa-note li, .pa-empty p, .pa-card p { text-wrap: pretty; }
+.pa-row-aside, .pa-badge, .pa-tcount, .pa-days figcaption, .pa-tabs { font-variant-numeric: tabular-nums; }
+/* shelves of rows breathe apart; a label sits with its own rows */
+.pa-list + .pa-list { margin-top: calc(var(--gap) * 1.6); }
+.pa-grid > .pa-list + .pa-list { margin-top: 0; }
+
+/* ── toast (screen.tsx): one at a time, rising from the foot, going back down; swipe it away, held while pointed at ── */
+.pa-toasts { position: fixed; left: 0; right: 0; bottom: calc(env(safe-area-inset-bottom, 0px) + 16px); display: grid; justify-items: center; pointer-events: none; z-index: 50; }
+.pa-toast { grid-area: 1 / 1; margin: 0 16px; max-width: 520px; padding: 8px 18px; border: var(--line-card); border-radius: 999px; background: var(--surface); color: var(--text);
+  font: var(--fs-small) var(--sans); box-shadow: var(--shadow-card); pointer-events: auto; touch-action: none; user-select: none;
+  transform: translateY(var(--pa-swipe, 0px)); transition: transform var(--t-sheet) var(--ease-out), opacity var(--t-sheet) var(--ease-out); }
+.pa-toast[data-state="before"] { opacity: 0; transform: translateY(calc(100% + 16px)); }
+.pa-toast[data-state="gone"] { pointer-events: none; opacity: 0; transform: translateY(calc(100% + 16px + var(--pa-swipe, 0px))); transition-duration: calc(var(--t-sheet) * .8); }
+.pa-toast[data-swiping] { transition: none; }
+.pa-toast-error { border-color: var(--danger); color: var(--danger); }
+
+/* ── Drawer (drawer.tsx): rises from the foot of the screen; drag it down, tap outside or Escape to put it away ── */
+.pa-drawer-scrim { position: fixed; inset: 0; z-index: 40; display: flex; align-items: flex-end; justify-content: center;
+  background: color-mix(in srgb, var(--text) 22%, transparent); background: light-dark(color-mix(in srgb, var(--text) 22%, transparent), rgb(0 0 0 / .45)); opacity: var(--pa-scrim, 1); transition: opacity var(--t-sheet) var(--ease-drawer); overscroll-behavior: contain; }
+.pa-drawer { position: relative; box-sizing: border-box; width: min(560px, 100%); max-height: 86dvh; overflow: auto; overscroll-behavior: contain;
+  padding: 6px var(--pad) calc(var(--pad) + env(safe-area-inset-bottom, 0px)); background: var(--bg); color: var(--text);
+  border-top: var(--line-card); border-radius: max(var(--radius-card), var(--radius)) max(var(--radius-card), var(--radius)) 0 0; box-shadow: var(--shadow-sheet);
+  transform: translateY(var(--pa-drag, 0px)); transition: transform var(--t-sheet) var(--ease-drawer); }
+.pa-drawer-scrim[data-state="before"], .pa-drawer-scrim[data-state="gone"] { --pa-scrim: 0; }
+.pa-drawer-scrim[data-state="gone"] { pointer-events: none; }
+/* content that fits: a finger drags it from anywhere (the page doesn't take the gesture); content that scrolls: by the grip */
+.pa-drawer:not([data-scrolls]) { touch-action: none; }
+.pa-drawer-scrim[data-state="before"] .pa-drawer, .pa-drawer-scrim[data-state="gone"] .pa-drawer { transform: translateY(100%); }
+.pa-drawer-scrim[data-state="gone"], .pa-drawer-scrim[data-state="gone"] .pa-drawer { transition-duration: calc(var(--t-sheet) * .8); }
+.pa-drawer-scrim[data-dragging], .pa-drawer-scrim[data-dragging] .pa-drawer { transition: none; }
+.pa-drawer-grip { display: block; width: 100%; height: 24px; margin: 0 0 2px; padding: 0; border: 0; background: none; cursor: grab; touch-action: none; }
+.pa-drawer-grip::before { content: ""; display: block; width: 36px; height: 4px; margin: 9px auto; border-radius: 2px; background: var(--line); }
+.pa-drawer-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--gap); margin: 0 0 var(--gap); }
+.pa-drawer-title { margin: 0; font: 400 var(--fs-head)/1.2 var(--serif); text-wrap: balance; }
+.pa-drawer-body > :last-child { margin-bottom: 0; }
+/* in a page drawn at its content's height (one with embeds) there is no screen's foot to rise from: it opens in place */
+.pa-drawer.pa-drawer-inline { position: relative; width: 100%; max-height: none; overflow: visible; margin: 0 0 var(--gap); padding-top: var(--pad);
+  border: var(--line-card); border-radius: max(var(--radius-card), var(--radius)); box-shadow: none; transform: none; transition: none; animation: pa-in var(--t-state) var(--ease-out) both; }
+}
+@layer parachute.base{:where(body){padding:calc(var(--pad) * 1.2) max(var(--pad), calc((100% - 760px) / 2)) calc(var(--pad) * 3);}}@layer parachute.parts{:root:has(.pa-page) body{padding:0;}}</style><style>.parachute-update,.parachute-error{padding:12px var(--pad);font:var(--size)/var(--leading) var(--sans);color:var(--text);overflow-wrap:anywhere}.parachute-update p,.parachute-error p{margin:0 0 6px}.parachute-update .quiet{color:var(--muted)}.parachute-error{color:var(--danger)}</style><style id="taste"></style></head><body><div id="root"><main class="pa-page"><header class="pa-page-head"><div><p class="pa-kicker">Parachute kit</p><h1 class="pa-title">The parts</h1></div><div class="pa-page-aside"><button type="button" class="pa-button pa-quiet pa-small">Show a toast</button></div></header><style>.part { margin: 0 0 calc(var(--gap) * 2.4); } .part > h2 { margin: 0 0 6px; font: 600 var(--fs-small) var(--sans); color: var(--muted); }
+.part pre { margin-top: 10px; font-size: var(--fs-label); } .row-of { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }</style><section class="part" id="button" data-part="Button"><h2>Button</h2><div class="live"><div class="row-of"><button type="button" class="pa-button pa-primary">Save</button><button type="button" class="pa-button pa-plain">Later</button><button type="button" class="pa-button pa-quiet">Cancel</button><button type="button" class="pa-button pa-plain pa-small">Small</button><button type="button" class="pa-button pa-primary" disabled="">Not yet</button></div></div><pre><code>&lt;Button kind="primary"&gt;Save&lt;/Button&gt;
+&lt;Button&gt;Later&lt;/Button&gt;
+&lt;Button kind="quiet"&gt;Cancel&lt;/Button&gt;
+&lt;Button small&gt;Small&lt;/Button&gt;</code></pre></section><section class="part" id="tabs" data-part="Tabs"><h2>Tabs</h2><div class="live"><nav class="pa-tabs" aria-label="Shelves"><button type="button" class="pa-tab" aria-current="page">Reading · 2</button><button type="button" class="pa-tab">Want to read</button><button type="button" class="pa-tab">Read</button></nav></div><pre><code>&lt;Tabs label="Shelves" current={tab} onChange={setTab}
+  tabs={[{ key: "reading", label: "Reading", count: 2 }, { key: "want", label: "Want to read" }, { key: "read", label: "Read" }]} /&gt;</code></pre></section><section class="part" id="list" data-part="List"><h2>List</h2><div class="live"><section class="pa-list" aria-label="Reading"><h3 class="pa-list-label">Reading</h3><ul><li><button type="button" class="pa-row"><span class="pa-row-mark" aria-hidden="true">❧︎</span><span class="pa-row-title">The Overstory</span><span class="pa-row-meta">Richard Powers</span><span class="pa-row-aside">p. 212</span></button></li><li><button type="button" class="pa-row pa-strong"><span class="pa-row-mark" aria-hidden="true">✎︎</span><span class="pa-row-title">Braiding Sweetgrass<span class="pa-badge">3</span></span><span class="pa-row-meta">Robin Wall Kimmerer</span></button></li><li><button type="button" class="pa-row" aria-current="true"><span class="pa-row-mark" aria-hidden="true">▢︎</span><span class="pa-row-title">A Pattern Language</span><span class="pa-row-meta">Christopher Alexander</span><span class="pa-row-aside">Nov 12</span></button></li></ul></section></div><pre><code>&lt;List label="Reading" rows={[
+  { key: "1", title: "The Overstory", meta: "Richard Powers", aside: "p. 212", glyph: "❧", onPress: open },
+  { key: "2", title: "Braiding Sweetgrass", meta: "Robin Wall Kimmerer", badge: 3, strong: true, onPress: open },
+]} /&gt;</code></pre></section><section class="part" id="card" data-part="Card"><h2>Card</h2><div class="live"><section class="pa-card"><h3 class="pa-card-title">Seed order</h3><p>Rye, late kale, the striped beans from last year.</p><button type="button" class="pa-button pa-primary pa-small">Send it</button></section></div><pre><code>&lt;Card title="Seed order"&gt;
+  &lt;p&gt;Rye, late kale, the striped beans from last year.&lt;/p&gt;
+  &lt;Button small kind="primary"&gt;Send it&lt;/Button&gt;
+&lt;/Card&gt;</code></pre></section><section class="part" id="field" data-part="Field"><h2>Field</h2><div class="live"><div class="pa-field"><label class="pa-field-label" for="_r_0_">Add a book</label><span class="pa-field-row"><input id="_r_0_" placeholder="A title" enterkeyhint="done" value="" style=""><button type="button" class="pa-field-action" disabled="">Add</button></span></div></div><pre><code>&lt;Field label="Add a book" placeholder="A title" action="Add" onAction={add} /&gt;</code></pre></section><section class="part" id="search" data-part="Search"><h2>Search</h2><div class="live"><input class="pa-search" aria-label="Search the shelf" placeholder="Search" enterkeyhint="search" type="search" value="" style=""></div><pre><code>&lt;Search label="Search the shelf" placeholder="Search" onSearch={find} /&gt;</code></pre></section><section class="part" id="write" data-part="Write"><h2>Write</h2><div class="live"><div class="pa-write"><label class="pa-field-label" for="_r_1_">A note</label><textarea id="_r_1_" class="pa-write-box" style="">Ask at the yard about cedar shakes.</textarea><div class="pa-write-row"><button type="button" class="pa-button pa-primary pa-write-send">Save</button></div></div></div><pre><code>&lt;Write label="A note" labelled value={draft} onChange={setDraft} onSend={save} send="Save" /&gt;</code></pre></section><section class="part" id="table" data-part="Table"><h2>Table</h2><div class="live"><section class="pa-table" aria-label="Books" style="--pa-cols: minmax(16ch, 2fr) minmax(10ch, 1fr) minmax(10ch, 1fr);"><div role="table" aria-label="Books" class="pa-tgrid"><div role="rowgroup"><div role="row" class="pa-thead"><div role="columnheader" class="pa-tcell">Title</div><div role="columnheader" class="pa-tcell">Author</div><div role="columnheader" class="pa-tcell pa-tend">Pages</div></div></div><div role="rowgroup"><div role="row" class="pa-trow"><div role="rowheader" class="pa-tcell"><button type="button" class="pa-topen">Gilead</button></div><div role="cell" class="pa-tcell">Marilynne Robinson</div><div role="cell" class="pa-tcell pa-tend">247</div></div><div role="row" class="pa-trow"><div role="rowheader" class="pa-tcell"><button type="button" class="pa-topen">The Peregrine</button></div><div role="cell" class="pa-tcell">J. A. Baker</div><div role="cell" class="pa-tcell pa-tend">191</div></div><div role="row" class="pa-trow"><div role="rowheader" class="pa-tcell"><button type="button" class="pa-topen">The Dispossessed</button></div><div role="cell" class="pa-tcell">Ursula K. Le Guin</div><div role="cell" class="pa-tcell pa-tend">387</div></div></div></div></section></div><pre><code>&lt;Table label="Books" columns={[{ key: "title", label: "Title" }, { key: "author", label: "Author" }, { key: "pages", label: "Pages", align: "end" }]}
+  rows={books.map((b) =&gt; ({ key: b.id, cells: b, onPress: () =&gt; open(b) }))} /&gt;</code></pre></section><section class="part" id="fields" data-part="Fields"><h2>Fields</h2><div class="live"><dl class="pa-fields" aria-label="This book"><dt class="pa-fname"><label for="_r_2_">status</label></dt><dd class="pa-fvalue"><select id="_r_2_" class="pa-finput"><option value="">–</option><option value="reading">reading</option><option value="want">want</option><option value="done">done</option></select></dd><dt class="pa-fname"><label for="_r_3_">pages</label></dt><dd class="pa-fvalue"><input id="_r_3_" class="pa-finput" placeholder="–" type="number" value="387" style=""></dd><dt class="pa-fname"><label for="_r_4_">lent</label></dt><dd class="pa-fvalue"><input id="_r_4_" class="pa-fcheck" type="checkbox" style=""></dd><dt class="pa-fname"><label for="_r_5_">started</label></dt><dd class="pa-fvalue"><input id="_r_5_" class="pa-finput" placeholder="–" type="date" value="2026-11-02" style=""></dd></dl></div><pre><code>&lt;Fields label="This book" onSave={save} fields={[
+  { name: "status", kind: "choice", choices: ["reading", "want", "done"], value: "reading" },
+  { name: "pages", kind: "number", value: 387 }, { name: "lent", kind: "yesno", value: false },
+]} /&gt;</code></pre></section><section class="part" id="days" data-part="Days"><h2>Days</h2><div class="live"><figure class="pa-days" role="img" aria-label="Four weeks of notes: 40 in 28 days"><svg viewBox="0 0 270 52" preserveAspectRatio="xMinYMax meet" aria-hidden="true"><g transform="translate(0 0)"><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(9 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(18 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(27 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(36 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(45 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(54 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(69 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(78 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(87 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(96 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(105 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(114 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(123 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(138 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(147 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(156 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(165 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(174 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(183 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(192 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(207 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(216 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(225 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(234 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(243 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(252 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect></g><g transform="translate(261 0)"><rect class="pa-mark" x="0" y="37" width="6" height="3.4" rx="1"></rect><rect class="pa-mark" x="0" y="32" width="6" height="3.4" rx="1"></rect><rect class="pa-base" x="0" y="42" width="6" height="1"></rect><circle class="pa-today" cx="3" cy="48" r="1.8"></circle></g></svg><figcaption>Four weeks of notes</figcaption></figure></div><pre><code>&lt;Days times={notes.map((n) =&gt; n.updatedAt)} label="Four weeks of notes" /&gt;</code></pre></section><section class="part" id="empty" data-part="Empty"><h2>Empty</h2><div class="live"><div class="pa-empty"><svg class="pa-sprig" viewBox="0 0 120 40" aria-hidden="true"><path d="M4 30 C30 26 60 18 116 8" fill="none" stroke="currentColor" stroke-width="1.4"></path><g><path d="M18 25.58 q-2 -10 12 -6" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="27" cy="18.58" rx="4.5" ry="2" transform="rotate(-30 27 18.58)" fill="currentColor" opacity=".55"></ellipse></g><g><path d="M34 22.54 q6 9 12 4" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="43" cy="28.54" rx="4.5" ry="2" transform="rotate(30 43 28.54)" fill="currentColor" opacity=".55"></ellipse></g><g><path d="M50 19.5 q-2 -10 12 -6" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="59" cy="12.5" rx="4.5" ry="2" transform="rotate(-30 59 12.5)" fill="currentColor" opacity=".55"></ellipse></g><g><path d="M66 16.46 q6 9 12 4" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="75" cy="22.46" rx="4.5" ry="2" transform="rotate(30 75 22.46)" fill="currentColor" opacity=".55"></ellipse></g><g><path d="M82 13.42 q-2 -10 12 -6" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="91" cy="6.42" rx="4.5" ry="2" transform="rotate(-30 91 6.42)" fill="currentColor" opacity=".55"></ellipse></g><g><path d="M98 10.379999999999999 q6 9 12 4" fill="none" stroke="currentColor" stroke-width="1.1"></path><ellipse cx="107" cy="16.38" rx="4.5" ry="2" transform="rotate(30 107 16.38)" fill="currentColor" opacity=".55"></ellipse></g></svg><p>No books yet. Add one above, or ask your AI.</p></div></div><pre><code>&lt;Empty&gt;No books yet. Add one above, or ask your AI.&lt;/Empty&gt;</code></pre></section><section class="part" id="loading and problem" data-part="Loading and Problem"><h2>Loading and Problem</h2><div class="live"><p class="pa-loading" role="status">Reading…</p><div class="pa-problem" role="alert"><p>Couldn't read the shelf.: the vault didn't answer</p><button type="button" class="pa-button pa-plain pa-small">Try again</button></div></div><pre><code>&lt;Loading /&gt;
+&lt;Problem error={err} onRetry={load}&gt;Couldn't read the shelf.&lt;/Problem&gt;</code></pre></section><section class="part" id="drawer" data-part="Drawer"><h2>Drawer</h2><div class="live"><button type="button" class="pa-button pa-plain">Open the drawer</button></div><pre><code>&lt;Button onClick={() =&gt; setOpen(true)}&gt;More&lt;/Button&gt;
+&lt;Drawer open={open} onClose={() =&gt; setOpen(false)} title="The Overstory"&gt;…&lt;/Drawer&gt;</code></pre></section><section class="part" id="plain html" data-part="Plain HTML"><h2>Plain HTML</h2><div class="live"><h3>Shed roof</h3><p>Corrugated or <a href="#">cedar shakes</a>?</p><blockquote>Measure twice.</blockquote><button>A bare button</button> <input placeholder="A bare field" style="" value=""></div><pre><code>&lt;h3&gt;Shed roof&lt;/h3&gt;
+&lt;p&gt;Corrugated or &lt;a href="#"&gt;cedar shakes&lt;/a&gt;?&lt;/p&gt;
+&lt;blockquote&gt;Measure twice.&lt;/blockquote&gt;
+&lt;button&gt;A bare button&lt;/button&gt; &lt;input placeholder="A bare field" /&gt;</code></pre></section></main></div></body></html>

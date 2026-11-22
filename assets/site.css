@@ -232,6 +232,26 @@ main pre code, .doc pre code { display: block; background: none; padding: 0; bor
 .copy-btn.copied { opacity: 1; }
 @media (hover: hover) and (pointer: fine) { .copy-btn:hover { opacity: 1; } }
 
+/* the Components page's gallery: the app's own drawing of the parts in a window, with a look and light or dark above
+   it (assets/components/gallery.js); edged like a code panel, and edge to edge on a phone as code is */
+.parts-gallery { margin: 1.4rem 0 1.8rem; }
+.parts-gallery .pg-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; margin: 0 0 .6rem; }
+.parts-gallery .pg-seg { display: flex; flex-wrap: wrap; gap: .15rem; }
+.parts-gallery button { min-height: 2.25rem; padding: 0 .8rem; border: 0; border-radius: 999px; background: none; color: var(--muted); font: 500 var(--fs-small)/1 var(--sans); cursor: pointer;
+  transition: background-color var(--t-press) var(--ease-out), color var(--t-press) var(--ease-out), transform var(--t-press) var(--ease-out); }
+.parts-gallery button[aria-pressed="true"] { background: var(--tint); color: var(--text); }
+.parts-gallery button:active { transform: scale(.97); }
+@media (hover: hover) and (pointer: fine) { .parts-gallery button:hover { color: var(--text); } }
+.parts-gallery .pg-window { height: min(38rem, 72vh); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #f2ede2; }
+.parts-gallery[data-scheme="dark"] .pg-window { background: #171613; }
+.parts-gallery iframe { display: block; width: 100%; height: 100%; border: 0; }
+.parts-gallery figcaption { margin: .6rem 0 0; font: var(--fs-small)/1.5 var(--sans); color: var(--muted); }
+.parts-gallery figcaption b { font-weight: 600; color: var(--text); }
+@media (max-width: 860px) {
+  .parts-gallery .pg-window { height: 70svh; margin: 0 calc(-1 * var(--gutter)); border-width: 1px 0; border-radius: 0; }
+  .parts-gallery button { min-height: 2.75rem; padding: 0 .7rem; }
+}
+
 /* tables: rules, no boxes; a name in the first column never breaks; a wide table scrolls sideways on a phone */
 .doc .table-wrap { margin: 0 0 1.6rem; overflow-x: auto; scrollbar-width: thin; }
 .doc table { width: 100%; border-collapse: collapse; font: var(--fs-small)/1.5 var(--sans); }
