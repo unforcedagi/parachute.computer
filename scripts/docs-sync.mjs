@@ -104,13 +104,13 @@ async function applet() {
     if (!r.ok) throw new Error(`WRITE-AN-APPLET.md at ${sha}: ${r.status}`);
     return r.text();
   });
-  // a file this site has as a page of its own links there (the same parts, drawn live)
+  // a file this site has as a page of its own links there (the same parts, drawn live, under the same headings)
   const OURS = { "docs/COMPONENTS.md": "/docs/build/components/" };
   const blob = (p) => `https://github.com/ParachuteComputer/parachute/blob/${sha}/${p}`;
   const body = raw
     .replace(/^# .*\n+/, "") // the layout prints the title
     // links to the repo's own files go to them on GitHub, at this commit
-    .replace(/\]\((?!https?:|#|\/)([^)#]+)(#[^)]*)?\)/g, (_m, p, h = "") => { const f = new URL(p, "https://x/docs/").pathname.slice(1); return OURS[f] ? `](${OURS[f]})` : `](${blob(f)}${h})`; })
+    .replace(/\]\((?!https?:|#|\/)([^)#]+)(#[^)]*)?\)/g, (_m, p, h = "") => { const f = new URL(p, "https://x/docs/").pathname.slice(1); return `](${OURS[f] ?? blob(f)}${h})`; })
     // and a link to one of our pages is named as the page, not the file
     .replace(/\[COMPONENTS\.md\]\(\/docs\/build\/components\/\)/g, "[Components](/docs/build/components/)")
     // and paths in backticks that name files stay as text

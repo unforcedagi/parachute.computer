@@ -69,7 +69,8 @@
     doc.getElementById("taste").textContent = t.css + EXTRA;
     doc.documentElement.dataset.motion = t.motion;
     // the window's own ground is the look's, so nothing else shows around the frame as it redraws
-    win.style.background = getComputedStyle(doc.body).backgroundColor;
+    var ground = getComputedStyle(doc.body).backgroundColor;
+    if (ground !== "rgba(0, 0, 0, 0)") win.style.background = ground;
   }
 
   // the two buttons in the drawing that would show a toast and a drawer: drawn with the parts' own classes, as the kit does
