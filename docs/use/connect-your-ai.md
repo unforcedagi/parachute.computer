@@ -19,7 +19,7 @@ The first time an AI app connects, you sign in and approve it on your server's p
 
 In the app the address is under **Connect**, with **Copy**.
 
-The AI connects as itself, with access of its own, not yours: Vault, your vault, **Sharing** lists it, and **End** there takes it back.
+The AI connects as itself, with access of its own, not yours. On your own server, Vault, your vault, **Sharing** lists it, and **End** there takes it back.
 
 **Just one vault:** to give an AI one vault and nothing else, use that vault's own address instead, `https://<your server>/vault/<vault name>/mcp`. Connect lists it under **Just one vault**.
 

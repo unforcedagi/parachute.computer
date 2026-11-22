@@ -36,9 +36,11 @@ The first sign-in reads your **home vault**. Other vaults on the same server sho
 
 ## 4. Make it yours
 
-On your own server, the app opens on its list of applets, and a new vault's list starts with **Start here**. On Parachute Cloud the app opens on **Notes**, a smaller set of screens (**Settings**, **Your app**, switches to **Everything**); there, **Vault** and **Connect** on the bar lead to the same places (packs and the Notion import need your own server for now: [why](/docs/use/templates-and-packs/)):
+On your own server, the app opens on its list of applets, which starts with **Start here** while your home vault holds nothing of yours:
 
 - **Bring in what you have.** [Import your Notion workspace](/docs/use/from-notion/), or start from a [pack](/docs/use/templates-and-packs/): clients and sessions, a reading list, or people, projects, meetings and tasks.
 - **Connect your AI.** One address for Claude or ChatGPT. When your server asks, give it **Write** on your vault so it can save what you tell it: [Connect your AI](/docs/use/connect-your-ai/).
+
+On Parachute Cloud the app opens on **Notes**, a smaller set of screens (Settings, **Your bundle**, switches to Everything); **Connect** is on its bar. Packs, and importing Notion databases, need your own server for now ([why](/docs/use/templates-and-packs/)).
 
 Then ask your AI to remember something, start a new chat, and ask again. What it wrote is in the app (Notes, Vault), and you can change it there.

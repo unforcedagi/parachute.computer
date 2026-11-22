@@ -10,7 +10,7 @@ Your Notion workspace comes in as one file.
 
 ## 1. Export it from Notion
 
-The whole workspace, on the web or the desktop app: **Settings**, under **Workspace** choose **General**, then **Export all workspace content**, as Markdown & CSV. Notion emails you a link to the .zip (a big workspace can take hours); it lasts 7 days.
+The whole workspace, on the web or the desktop app: **Settings**, under **Workspace** choose **General**, then **Export all workspace content**, and choose Markdown & CSV. Notion emails you a link to the .zip (a big workspace can take hours); it lasts 7 days.
 
 One page and what is inside it: **•••** at the top right of the page, **Export**, **Markdown & CSV**, and switch on **Include subpages**. The .zip downloads.
 
@@ -18,9 +18,9 @@ Keep the .zip as it is, without unzipping it.
 
 ## 2. Bring it in
 
-In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, a new vault's first screen leads there: **Start here**, **Bring in what you have**.
+In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, while your home vault is empty, the first screen leads there: **Start here**, **Bring in what you have**.
 
-The import makes types, which today needs [your own server](/docs/run/self-host/). On Parachute Cloud and your own Cloudflare the app says the server doesn't let it make types yet, and changes nothing; that comes with their next update.
+An export with databases makes types, which today needs [your own server](/docs/run/self-host/). On Parachute Cloud and your own Cloudflare the app says the server doesn't let it make types yet, and changes nothing; that comes with their next update. An export of pages only comes in anywhere.
 
 ## What becomes what
 
