@@ -3,7 +3,7 @@ title: "Coming from Notion"
 summary: "Bring your Notion workspace in as one file: tables stay tables, pages stay pages, and they are yours."
 door: use
 order: 1.5
-checked: "parachute applets/vault.tsx (Import from Notion), src/kit/notion.ts, docs/PACKS.md (From Notion), e2e/notion.spec.ts; Notion's help page Export your content (www.notion.com/help/export-your-content), read 2026-11-22"
+checked: "parachute applets/vault.tsx (Import from Notion, a record's pictures), src/kit/notion.ts, docs/PACKS.md (From Notion), docs/design/PICTURES.md, e2e/notion.spec.ts; Notion's help page Export your content (www.notion.com/help/export-your-content), read 2026-11-22"
 ---
 
 Your Notion workspace comes in as one file.
@@ -18,7 +18,7 @@ Keep the .zip as it is, without unzipping it.
 
 ## 2. Bring it in
 
-In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB). On your own server, while your home vault holds nothing of yours, the first screen leads there: **Start here**, **Bring in what you have**.
+In the Parachute app: **Vault**, your vault, **Import from Notion**, and choose the .zip (up to 200 MB of pages and tables, and 150 MB of images and files). On your own server, while your home vault holds nothing of yours, the first screen leads there: **Start here**, **Bring in what you have**.
 
 An export with databases makes types, which today needs [your own server](/docs/run/self-host/). On Parachute Cloud and your own Cloudflare the app says the server doesn't let it make types yet, and changes nothing; that comes with their next update. An export of pages only comes in anywhere.
 
@@ -26,13 +26,13 @@ An export with databases makes types, which today needs [your own server](/docs/
 
 | In Notion | In Parachute |
 |---|---|
-| A database, say Reading List | A type, `reading-list`. Its columns are its fields: dates, numbers, yes/no, lists, and links to other rows stay what they were. Rows a view hid come too. |
+| A database, say Reading List | A type, `reading-list`. Its columns are its fields: dates, numbers, yes/no, lists, and links to other rows stay what they were. Rows a view hid come too. If a column changed kind since your last export, the values that no longer fit go to a text field beside it, and the app says so. |
 | A row | A record of that type. The row's page is its words. |
 | A page | A record at the same place in the tree |
 | A link between pages | A link between records |
-| Images and attachments | Not yet. They stay in your export, and the app says which. |
+| Images and attachments | Files on the record they belong to, linked from its words. Vault shows the pictures. A file over 25 MB, or past 150 MB in all, stays in your export, and the app says which. |
 
-Your pages and tables land under `Notion/`, so nothing of yours is touched. Importing the same export again changes nothing. It is listed in Vault under **Packs**, **Installed packs**.
+Your pages and tables land under `Notion/<your workspace>/`, so nothing of yours is touched, and a second workspace keeps its own types. Importing the same export again changes nothing. It is listed in Vault under **Packs**, **Installed packs**.
 
 ## Then
 
