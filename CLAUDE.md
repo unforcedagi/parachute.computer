@@ -19,6 +19,15 @@ this file only carries what the repo can't tell you.
   page once and both readers get it. The MCP `docs` tool in parachute-core reads these
   `.md` addresses, so a page's address is a contract: rename one only with a redirect.
   `docs/build/reference/` is generated (`npm run docs:sync`): don't edit it by hand.
+- **What an AI reads, besides the twins** (a contract with core's and Cloud's `docs` tool, T-476):
+  `/docs/v/<version>/<page>.md` for each version in `_data/versions.json` (major.minor), `/docs/index.json` (every
+  page, its headings, and `errors`: each refusal `error_type` → the page and section with its fix, from a page's
+  `errors:` front matter) and `/latest.json` (npm dist-tags of `@openparachute/core` at build). At a release, run
+  `npm run docs:freeze -- <old version>` before the pages move on, then add the new version as `current`.
+  `SITE_ORIGIN=<url>` builds a copy whose machine-read links point at itself (a preview, or a self-hoster's docs).
+- **`npm run check` after a build** (and in CI on every PR): every link on the live pages, the twins, llms.txt and
+  llms-full.txt resolves, anchors included; every page exists under every version; every mapped refusal lands on a
+  section. archive/ and design/ are dated records and aren't checked.
 - **Don't publish fast-changing metrics** — file counts, version numbers, test
   counts — anywhere on the site or in this file. They go stale silently and then
   read as truth; link to GitHub for anything that changes frequently. A docs page's

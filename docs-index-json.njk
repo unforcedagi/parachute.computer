@@ -1,0 +1,6 @@
+---
+# docs/index.json: what an AI (or the MCP docs tool) searches and maps refusals with. Generated from the pages.
+permalink: /docs/index.json
+eleventyExcludeFromCollections: true
+---
+{{ collections.docs | docsIndex | dump(2) | safe }}

@@ -1,0 +1,11 @@
+---
+# Every docs page for each Parachute version: /docs/v/<version>/<page>.md (_data/versions.json). An AI connected to a
+# vault fetches the page for that vault's version (major.minor). Frozen versions are files in docs-versions/ instead.
+pagination:
+  data: collections.versionedDocs
+  size: 1
+  alias: item
+permalink: "/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}.md"
+eleventyExcludeFromCollections: true
+---
+{{ item.doc | mdTwin(item.version) | safe }}
