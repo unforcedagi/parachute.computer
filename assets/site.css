@@ -477,11 +477,11 @@ main :not(pre) > code { color: var(--text); }
 .connect-card ol.asks { margin-top: -.2rem; }
 .connect-card ol.asks li { padding-left: 1.5rem; }
 
-/* Homepage: real claude.ai screens, the wide one beside two small ones (stacked on a phone). */
-.seen-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 1.8rem 2.4rem; align-items: start; }
+/* Homepage: real claude.ai screens, the live page across the band, two small ones under it (stacked on a phone). */
+.seen-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.4rem 2.4rem; align-items: start; }
 .seen-grid figure { margin: 0; min-width: 0; }
-.seen-grid .seen-wide { grid-row: 1 / span 2; }
+.seen-grid .seen-wide { grid-column: 1 / -1; }
 .seen-grid img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 10px 30px -14px rgb(0 0 0 / .22); }
 .seen-grid figcaption { margin: .75rem 0 0; max-width: 34rem; font: 400 var(--fs-body)/1.5 var(--serif); color: var(--muted); text-wrap: pretty; }
 .seen-grid figcaption b { color: var(--text); font-weight: 500; }
-@media (max-width: 860px) { .seen-grid { grid-template-columns: 1fr; } .seen-grid .seen-wide { grid-row: auto; } }
+@media (max-width: 860px) { .seen-grid { grid-template-columns: 1fr; } }
