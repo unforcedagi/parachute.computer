@@ -70,8 +70,8 @@ module.exports = function (eleventyConfig) {
     : `<code>${esc(raw)}</code>`;
   eleventyConfig.addFilter("inlineCode", (t) => String(t ?? "").split(/(`[^`]+`)/).map((part) => /^`[^`]+`$/.test(part) ? codeTag(part.slice(1, -1)) : esc(part)).join(""));
   eleventyConfig.addFilter("plainText", (t) => String(t ?? "").replace(/`([^`]+)`/g, "$1"));
-  // The docs, in reading order: by door (use, build, run), then `order`.
-  const DOORS = ["use", "build", "run"];
+  // The docs, in reading order: by door (use, build, run, fix), then `order`.
+  const DOORS = ["use", "build", "run", "fix"];
   eleventyConfig.addCollection("docs", (api) =>
     api
       .getFilteredByGlob("docs/**/*.md")
