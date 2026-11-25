@@ -26,5 +26,13 @@
       "href": "/docs/run/own-cloudflare/#which-one-is-for-me",
       "text": "Which one is for me? The three side by side"
     }
+  },
+  {
+    "door": "fix",
+    "title": "When something's stuck",
+    "who": "For people and their AI: what a refusal means, and the fix. An AI that is refused finds its page here by the refusal's error_type.",
+    "name": "Fix",
+    "label": "Fix: when something's stuck",
+    "short": "When something's stuck: what a refusal means, and the fix."
   }
 ]

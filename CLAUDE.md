@@ -12,7 +12,7 @@ this file only carries what the repo can't tell you.
   US timezones — the off-by-one is silent and only visible on the rendered site.
 - **One layout, one nav** (`_includes/base.njk`), the homepage included (since T-476; the
   2026-07 self-contained landing is archived at `archive/home-v2/`).
-- **The docs are `docs/<door>/<page>.md`** (door: use, build, run), each with `title`,
+- **The docs are `docs/<door>/<page>.md`** (door: use, build, run, fix), each with `title`,
   `summary`, `door`, `order` and `checked` (the code it was checked against) in its front
   matter. Every page is also served as markdown at `/docs/<door>/<page>.md`
   (`docs-md.njk`), and `/llms.txt` and `/llms-full.txt` are generated from them: write a
@@ -22,7 +22,7 @@ this file only carries what the repo can't tell you.
 - **What an AI reads, besides the twins** (a contract with core's and Cloud's `docs` tool, T-476):
   `/docs/v/<version>/<page>.md` for each version in `_data/versions.json` (major.minor), `/docs/index.json` (every
   page, its headings, and `errors`: each refusal `error_type` → the page and section with its fix, from a page's
-  `errors:` front matter) and `/latest.json` (npm dist-tags of `@openparachute/core` at build). At a release, run
+  `errors:` front matter; the Fix door's pages carry them) and `/latest.json` (npm dist-tags of `@openparachute/core` at build). At a release, run
   `npm run docs:freeze -- <old version>` before the pages move on, then add the new version as `current`.
   `SITE_ORIGIN=<url>` builds a copy whose machine-read links point at itself (a preview, or a self-hoster's docs).
 - **`npm run check` after a build** (and in CI on every PR): every link on the live pages, the twins, llms.txt and
