@@ -138,10 +138,10 @@ code, pre, kbd { font-variant-ligatures: none; }
   .site-nav .nav-right .btn { min-height: 2.75rem; margin-left: .35rem; padding-inline: 1rem; }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 366px) {   /* four doors and the button, 320px to 366px */
   .site-nav .nav-in { padding: 0 .9rem; }
-  .site-nav a.nav-door { padding: 1rem .35rem; }
-  .site-nav a.nav-door[aria-current]::after { left: .35rem; right: .35rem; }
+  .site-nav a.nav-door { padding: 1rem .25rem; }
+  .site-nav a.nav-door[aria-current]::after { left: .25rem; right: .25rem; }
   .site-nav .nav-right .btn { margin-left: .2rem; padding-inline: .8rem; font-size: var(--fs-label); }
 }
 
