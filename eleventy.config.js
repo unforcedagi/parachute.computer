@@ -173,6 +173,8 @@ module.exports = function (eleventyConfig) {
   eleventyConfig.ignores.add("blog/drafts/**");
   eleventyConfig.ignores.add("node_modules/**");
   eleventyConfig.ignores.add("archive/**");
+  // frozen docs versions are files to copy as they are (passthrough above), never templates
+  eleventyConfig.ignores.add("docs-versions/**");
   // Subscribe Worker backend assets — not part of the static site output.
   // The Worker deploys via `wrangler deploy` (a separate Cloudflare
   // origin); `migrations/` + `wrangler.toml` are its config, not content.
