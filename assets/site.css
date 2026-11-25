@@ -468,8 +468,8 @@ main :not(pre) > code { color: var(--text); }
 .doc p > img:only-child { display: block; max-width: 100%; height: auto; margin: .4rem 0 .2rem; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 8px 24px -12px rgb(0 0 0 / .18); background: #fff; }
 
 /* Homepage: the connect card's numbered steps, and the asks in quotes under them. */
-.connect-card ol.steps { list-style: none; counter-reset: step calc(var(--start, 1) - 1); margin: 0 0 .7rem; }
-.connect-card ol.steps[start="3"] { --start: 3; }
+.connect-card ol.steps { list-style: none; counter-reset: step; margin: 0 0 .7rem; }
+.connect-card ol.steps[start="3"] { counter-reset: step 2; }
 .connect-card ol.steps li { counter-increment: step; position: relative; padding: .5rem 0 0 1.5rem; border: 0; font: var(--fs-small)/1.5 var(--sans); color: var(--text); }
 .connect-card ol.steps li::before { content: counter(step); position: absolute; left: 0; color: var(--accent); font-weight: 600; }
 .connect-card ol.steps b { font-weight: 600; }

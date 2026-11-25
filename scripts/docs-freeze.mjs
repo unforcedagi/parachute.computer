@@ -13,7 +13,8 @@ const data = JSON.parse(fs.readFileSync(file, "utf8"));
 const entry = data.versions.find((v) => v.version === version);
 if (!entry) throw new Error(`${version} isn't in ${file}: add it there first`);
 if (entry.frozen) throw new Error(`${version} is frozen already (docs-versions/${version}/)`);
-execSync("npx @11ty/eleventy --quiet", { stdio: "inherit" });
+fs.rmSync("_site", { recursive: true, force: true }); // a clean build: nothing stale or from another SITE_ORIGIN gets frozen
+execSync("npx @11ty/eleventy --quiet", { stdio: "inherit", env: { ...process.env, SITE_ORIGIN: "" } });
 const from = `_site/docs/v/${version}`, to = `docs-versions/${version}`;
 let n = 0;
 const copy = (dir) => {

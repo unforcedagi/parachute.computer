@@ -10,12 +10,11 @@ A **skill** is a record of type `skill`. Its body is instructions, its `descript
 
 ## How your AI finds them
 
+- **Every AI.** Once your vault has a skill it can see, the connection tells your AI so. It lists them with `query-records { type: "skill" }` and reads the one a task matches before it starts.
+- **Claude Code**, with Skills over MCP on: it lists them as skills (`<connector name>:<skill>`, e.g. `parachute:shop-copy`) and loads one only when a task matches. Beside yours it gets two from Parachute: `vault-guide` (your vault's types and fields, made fresh from the vault) and `live-page` (how to [build a live page](/docs/use/claude-artifacts/)). Anthropic is rolling this out: on by default for Pro, Max and Ultra; on Team an owner turns it on, and a server you add yourself stays off there unless an admin allows it; Enterprise is coming. `claude -p` gets no skills. Where it isn't on, the way every AI uses (above) works.
 - **claude.ai.** When it connects, it lists your vault's skills beside its own. In our runs Claude used one unprompted when a task matched: asked for a product card, it loaded the shop's "Brand Design" skill and wrote in its colours and sign-off; asked "How did my week go?", it followed "Weekly Review" step by step. Duet (claude.ai's agent) finds them as records instead.
 
 ![claude.ai: a product card for Fernhill Pottery's speckled oat mugs, written after Claude read the vault's brand skill, signed "Fired with care."](/assets/shots/claude-skill.webp)
-
-- **Every AI.** Once your vault has a skill it can see, the connection tells your AI so. It lists them with `query-records { type: "skill" }` and reads the one a task matches before it starts.
-- **Claude Code**, with Skills over MCP on: it lists them as skills (`<connector name>:<skill>`, e.g. `parachute:shop-copy`) and loads one only when a task matches. Beside yours it gets two from Parachute: `vault-guide` (your vault's types and fields, made fresh from the vault) and `live-page` (how to [build a live page](/docs/use/claude-artifacts/)). Anthropic is rolling this out: on by default for Pro, Max and Ultra; on Team an owner turns it on, and a server you add yourself stays off there unless an admin allows it; Enterprise is coming. `claude -p` gets no skills. Where it isn't on, the first way works.
 
 ## Make one
 

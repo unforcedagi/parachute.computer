@@ -1,10 +1,17 @@
 {
-  "why": "The Parachute versions the docs serve at /docs/v/<version>/<page>.md (major.minor). `current` is the version the pages are written for. A version without `frozen` is served from today's pages with a line on top; `npm run docs:freeze -- <version>` keeps a copy of its pages before they move on. `latest` is the fallback for /latest.json when npm can't be read at build.",
+  "why": "The Parachute versions the docs serve at /docs/v/<version>/<page>.md (major.minor). `current` is the version the pages are written for. A version without `frozen` is served from today's pages with a line on top; `npm run docs:freeze -- <version>` keeps a copy of its pages before they move on.",
   "current": "0.9",
   "versions": [
-    { "version": "0.9", "status": "current", "note": "Today's pages." },
-    { "version": "0.8", "status": "supported", "note": "Written for 0.9. Parachute Cloud runs 0.8 today: where 0.8 differs (note tools and /api/notes instead of record tools and /api/records), the page says so." }
+    {
+      "version": "0.9",
+      "status": "current",
+      "note": "Today's pages."
+    },
+    {
+      "version": "0.8",
+      "status": "supported",
+      "note": "Written for 0.9. Parachute Cloud runs 0.8 today: where 0.8 differs (note tools and /api/notes instead of record tools and /api/records), the page says so."
+    }
   ],
-  "package": "@openparachute/core",
-  "latest": { "latest": "0.8.0", "beta": "0.9.0-pre.2" }
+  "package": "@openparachute/core"
 }
