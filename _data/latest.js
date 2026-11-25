@@ -3,7 +3,7 @@
 // `latest` and says so; the build never fails on it.
 const versions = require("./versions.json");
 const shape = (tags, source) => ({
-  package: versions.package, latest: tags.latest, beta: tags.beta,
+  core: { package: versions.package, latest: tags.latest, beta: tags.beta },
   docs: versions.current, docs_versions: versions.versions.map((v) => v.version),
   source, checked_at: new Date().toISOString(),
 });

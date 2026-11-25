@@ -90,7 +90,7 @@ for (const [type, where] of Object.entries(index.errors)) {
   if (anchor && !idsIn(page).has(anchor)) fail(`errors.${type}: no #${anchor} on ${topic}`);
 }
 const latest = JSON.parse(fs.readFileSync(path.join(SITE, "latest.json"), "utf8"));
-if (!latest.latest || !latest.docs) fail("latest.json lacks latest or docs");
+if (!latest.core?.latest || !latest.docs) fail("latest.json lacks core.latest or docs");
 
 const llms = fs.readFileSync(path.join(SITE, "llms.txt"), "utf8");
 for (const t of pagesOnDisk) if (!llms.includes(`/docs/${t}.md`)) fail(`llms.txt doesn't list ${t}`);
