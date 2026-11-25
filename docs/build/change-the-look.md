@@ -51,7 +51,7 @@ create-record {
 
 Every key is optional. Anything left out, or written in a form the app doesn't read, stays the built-in value, and the rest still apply. A colour is hex, or `rgb()`, `hsl()`, `oklch()`, `oklab()` with plain numbers. Nothing else is read, so a theme can't load anything from the network.
 
-If the record already exists, read it, then `update-record` with the whole `theme` object and the record's `if_updated_at`: `fields` merges one level deep, so a partial `theme` replaces the old one. In the app: Settings → **Look**. Choosing a style, a density, light or dark, or motion writes the record; a new style keeps any colour the person set. The app follows the record while it runs: every screen and every open applet changes at once.
+If the record already exists, read it, then `update-record` with the whole `theme` object and `if_updated_at` set to the record's `updatedAt`: `fields` merges one level deep, so a partial `theme` replaces the old one. In the app: Settings → **Look**. Choosing a style, a density, light or dark, or motion writes the record; a new style keeps any colour the person set. The app follows the record while it runs: every screen and every open applet changes at once.
 
 ## The style tokens
 
