@@ -46,5 +46,5 @@ The generated `vault-guide` shows your types and fields only by name. Anyone who
 ## Limits
 
 - **Your own server** has skills and the admin rule once you update to the Parachute release that carries them. **Parachute Cloud doesn't have skills yet:** it lists none, and doesn't yet keep skill writes to admin.
-- **claude.ai reads the list once, when it connects.** A skill added or changed after that isn't seen as a skill in that session (in our runs, Claude noticed the change and read the record instead). Ask it to read the skill by name, or remove the connector and add it again.
+- **claude.ai reads the list once, when it connects.** A skill added or changed after that isn't seen as a skill in that session (in our runs, Claude noticed the change and read the record instead). Ask it to read the skill by name. Removing the connector and adding it again should refresh the list (not tried yet).
 - **Claude Code asks you to allow each version** of a skill (when it isn't in auto mode). A changed skill asks again.

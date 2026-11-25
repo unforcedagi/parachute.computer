@@ -10,7 +10,7 @@ checked: "parachute-cloud next 005d073 workers/identity/src/ui.ts (sign-up, Name
 
 Parachute Cloud is Parachute run for you. Sign up at [my.parachute.computer](https://my.parachute.computer) with your email (a link or a 6-digit code, no password), name your first vault, and connect Claude: [Start on Parachute Cloud](/docs/use/start/). Your account page lists your vaults, each with its connector address and **Copy**.
 
-- **Open beta:** free, no card; up to 5 vaults and 8 GB of files. Before any paid plan you'll hear about it well ahead.
+- **Open beta:** free, no card; up to 5 vaults, 500 MiB of notes and 8 GiB of files. Before any paid plan you'll hear about it well ahead.
 
 - **Your vaults** live at `https://my.parachute.computer/vault/<name>/`. The connector address for an AI is that plus `mcp`. See [Connect your AI](/docs/use/connect-your-ai/).
 - **Sign in** in the Parachute app with **Sign in with Parachute Cloud**: your email, then the code it mails you. No key needed.

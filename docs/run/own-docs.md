@@ -37,11 +37,12 @@ git clone https://github.com/ParachuteComputer/parachute.computer
 cd parachute.computer
 npm ci
 SITE_ORIGIN=https://docs.example.org npx @11ty/eleventy
-npm run check
+SITE_ORIGIN=https://docs.example.org npm run check
 ```
 
-Serve `_site/` at that address (any static host: Caddy, nginx, Cloudflare Pages). Add or change pages in `docs/`
-and build again; `npm run check` fails on a broken link. `latest.json` is written at build time from npm.
+Serve `_site/` at the root of that host (any static host: Caddy, nginx, Cloudflare Pages); the site's links don't
+work under a path. Add or change pages in `docs/` and build again; `SITE_ORIGIN=https://docs.example.org npm run check`
+fails on a broken link. `latest.json` is written at build time from npm.
 
 ## Point your server at it
 
@@ -52,9 +53,8 @@ docs:
   base_url: https://docs.example.org
 ```
 
-- `base_url: off` lists no `docs` tool and makes no call for `latest.json`. Refusals still name their fix page, as
-  text.
+- `base_url: off` lists no `docs` tool, makes no call for `latest.json`, and refusals carry no link to a fix page.
 - The environment variable `PARACHUTE_DOCS_URL` wins over the file (for a container).
 - Restart Parachute after a change (`parachute restart`).
 
-The AI isn't told where the pages come from; it calls `docs` as before.
+The connection's own words name your docs host instead of parachute.computer, and the pages the tool returns link to it.

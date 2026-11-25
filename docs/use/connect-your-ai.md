@@ -9,15 +9,16 @@ checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins
 
 Your AI needs one thing: your vault's address, which ends in `/mcp`.
 
-- **Parachute Cloud:** your vault's card on [my.parachute.computer](https://my.parachute.computer) shows it, with
-  **Copy**: `https://my.parachute.computer/vault/<your vault>/mcp`.
+- **Parachute Cloud:** `https://my.parachute.computer/mcp`, the same for everyone; you pick the vault when you allow
+  it. Each vault's own address, `https://my.parachute.computer/vault/<your vault>/mcp`, is under **Connect your AI**
+  on its card.
 - **Your own server:** `https://<your server>/mcp` reaches every vault you choose when you allow it;
   `https://<your server>/vault/<vault name>/mcp` reaches one. The app shows both under **Connect**, with **Copy**.
 
 ## Claude
 
-On [claude.ai](https://claude.ai), on any plan (the free plan allows one custom connector). It then works in Claude's
-desktop and phone apps too.
+On [claude.ai](https://claude.ai). (Parachute Cloud's account page notes that Claude's free plan allows one custom
+connector.)
 
 **1.** In a chat, press **+**, then **Plugins › Manage plugins**. On **Your plugins**, press **Add**, then **Add custom connector**.
 
@@ -25,7 +26,7 @@ desktop and phone apps too.
 
 **2.** Name it `Parachute`, paste your address, and press **Continue**.
 
-![Add custom connector: the name Parachute and the address https://my.parachute.computer/vault/field-notes/mcp](/assets/shots/claude-connector-step1.webp)
+![Add custom connector: the name Parachute and the address https://my.parachute.computer/mcp](/assets/shots/claude-connector-step1.webp)
 
 **3.** Claude checks the address and picks **Sign in now** and **Register automatically** for you. Leave them and press **Add**.
 
@@ -33,20 +34,24 @@ desktop and phone apps too.
 
 *Pictures from claude.ai, connected to a test vault; your address goes where this one is.*
 
-**4.** Parachute's page opens. Sign in (on Cloud, the emailed link or code), then allow Claude:
+**4.** Parachute's page opens. Sign in (on Cloud, the emailed link or code), then allow Claude at **Read & write**, so
+it can save what you tell it. With read only it can look but can't remember anything.
 
-- **Read & write**, so it can save what you tell it. With read only it can look but can't remember anything. On
-  Parachute Cloud it's chosen already; on your own server choose **Write** for each vault it should save to.
-- **Leave admin off.** Claude asks for every level, admin included; admin is for changing how a vault is set up, and
-  you can give it later, on purpose ([It needs admin](/docs/fix/needs-admin/)).
-- Through `https://my.parachute.computer/mcp` (no vault in the address) you pick the vault here.
+- **Parachute Cloud**, through `https://my.parachute.computer/mcp`: **Connect Claude** asks which vault, and the access
+  level, **Read & write**, is chosen already. Leave **Full admin** unchosen. (Through a vault's own address the page
+  just says "Claude wants to read and write notes in" that vault: press **Allow**.)
+- **Your own server:** choose **Write** for each vault it should save to. Through one vault's own address Claude asks
+  for every level and admin comes ticked: untick it.
 
-**5.** Back in claude.ai the connector shows as connected. Ask something. The first time Claude uses a tool it asks
-you, reads included (on claude.ai's **Manual** setting). **Always allow** stops the asking for that tool.
+Admin is for changing how a vault is set up; you can give it later, on purpose ([It needs admin](/docs/fix/needs-admin/)).
+
+**5.** Back in claude.ai the connector shows as connected. Ask something. On claude.ai's **Manual** setting Claude asks
+before each tool call, reads included; **Always allow** on the card is meant to stop that for the tool. On **Auto**
+(the default now) it goes ahead.
 
 ![Claude wants to use Query-records from Parachute test: Decline, Always allow, Allow once](/assets/shots/claude-tool-approval.webp)
 
-**Claude Code:** `claude mcp add --transport http parachute https://my.parachute.computer/vault/<your vault>/mcp`,
+**Claude Code:** `claude mcp add --transport http parachute https://my.parachute.computer/mcp`,
 then `/mcp` in Claude Code to sign in.
 
 ## ChatGPT

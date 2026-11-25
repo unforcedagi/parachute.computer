@@ -19,26 +19,26 @@ use **Parachute Cloud**, where we run the server. To run your own instead, see [
 3. Your account page asks you to **Name your vault**: a short name in lowercase, like `field-notes` or `home`. Press
    **Create my vault**.
 
-The vault's card shows its address, with **Copy**:
-
-```
-https://my.parachute.computer/vault/<your vault>/mcp
-```
-
-That address is all your AI needs.
-
 ## 2. Connect Claude
 
-On [claude.ai](https://claude.ai) (any plan; the free plan allows one custom connector):
+Your AI needs one address, the same for every Parachute Cloud account:
+
+```
+https://my.parachute.computer/mcp
+```
+
+You choose which vault it reaches when you allow it. (Each vault also has its own address, under **Connect your AI**
+on its card; it skips the choice.)
+
+On [claude.ai](https://claude.ai):
 
 1. In a chat, press **+**, then **Plugins › Manage plugins**. On the plugins page, **Add › Add custom connector**.
-2. Name it `Parachute`, paste your vault's address, and press **Continue**. Leave what Claude detects (**Sign in now**,
+2. Name it `Parachute`, paste the address, and press **Continue**. Leave what Claude detects (**Sign in now**,
    **Register automatically**) and press **Add**.
-3. Parachute's page opens: sign in with the same email, and on **Connect Claude** choose **Read & write** (it's
-   chosen already) and press **Allow**. Leave **Full admin** off.
+3. Parachute's page opens. Sign in with the same email. On **Connect Claude**, pick your vault, keep **Read & write**
+   (chosen already; Claude can then save what you tell it) and press **Allow**. Leave **Full admin** unchosen.
 
-It's connected in Claude's apps on your desktop and phone too. Step by step, with pictures:
-[Connect Claude](/docs/use/connect-your-ai/).
+Step by step, with pictures: [Connect Claude](/docs/use/connect-your-ai/).
 
 ## 3. Ask it
 
@@ -48,7 +48,8 @@ Start a chat and try:
 - "Make me a live board of my open tasks in Parachute that I can tick off."
 - "What did I tell you about the garden this month?"
 
-Claude asks before it uses a tool, until you press **Always allow** for that tool. What it writes is in your vault, for any chat
+On claude.ai's **Manual** setting Claude asks before each tool call, and **Always allow** on the card stops that for
+the tool; on **Auto** (claude.ai's default now) it goes ahead. What it writes is in your vault, for any chat
 later and any AI you connect. Your account page downloads all of it (**Download everything**: plain markdown, with
 your files).
 
@@ -57,7 +58,7 @@ you do things. If something doesn't work: [Claude won't connect](/docs/fix/conne
 
 ## What the open beta gives you
 
-Free, no card: up to 5 vaults and 8 GB of files. Before any paid plan you'll hear about it well ahead. Your vault is
+Free, no card: up to 5 vaults, 500 MiB of notes and 8 GiB of files. Before any paid plan you'll hear about it well ahead. Your vault is
 yours to take: it downloads as plain markdown that a server of your own reads as it is.
 
 Parachute Cloud runs the 0.8 engine today, a release behind a server of your own: small files from a chat come with

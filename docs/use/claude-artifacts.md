@@ -18,7 +18,7 @@ You need Parachute [connected on claude.ai](/docs/use/connect-your-ai/) (**+ ›
 
 ## Ask for one
 
-Ask in a claude.ai chat, the desktop app or Claude Code. Plain words are enough ("make me a live board of my open tasks in Parachute that I can tick off"); this asks for more:
+Ask in a claude.ai chat. Plain words are enough ("make me a live board of my open tasks in Parachute that I can tick off"); this asks for more:
 
 > Using my Parachute connector, make me a live page (an artifact) of my open tasks, earliest due first, with a way to tick one done and change its date. Look at the vault first so it uses my own types and fields.
 
