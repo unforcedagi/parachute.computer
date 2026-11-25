@@ -5,34 +5,50 @@ door: fix
 order: 4
 errors:
   tag_not_found: "no-type-by-that-name"
+  unknown_tag: "no-type-by-that-name"
   tag_kind: "a-tag-not-a-type"
   schema_validation: "a-field-doesnt-fit"
   retype_conflict: "a-field-doesnt-fit"
-  field_not_indexed: "a-field-cant-be-sorted-or-counted"
-checked: "parachute-core packages/vault/core/src/type-write.ts (write defines types), core/src/tag-kind.ts, core/src/mcp-refusal.ts (schema_validation), core/src/query-warnings.ts (field_not_indexed), core/src/mcp.ts (did_you_mean); contracts/write-defines-types"
+  field_not_indexed: "a-field-cant-be-counted"
+checked: "parachute-core next: packages/vault/core/src/type-write.ts (write defines a type), core/src/tag-kind.ts, core/src/query-warnings.ts (unknown_tag with did_you_mean, scan, field_not_indexed for aggregate), core/src/query-operators.ts, core/src/schema-defaults.ts (strict fields), core/src/mcp.ts (tag_not_found from list-types and rename); parachute-cloud next workers/vault/src/mcp.ts (0.8: refusals as JSON-RPC errors)"
 ---
 
-A **type** says what a record is (`book`, `task`, `person`) and which fields it has. Your AI learns the vault's types when it connects (the connection's own words, and the `vault-guide` skill where skills work). When it guesses a name instead, one of these happens.
+A **type** says what a record is (`book`, `task`, `person`) and which fields it has. Your AI learns the vault's types
+when it connects (`list-types`, and the `vault-guide` skill where skills work). When it guesses a name instead, one of
+these happens.
 
 ## No type by that name
 
-- **A search for a type that isn't there** finds nothing, and the reply may carry `did_you_mean` with the closest names (`books` → `book`). That isn't a refusal: the AI should use the suggested name.
-- **`tag_not_found`**: a change to a type or tag that doesn't exist (renaming it, adding a field to it). Check the name with `list-types`, or the vault's guide.
-- **Writing a record with a new type makes the type.** `create-record { types: ["book"] }` on a vault with no `book` defines it, and the AI that made it may add fields to it later. So if the AI meant a type you already have under another name (`reading`, `books`), ask it to use that one, and delete the stray type in the app.
+- **A search for a type that isn't there** finds nothing, with an `unknown_tag` warning that may carry `did_you_mean`
+  (`books` → `book`). Not a refusal: use the suggested name.
+- **`tag_not_found`**: `list-types` for one name, or a rename, found no such type. Check the name with `list-types`.
+- **Writing a record with a new type makes the type.** `create-record { types: ["book"] }` on a vault with no `book`
+  defines it, and the AI that made it may add fields to it later (`manage-types` on a new name defines it too). So if
+  the AI meant a type you already have under another name (`reading`, `books`), ask it to use that one, and delete the
+  stray type in the app.
 
 ## A tag, not a type
 
-`tag_kind`: the name is a plain tag (a label like `pinned`), and the AI used it as a type, or the other way round. The message says which call to use, for example `tag: "pinned"` instead of `type: "pinned"`. To turn a plain tag into a type takes admin ([It needs admin](/docs/fix/needs-admin/)).
+`tag_kind`: the name is a plain tag (a label like `pinned`), and the AI used it as a type, or the other way round. The
+message says which call to use, for example `tag: "pinned"` instead of `type: "pinned"`. Turning a plain tag into a type
+takes admin ([It needs admin](/docs/fix/needs-admin/)).
 
 ## A field doesn't fit
 
-- **`schema_validation`**: a field's value doesn't match the type (text in a number field, a value not in the list a field allows). `violations` lists every field that failed, and none of the write was applied. Fix those and write again.
-- **`retype_conflict`**: changing a field's kind (text to number, say) would leave records whose values no longer fit. The message says how many. Change those records first, or make a new field.
+- **`schema_validation`**: a value doesn't fit a field the type marks `strict` (or the kind of an indexed field: text in
+  a number field). `violations` lists every field that failed, and none of the write was applied. Fix those and write
+  again. A value that doesn't fit a field that isn't strict is saved, with a warning.
+- **`retype_conflict`**: changing a field's kind (text to number, say) would leave records whose values no longer fit.
+  The message says how many. Change those records first, or make a new field.
 
-## A field can't be sorted or counted
+## A field can't be counted
 
-`field_not_indexed`: a query sorts, filters with a range, or counts on a field the type doesn't index. The hint names the field: declare it `indexed: true` on the type (`manage-types`), or query without that part.
+`field_not_indexed`: a count or sum grouped by a field the type doesn't index. Declare it `indexed: true` on the type
+(`manage-types`), or count without grouping on it. The same thing in a `group_by` can come back as `invalid_query`
+with `code: "FIELD_NOT_INDEXED"`. Sorting or filtering on such a field works, slower, with a `scan` warning.
 
 ## On Parachute Cloud today
 
-Cloud runs 0.8, where a type is a tag with fields. The AI uses `tags` and `metadata` where these pages say `types` and `fields`, and `update-tag` to give a tag fields; the refusals are the same. See [Parachute Cloud](/docs/run/cloud/).
+Cloud runs 0.8, where a type is a tag with fields: the AI uses `tags` and `metadata` where these pages say `types` and
+`fields`, and giving a tag fields (`update-tag`) takes admin. Refusals come as MCP errors with `error_type` in their
+`data`, and some above (`tag_kind`, `retype_conflict`) don't exist there. See [Parachute Cloud](/docs/run/cloud/).

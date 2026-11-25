@@ -17,7 +17,7 @@ claude.ai says this, or **Server not responding**, or marks the connector **need
 
 - **The address is wrong.** A missing `/mcp`, a typo in the vault name, or `http://` instead of `https://`. Open the connector's **⋯ › Remove**, then add it again with the address copied from your vault's card.
 - **Your own server isn't reachable from the internet.** claude.ai connects from Anthropic's servers, not your computer. `localhost` and a tailnet name can't be reached from there. A quick tunnel (`trycloudflare.com`) failed in our tests; a named Cloudflare Tunnel or a public domain works. See [Run your own](/docs/run/self-host/).
-- **A firewall in front of your server is checking browsers.** Cloudflare's bot protection or Browser Integrity Check can block Claude's requests. Turn them off for your Parachute's address.
+- **A firewall in front of your server is checking browsers.** Cloudflare's bot protection or Browser Integrity Check may block Claude's requests (we haven't seen it happen). If you have either on, try your Parachute's address with them off.
 
 ## Sign-in opens, then nothing happens
 
@@ -37,10 +37,10 @@ Each refusal names its reason (`error_type`) and the page with the fix: [It need
 
 ## Claude doesn't see a new skill, or an edited one
 
-claude.ai reads your vault's list of skills when it connects, and in our tests didn't read it again in that session. After you add or change a skill, ask Claude to read it by name (it can read a skill as a record), or remove the connector and add it again. See [Skills in your vault](/docs/use/skills/).
+claude.ai reads your vault's list of skills when it connects, and in our tests didn't read it again in that session. After you add or change a skill, ask Claude to read it by name (it can read a skill as a record). Removing the connector and adding it again should refresh the list (not tried yet). See [Skills in your vault](/docs/use/skills/).
 
 ## Things that are normal
 
-- **Claude asks before each tool**, reads included, while your claude.ai account is on **Manual**. **Always allow** on a tool stops the asking for that tool.
-- **Each time you connect again, you approve again**, and your vault keeps one more connection for Claude. Ending the old ones is tidy, not needed.
-- **On Claude's free plan** you can add one custom connector.
+- **Claude asks before each tool call**, reads included, while your claude.ai account is on **Manual**. **Always allow** on the card is meant to stop that for the tool.
+- **Each time you connect again, you approve again.** On Parachute Cloud the approval page offers to end Claude's earlier connection (ticked); on your own server the old one stays until you end it.
+- **On Claude's free plan** you can add one custom connector (Parachute Cloud's account page says so).
