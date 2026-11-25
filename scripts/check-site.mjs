@@ -8,7 +8,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const SITE = "_site";
-const ORIGIN = (process.env.SITE_ORIGIN || "https://parachute.computer").replace(/\/+$/, "");
+// the origin the build was made for (docs/index.json says it), so a check never skips links a build wrote
+const ORIGIN = JSON.parse(fs.readFileSync(path.join(SITE, "docs/index.json"), "utf8")).origin.replace(/\/+$/, "");
 const fails = [];
 const fail = (m) => fails.push(m);
 const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
@@ -36,8 +37,8 @@ function checkLink(from, href) {
   const target = fileFor(href);
   if (!target) return fail(`${from}: ${href} is not built`);
   const hash = href.split("#")[1];
-  // anchors are checked on docs pages (rendered markdown ids); a markdown link's anchor is checked on the HTML page
-  if (hash && href.startsWith("/docs/")) {
+  // every anchor lands on an id; a markdown twin's anchor is checked on its HTML page
+  if (hash) {
     const html = target.endsWith(".md") ? fileFor(href.split("#")[0].replace(/\.md$/, "/").replace(/^\/docs\/v\/[^/]+\//, "/docs/")) : target;
     if (html && html.endsWith(".html") && !fs.readFileSync(html, "utf8").includes("http-equiv=\"refresh\"") && !idsIn(html).has(decodeURIComponent(hash)))
       fail(`${from}: ${href}: no #${hash} on ${html}`);
@@ -78,7 +79,11 @@ for (const t of pagesOnDisk) {
   if (!topics.has(t)) fail(`docs/${t}.md is not in docs/index.json`);
   if (!has(path.join(SITE, "docs", t + ".md"))) fail(`docs/${t}.md has no twin`);
   if (!has(path.join(SITE, "docs", t, "index.html"))) fail(`docs/${t}.md has no page`);
-  for (const v of versions.versions) if (!has(path.join(SITE, "docs/v", v.version, t + ".md"))) fail(`docs/${t}.md is missing for ${v.version}`);
+  for (const v of versions.versions) {
+    // a frozen version keeps the pages it had; a page added since is read from today's pages
+    if (!v.frozen && !has(path.join(SITE, "docs/v", v.version, t + ".md"))) fail(`docs/${t}.md is missing for ${v.version}`);
+    if (!has(path.join(SITE, "docs/v", v.version, t, "index.html"))) fail(`docs/${t}/ has no address for ${v.version}`);
+  }
 }
 for (const p of index.pages) {
   if (!p.title || !p.summary || !p.door) fail(`index: ${p.topic} lacks a title, summary or door`);

@@ -28,6 +28,7 @@ jobs:
         run: |
           npm ci
           npx @11ty/eleventy
+          npm run check
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
