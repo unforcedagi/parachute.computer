@@ -6,19 +6,21 @@ order: 2.5
 checked: "parachute-core packages/vault/core/src/vault-projection.ts (LIVE_PAGE_BLOCK), core/src/mcp-records.ts (query-records, update-record), core/src/skill-files.ts (live-page), contracts/suites/door/records.test.ts; the template and two pages Claude wrote from the connector's words alone, run in a harness that mimics claude.ai's artifact runtime (contract 0.2.96)"
 ---
 
+*On a 0.8 server (Parachute Cloud today):* the page calls `query-notes` and `update-note`; a record's `body` and `fields` are `content` and `metadata`, types go in `tags`, and `include_body` is `include_content`. Change the template's names to match.
+
 **Tested in a harness; claude.ai run pending.** Everything on this page ran in a harness that copies claude.ai's side of an artifact (a sandboxed frame, its content rules, the first-call approval, the declared tools, read caching). It hasn't yet run in claude.ai itself.
 
 A Claude artifact can call your connectors every time someone opens it. Over Parachute that makes a small live page: your open tasks, a reading list, a people directory. It reads and writes your vault on the viewer's own connection. The page never sees a key, and no model runs when it opens.
 
-You need Parachute [connected in Claude](/docs/use/connect-your-ai/), and a Pro, Max, Ultra, Team or Enterprise plan, on the web or the desktop app.
+You need Parachute [connected on claude.ai](/docs/use/connect-your-ai/) (Customize → Connectors): a page calls your claude.ai connectors, not a server you added only to Claude Code. And a Pro, Max, Ultra, Team or Enterprise plan, on the web or the desktop app. Each viewer sees their own vault, through their own connection; people share a list only when they're connected to the same vault.
 
 ## Ask for one
 
-Paste this into Claude, with Parachute connected:
+Paste this into Claude Code or the Claude desktop app, which publish artifacts that call connectors (artifacts made in a claude.ai chat aren't tested yet):
 
 > Using my Parachute connector, make me a live page (an artifact) of my open tasks, earliest due first, with a way to tick one done and change its date. Look at the vault first so it uses my own types and fields.
 
-Claude looks at your vault's types, writes the page, and publishes it. The page declares the tools it calls: `query-records` to read, `update-record` to change, and `create-record` if it adds records. Ask for changes in plain words ("group them by project", "show the notes").
+Claude looks at your vault's types, writes the page, and publishes it once you say yes. The page declares the tools it calls: `query-records` to read, `update-record` to change, and `create-record` if it adds records. Ask for changes in plain words ("group them by project", "show the notes").
 
 You don't need to explain Parachute to Claude. The connector tells it how to build a page that works:
 
@@ -99,8 +101,8 @@ const recordsOf = (payload) => Array.isArray(payload) ? payload : (payload && Ar
 // what each failure means to the person, in plain words (mcp.d.ts McpErrorCode)
 function plain(e) {
   const code = e && e.code;
-  if (code === "server_not_connected" || code === "server_not_found") return "Connect Parachute in Settings › Connectors to see your tasks here.";
-  if (code === "needs_reauth") return "Parachute needs you to sign in again (Settings › Connectors).";
+  if (code === "server_not_connected" || code === "server_not_found") return "Connect Parachute in Customize › Connectors to see your tasks here.";
+  if (code === "needs_reauth") return "Parachute needs you to sign in again (Customize › Connectors).";
   if (code === "not_granted" || code === "consent_required" || code === "approval_required") return "This page needs your OK to read Parachute.";
   if (code === "tool_error") return toolText(e) || "Parachute refused that change.";
   return (e && e.message) || String(e);
@@ -190,23 +192,22 @@ async function change(li, r, patch) {
 </html>
 ```
 
-In the harness it passed 13 checks: the approval shows; three open tasks sort by due date; a tick, a date and a note edit each land in the vault; two edits in a row on one task both land; a refresh while typing keeps the note and the cursor; and a change made elsewhere in between is refused and reloaded, not overwritten.
+In the harness: the approval shows; three open tasks sort by due date; a tick, a date and a note edit each land in the vault; two edits in a row on one task both land; a refresh while typing keeps the note and the cursor; and a change made elsewhere in between is refused and reloaded, not overwritten.
 
 ## What a viewer sees
 
 - The first time, Claude asks to let the page use Parachute, and which tools. The choice carries over.
-- A tick is written at once. Anyone else with the page open sees it at the next refresh (the page refreshes every minute, and has a refresh link).
+- A tick is written at once. Another window on the same vault sees it at the next refresh (the page refreshes every minute, and has a refresh link).
 - If someone changed that task elsewhere first, the page says so and shows the new version. Nothing is overwritten.
 - A viewer who hasn't connected Parachute, or said no, sees the page with empty sections and a line saying why.
 
 ## Limits
 
-- **Not yet run in claude.ai.** One open question there: `update-record` is marked as a change, and Claude may ask before each write.
+- **Not yet run in claude.ai.** Two open questions there: `update-record` is marked destructive, so Claude may ask before each write; and how claude.ai hands a refused change to the page isn't documented, so the conflict message may come out more general.
 - **Each viewer uses their own connection**, at their own level. A viewer whose connection only reads sees the page but can't tick.
 - **Only while it's open.** No offline, no notifications, nothing in the background. The Parachute app does those.
 - **Your records pass through claude.ai** to the page, and reads are cached in the viewer's browser.
 - **Parachute can tell an artifact called, not which one.**
 - **Phones:** Anthropic lists the web and desktop apps; it doesn't say whether phones run artifact connector calls.
-- **Parachute Cloud runs the earlier tools for now:** there the page calls `query-notes` and `update-note`, and a record's `body` and `fields` are `content` and `metadata`. `updatedAt` and the rest work the same.
 
 The same recipe, for an AI that supports skills, is the [`live-page` skill](/docs/use/skills/).
