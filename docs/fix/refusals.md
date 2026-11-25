@@ -37,14 +37,14 @@ tool is a plain "Unknown tool" message. The meanings below are the same.
 
 | `error_type` | What it means | Fix |
 |---|---|---|
-| `insufficient_scope`, `unknown_tool`, `skill_needs_admin`, `tag_scope_violation`, `tag_in_use_by_tokens` | the call needs more access than the connection has, or a key's reach is in the way | [It needs admin](/docs/fix/needs-admin/) |
-| `tag_not_found`, `unknown_tag`, `tag_kind`, `schema_validation`, `retype_conflict`, `field_not_indexed` | a type, tag or field isn't what the call expected | [A type or field isn't there](/docs/fix/unknown-type/) |
-| `inline_too_large`, `file_too_large`, `image_too_large`, `blocked_upload_extension`, `unsupported_attachment_type`, `storage_cap_exceeded`, `attachments_not_included` | a file too big, of a kind the vault won't keep or the AI can't read, or no room | [A file is too big](/docs/fix/file-too-large/) |
-| `conflict`, `precondition_required`, `transition_conflict` | the record changed since it was read | [It changed somewhere else](/docs/fix/conflict/) |
-| `not_found`, `ambiguous_path` | no record there, or one name with several files | [It isn't there](/docs/fix/not-found/) |
-| `unknown_parameter`, `missing_required_field`, `invalid_query`, `invalid_request`, `mutually_exclusive`, `invalid_search_syntax`, `cursor_invalid`, `batch_too_large` | the call isn't shaped right | [below](#a-call-thats-not-right) |
-| `path_conflict`, `target_exists` | the name is taken | [below](#a-name-thats-taken) |
-| `size_mismatch`, `digest_mismatch` | a file arrived different from what the call said | [below](#a-file-that-didnt-arrive-whole) |
+| `insufficient_scope`<br>`unknown_tool`<br>`skill_needs_admin`<br>`tag_scope_violation`<br>`tag_in_use_by_tokens` | the call needs more access than the connection has, or a key's reach is in the way | [It needs admin](/docs/fix/needs-admin/) |
+| `tag_not_found`<br>`unknown_tag`<br>`tag_kind`<br>`schema_validation`<br>`retype_conflict`<br>`field_not_indexed` | a type, tag or field isn't what the call expected | [A type or field isn't there](/docs/fix/unknown-type/) |
+| `inline_too_large`<br>`file_too_large`<br>`image_too_large`<br>`blocked_upload_extension`<br>`unsupported_attachment_type`<br>`storage_cap_exceeded`<br>`attachments_not_included` | a file too big, of a kind the vault won't keep or the AI can't read, or no room | [A file is too big](/docs/fix/file-too-large/) |
+| `conflict`<br>`precondition_required`<br>`transition_conflict` | the record changed since it was read | [It changed somewhere else](/docs/fix/conflict/) |
+| `not_found`<br>`ambiguous_path` | no record there, or one name with several files | [It isn't there](/docs/fix/not-found/) |
+| `unknown_parameter`<br>`missing_required_field`<br>`invalid_query`<br>`invalid_request`<br>`mutually_exclusive`<br>`invalid_search_syntax`<br>`cursor_invalid`<br>`batch_too_large` | the call isn't shaped right | [below](#a-call-thats-not-right) |
+| `path_conflict`<br>`target_exists` | the name is taken | [below](#a-name-thats-taken) |
+| `size_mismatch`<br>`digest_mismatch` | a file arrived different from what the call said | [below](#a-file-that-didnt-arrive-whole) |
 | `semantic_unavailable` | search by meaning is off | [below](#search-by-meaning-is-off) |
 | `plan_required` | a Cloud account without a plan | [below](#parachute-cloud-limits) |
 | `internal_error` | a bug on the server | [below](#something-broke) |

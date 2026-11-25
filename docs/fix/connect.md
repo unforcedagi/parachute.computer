@@ -33,7 +33,7 @@ It connected at **Read only**. Remove the connector and add it again, and on the
 
 ## Claude says Parachute refused it
 
-Each refusal names its reason (`error_type`) and the page with the fix: [It needs admin](/docs/fix/needs-admin/), [A type or field isn't there](/docs/fix/unknown-type/), [A file is too big](/docs/fix/file-too-large/), and [every refusal](/docs/fix/refusals/).
+Each refusal names its reason (`error_type`), and from the next release the page with the fix (`docs`): [It needs admin](/docs/fix/needs-admin/), [A type or field isn't there](/docs/fix/unknown-type/), [A file is too big](/docs/fix/file-too-large/), and [every refusal](/docs/fix/refusals/).
 
 ## Claude doesn't see a new skill, or an edited one
 
