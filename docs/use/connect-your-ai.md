@@ -32,7 +32,8 @@ connector.)
 
 ![Step two: Authentication, Sign in now (Detected); OAuth client, Register automatically (Detected)](/assets/shots/claude-connector-step2.webp)
 
-*Pictures from claude.ai, connected to a test vault; your address goes where this one is.*
+*Pictures from claude.ai, connected to a test server. In these two the connector's name and address are changed to
+Parachute Cloud's; everything else is as claude.ai drew it.*
 
 **4.** Parachute's page opens. Sign in (on Cloud, the emailed link or code), then allow Claude at **Read & write**, so
 it can save what you tell it. With read only it can look but can't remember anything.
