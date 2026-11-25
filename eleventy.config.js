@@ -55,10 +55,17 @@ function docsIndex(docs, latest) {
 module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("mdTwin", mdTwin);
   eleventyConfig.addFilter("docsIndex", docsIndex);
-  // Every docs page under every version that isn't frozen (frozen ones are copied from docs-versions/<version>/).
+  // Every docs page under every version that isn't frozen: its markdown (frozen ones are copied from
+  // docs-versions/<version>/ instead).
   eleventyConfig.addCollection("versionedDocs", (api) => {
     const docs = api.getFilteredByGlob("docs/**/*.md");
     return VERSIONS.versions.filter((v) => !v.frozen).flatMap((version) => docs.map((doc) => ({ version, doc })));
+  });
+  // Every version's address for a person, frozen or not (/docs/v/<version>/<page>/ is what a refusal's `docs` names):
+  // a page that sends them to today's page.
+  eleventyConfig.addCollection("versionedPages", (api) => {
+    const docs = api.getFilteredByGlob("docs/**/*.md");
+    return VERSIONS.versions.flatMap((version) => docs.map((doc) => ({ version, doc })));
   });
   eleventyConfig.addPassthroughCopy({ "docs-versions": "docs/v" });
   // A summary is a line of markdown: its `code` drawn as code on the page, and plain in a meta description.

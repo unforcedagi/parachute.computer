@@ -1,8 +1,8 @@
 ---
-# A person who opens a versioned address in a browser lands on the page itself (the versions differ only for an AI's
-# markdown until one is frozen).
+# A person who opens a versioned address in a browser (a refusal's `docs` link is one) lands on today's page; the
+# versions differ only in the markdown an AI reads.
 pagination:
-  data: collections.versionedDocs
+  data: collections.versionedPages
   size: 1
   alias: item
 permalink: "/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}/"
@@ -14,7 +14,7 @@ eleventyExcludeFromCollections: true
     <meta charset="utf-8">
     <title>{{ item.doc.data.title }} &mdash; Parachute {{ item.version.version }}</title>
     <meta http-equiv="refresh" content="0; url={{ to }}">
-    <link rel="canonical" href="https://parachute.computer{{ to }}">
+    <link rel="canonical" href="{{ site.origin }}{{ to }}">
     <link rel="alternate" type="text/markdown" href="/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}.md">
     <meta name="robots" content="noindex">
     <script>location.replace({{ to | dump | safe }} + location.hash);</script>
