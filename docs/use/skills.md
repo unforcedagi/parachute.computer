@@ -33,7 +33,7 @@ create-record {
 
 ## Who may add or change one
 
-Only an admin key, or a pack you install. A skill is instructions every connected AI may follow, so a skill planted by anyone who can write would keep steering your AI. Any other key is refused with `skill_needs_admin`, which says why. That covers making a skill, changing its words or fields, taking the type off, and defining the `skill` type itself. A rename by a non-admin key never rewrites a skill that links to the renamed record, and a recording attached to a skill never has its transcript written into it.
+Only an admin key, or a pack you install. A skill is instructions every connected AI may follow, so a skill planted by anyone who can write would keep steering your AI. Any other key is refused with `skill_needs_admin`, which says why. That covers making a skill, changing its words or fields, taking the type off, defining the `skill` type itself, and records of a type an admin made under `skill` (`query-records` lists its subtypes with it). An admin key limited to some tags counts as a write key here: a skill reaches every AI on the vault. A rename by a non-admin key never rewrites a skill that links to the renamed record, and a recording attached to a skill never has its transcript written into it.
 
 Reading and following skills needs no admin. Deleting one is like deleting any record: history keeps it.
 
