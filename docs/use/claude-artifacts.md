@@ -12,7 +12,7 @@ checked: "parachute-core packages/vault/core/src/vault-projection.ts (LIVE_PAGE_
 
 A Claude artifact can call your connectors every time someone opens it. Over Parachute that makes a small live page: your open tasks, a reading list, a people directory. It reads and writes your vault on the viewer's own connection. The page never sees a key, and no model runs when it opens.
 
-You need Parachute [connected on claude.ai](/docs/use/connect-your-ai/) (Customize → Connectors): a page calls your claude.ai connectors, not a server you added only to Claude Code. And a Pro, Max, Ultra, Team or Enterprise plan, on the web or the desktop app. Each viewer sees their own vault, through their own connection; people share a list only when they're connected to the same vault.
+You need Parachute [connected on claude.ai](/docs/use/connect-your-ai/) (Customize → Connectors): a page calls your claude.ai connectors, not a server you added only to Claude Code. You also need a Pro, Max, Ultra, Team or Enterprise plan, on the web or the desktop app. Each viewer sees their own vault, through their own connection; people share a list only when they're connected to the same vault.
 
 ## Ask for one
 
