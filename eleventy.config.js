@@ -1,23 +1,66 @@
 const fs = require("node:fs");
 
-/** A docs page as an agent reads it: the page's own markdown, its title and summary on top, no front matter. */
-function mdTwin(doc) {
+const ORIGIN = require("./_data/site.js").origin;
+const VERSIONS = require("./_data/versions.json");
+
+/** A docs page as an agent reads it: the page's own markdown, its title and summary on top, no front matter.
+ *  With a version (a /docs/v/<version>/ copy), links stay in that version and one line on top says which it is. */
+function mdTwin(doc, version) {
+  const base = version ? `${ORIGIN}/docs/v/${version.version}` : `${ORIGIN}/docs`;
   const raw = fs.readFileSync(doc.inputPath, "utf8").replace(/^---\n[\s\S]*?\n---\n/, "").trim()
     // links to other docs pages point at their markdown, with the host, so an agent can follow them (or ask the docs
     // tool for the same name); other site links get the host
     // (a page is a door and a name, `build/make-a-type`; a door alone, `/docs/build/`, has no twin and stays a page)
-    .replace(/\]\(\/docs\/([a-z0-9-]+\/[a-z0-9/-]+?)\/?(#[^)]*)?\)/g, (_m, p, h = "") => `](https://parachute.computer/docs/${p}.md${h})`)
-    .replace(/\]\(\/(?!\/)([^)]*)\)/g, "](https://parachute.computer/$1)");
+    .replace(/\]\(\/docs\/([a-z0-9-]+\/[a-z0-9/-]+?)\/?(#[^)]*)?\)/g, (_m, p, h = "") => `](${base}/${p}.md${h})`)
+    .replace(/\]\(\/(?!\/)([^)]*)\)/g, `](${ORIGIN}/$1)`);
   const d = doc.data;
   const head = [`# ${d.title}`, "", `> ${d.summary}`, ""];
+  if (version) head.push(`**Parachute ${version.version}${version.status === "current" ? " (current)" : ""}:** ${version.note} Latest: ${ORIGIN}/docs/${d.slug}.md`, "");
   if (d.status && d.status !== "current") head.push(`**${d.status === "next" ? "Next release" : "Coming"}:** ${d.status_note || ""}`, "");
-  const foot = ["", "---", "", `For people: https://parachute.computer/docs/${d.slug}/ · All pages: https://parachute.computer/llms.txt`];
+  const foot = ["", "---", "", `For people: ${ORIGIN}/docs/${d.slug}/ · All pages: ${ORIGIN}/llms.txt · Search: ${ORIGIN}/docs/index.json`];
   if (d.checked) foot.push(`Checked against the code: ${d.checked}`);
   return [...head, raw, ...foot].join("\n") + "\n";
 }
 
+/** A docs page's headings (## and ###) from its markdown, for the index an AI searches. */
+function headingsOf(doc) {
+  const raw = fs.readFileSync(doc.inputPath, "utf8").replace(/^---\n[\s\S]*?\n---\n/, "").replace(/```[\s\S]*?```/g, "");
+  return [...raw.matchAll(/^#{2,3} +(.+?) *$/gm)].map((m) => m[1].replace(/`/g, ""));
+}
+
+/** docs/index.json: every page, the versions, and which page fixes which refusal (a page's `errors` front matter). */
+function docsIndex(docs, latest) {
+  const errors = {};
+  const pages = docs.map((doc) => {
+    const d = doc.data;
+    for (const [type, anchor] of Object.entries(d.errors || {})) {
+      if (errors[type]) throw new Error(`error_type ${type} is on two pages: ${errors[type]} and ${d.slug}`);
+      errors[type] = `${d.slug}${anchor ? "#" + anchor : ""}`;
+    }
+    return {
+      topic: d.slug, title: d.title, summary: d.summary, door: d.door,
+      md: `${ORIGIN}/docs/${d.slug}.md`, html: `${ORIGIN}/docs/${d.slug}/`,
+      headings: headingsOf(doc), errors: Object.keys(d.errors || {}),
+    };
+  });
+  return {
+    about: "Parachute's docs, for an AI. Fetch a page's `md`; for a version, " + `${ORIGIN}/docs/v/<version>/<topic>.md` + " (major.minor, from `versions`). `errors` maps a refusal's error_type to the page (and section) with its fix.",
+    origin: ORIGIN, current: VERSIONS.current,
+    versions: VERSIONS.versions.map(({ version, status, note }) => ({ version, status, note, md: `${ORIGIN}/docs/v/${version}/<topic>.md` })),
+    latest: `${ORIGIN}/latest.json`,
+    pages, errors,
+  };
+}
+
 module.exports = function (eleventyConfig) {
   eleventyConfig.addFilter("mdTwin", mdTwin);
+  eleventyConfig.addFilter("docsIndex", docsIndex);
+  // Every docs page under every version that isn't frozen (frozen ones are copied from docs-versions/<version>/).
+  eleventyConfig.addCollection("versionedDocs", (api) => {
+    const docs = api.getFilteredByGlob("docs/**/*.md");
+    return VERSIONS.versions.filter((v) => !v.frozen).flatMap((version) => docs.map((doc) => ({ version, doc })));
+  });
+  eleventyConfig.addPassthroughCopy({ "docs-versions": "docs/v" });
   // A summary is a line of markdown: its `code` drawn as code on the page, and plain in a meta description.
   const esc = (t) => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   // Inline code never breaks inside a name; a long one (an address, a call with its arguments) may break after a slash

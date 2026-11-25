@@ -1,0 +1,7 @@
+---
+# /latest.json: the newest Parachute release (npm dist-tags of @openparachute/core at build) and the docs version, so a
+# connected AI can say "a newer version exists". Read it, never wait on it.
+permalink: /latest.json
+eleventyExcludeFromCollections: true
+---
+{{ latest | dump(2) | safe }}

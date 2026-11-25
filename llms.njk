@@ -10,10 +10,14 @@ eleventyExcludeFromCollections: true
 Parachute is three things that work as one: a **vault** (your records: notes, typed records, files, links; on Parachute Cloud or a server of your own), the **MCP connection** any AI uses to read and write it, and the **Parachute app** (Android and Mac), a thin app that shows whatever your vault says: the applets (small screens, each one record), the home, and the pins on the bar. You and your AI write all of it as records.
 
 Every page below is plain markdown. If you are an AI working in someone's vault over the Parachute MCP, a server that lists the `docs` tool returns the same pages: `docs {}` for this list, `docs { topic: "build/make-an-applet" }` for one. Read the page before you build something new.
+
+- **For a version:** `{{ site.origin }}/docs/v/<version>/<page>.md`, where version is the vault's major.minor ({% for v in versions.versions %}{{ v.version }}{% if v.status == "current" %} (current){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}). Without a version, the page is today's.
+- **Search and refusals:** [{{ site.origin }}/docs/index.json]({{ site.origin }}/docs/index.json) lists every page with its headings, and maps each refusal's `error_type` to the page that says how to fix it.
+- **Newest release:** [{{ site.origin }}/latest.json]({{ site.origin }}/latest.json).
 {% for dp in doorPages %}
 ## {{ dp.label }}
 
-{% for p in collections.docs | door(dp.door) %}- [{{ p.data.title | safe }}](https://parachute.computer/docs/{{ p.data.slug }}.md): {{ p.data.summary | safe }}
+{% for p in collections.docs | door(dp.door) %}- [{{ p.data.title | safe }}]({{ site.origin }}/docs/{{ p.data.slug }}.md): {{ p.data.summary | safe }}
 {% endfor %}{% endfor %}
 ## Endpoints
 
@@ -25,6 +29,6 @@ Paths are relative to the hub's address (the one a person signs in at); on Parac
 
 ## More
 
-- [All pages in one file](https://parachute.computer/llms-full.txt)
-- [Install runbook for an AI agent](https://parachute.computer/install.md): non-interactive install on a fresh Ubuntu/Debian box or a Mac.
+- [All pages in one file]({{ site.origin }}/llms-full.txt)
+- [Install runbook for an AI agent]({{ site.origin }}/install.md): non-interactive install on a fresh Ubuntu/Debian box or a Mac.
 - [Source](https://github.com/ParachuteComputer): the app (parachute), the server (parachute-core), Cloud (parachute-cloud). Open source, AGPL.

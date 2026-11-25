@@ -1,0 +1,25 @@
+---
+# A person who opens a versioned address in a browser lands on the page itself (the versions differ only for an AI's
+# markdown until one is frozen).
+pagination:
+  data: collections.versionedDocs
+  size: 1
+  alias: item
+permalink: "/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}/"
+eleventyExcludeFromCollections: true
+---
+{% set to = "/docs/" + item.doc.data.slug + "/" %}<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ item.doc.data.title }} &mdash; Parachute {{ item.version.version }}</title>
+    <meta http-equiv="refresh" content="0; url={{ to }}">
+    <link rel="canonical" href="https://parachute.computer{{ to }}">
+    <link rel="alternate" type="text/markdown" href="/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}.md">
+    <meta name="robots" content="noindex">
+    <script>location.replace({{ to | dump | safe }} + location.hash);</script>
+</head>
+<body>
+    <p>{{ item.version.note }} <a href="{{ to }}">{{ item.doc.data.title }}</a> · <a href="/docs/v/{{ item.version.version }}/{{ item.doc.data.slug }}.md">as markdown, for {{ item.version.version }}</a></p>
+</body>
+</html>
