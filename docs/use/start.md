@@ -1,46 +1,80 @@
 ---
-title: "Get Parachute"
-summary: "A vault of your own, the Parachute app, one sign-in, then something of yours in it and your AI connected."
+title: "Start on Parachute Cloud"
+nav: "Start here"
+summary: "Five minutes: an account and a vault on Parachute Cloud, Claude connected to it, and the first things to ask. Free in the open beta."
 door: use
 order: 1
-status: next
-status_note: "The Parachute app has no public release yet. Builds for Android and Apple Silicon Macs come from the app's repository and are shared by hand while it is tried; this page says what the first release will ask of you."
-checked: "parachute README.md (Install and sign in), docs/SIMPLE.md, src/key/KeyStart.tsx, src/views/AddParachute.tsx, src/frame/views/Launcher.tsx (Start here); parachute-cloud workers/identity/wrangler.toml; T-476 first-run walks 2026-11-21"
+checked: "parachute-cloud next 005d073: workers/identity/src/ui.ts (Create your account, Name your vault, Create my vault, Connect your AI, consent: Read only / Read & write / Full admin), email-templates.ts, plans.ts (open beta: free, 5 vaults, 8 GB of files), console.ts (export); my.parachute.computer read 2026-11-25; claude.ai runs of 2026-11-25 (Plugins › Add › Add custom connector)"
 ---
 
-Parachute keeps your notes and records in a **vault** that is yours, and lets the AIs you choose read and write it, so
-they remember what you tell them. You need two things: a vault, and the **Parachute app** to see it.
+Parachute keeps what you and your AI write in a **vault** that is yours: notes, tasks, people, books, whatever you
+keep. Claude reads and writes it, so it remembers between chats, and it can build you live pages over it. These steps
+use **Parachute Cloud**, where we run the server. To run your own instead, see [the other ways](#other-ways-to-start).
 
-## 1. A vault
+## 1. Make an account and a vault
 
-Pick one:
+1. Go to **[my.parachute.computer](https://my.parachute.computer)**, type your email and press **Email me a sign-in link**.
+2. Open the email (*Welcome to Parachute*) and press **Create my account & sign in**, or type its 6-digit code. The
+   link works once, for 10 minutes. No password.
+3. Your account page asks you to **Name your vault**: a short name in lowercase, like `field-notes` or `home`. Press
+   **Create my vault**.
 
-- **Your own Cloudflare.** Parachute's code on a Cloudflare account you own: you hold the account, the data and the bill, and there is no computer to keep on. For someone at home in a terminal. See [Your own Parachute on your own Cloudflare](/docs/run/own-cloudflare/).
-- **Parachute Cloud.** Nothing to set up: sign up at [my.parachute.computer](https://my.parachute.computer/console) with your email. We run the server; your vault is yours to export. See [Parachute Cloud](/docs/run/cloud/).
-- **Your own computer.** One command installs Parachute on a Mac or a Linux box, and its setup page makes your account and first vault. See [Run your own](/docs/run/self-host/).
-- **Someone else's.** An organisation or a friend can give you a vault on theirs.
+## 2. Connect Claude
 
-## 2. The app
+Your AI needs one address, the same for every Parachute Cloud account:
 
-Android (8 or newer, 64-bit ARM) and Apple Silicon Macs. The Mac build isn't notarised yet, so macOS asks once before it opens it.
+```
+https://my.parachute.computer/mcp
+```
 
-## 3. Sign in
+You choose which vault it reaches when you allow it. (Each vault also has its own address, under **Connect your AI**
+on its card; it skips the choice.)
 
-The app's first screen has a way in for each:
+On [claude.ai](https://claude.ai):
 
-- **Parachute Cloud:** **Sign in with Parachute Cloud**, then the code it mails you.
-- **Your own computer, or someone else's:** **Sign in with its address**. On the computer it runs on, that is `http://localhost:1939`; on your phone, the https address `parachute setup expose` gives it (the app takes plain http only on the same computer). Say whose it is (**Mine**), and sign in on its own page with the account you made there. It asks you to approve the Parachute app: that is this app, on your device.
-- **Your own Cloudflare:** sign in with your key: **Make a new key** or **Pair from a device that has your key**, then your Parachute's address ([how](/docs/run/own-cloudflare/)).
+1. In a chat, press **+**, then **Plugins › Manage plugins**. On the plugins page, **Add › Add custom connector**.
+2. Name it `Parachute`, paste the address, and press **Continue**. Leave what Claude detects (**Sign in now**,
+   **Register automatically**) and press **Add**.
+3. Parachute's page opens. Sign in with the same email. On **Connect Claude**, pick your vault, keep **Read & write**
+   (chosen already; Claude can then save what you tell it) and press **Allow**. Leave **Full admin** unchosen.
 
-The first sign-in reads your **home vault**. Other vaults on the same server show in Settings as one line each, **Open**, and are read only after you tap it.
+Step by step, with pictures: [Connect Claude](/docs/use/connect-your-ai/).
 
-## 4. Make it yours
+## 3. Ask it
 
-On your own server, the app opens on its list of applets, which starts with **Start here** while your home vault holds nothing of yours:
+Start a chat and try:
 
-- **Bring in what you have.** [Import your Notion workspace](/docs/use/from-notion/), or start from a [pack](/docs/use/templates-and-packs/): clients and sessions, a reading list, or people, projects, meetings and tasks.
-- **Connect your AI.** One address for Claude or ChatGPT. When your server asks, give it **Write** on your vault so it can save what you tell it: [Connect your AI](/docs/use/connect-your-ai/).
+- "Remember this in Parachute: the seed library box goes by the garden gate. Ask Maya if the garden will host it."
+- "Make me a live board of my open tasks in Parachute that I can tick off."
+- "What did I tell you about the garden this month?"
 
-On Parachute Cloud the app opens on **Notes**, a smaller set of screens (Settings, **Your bundle**, switches to Everything); **Connect** is on its bar. Packs, and importing Notion databases, need your own server for now ([why](/docs/use/templates-and-packs/)).
+On claude.ai's **Manual** setting Claude asks before each tool call, and **Always allow** on the card stops that for
+the tool; on **Auto** (claude.ai's default now) it goes ahead. What it writes is in your vault, for any chat
+later and any AI you connect. Your account page downloads all of it (**Download everything**: plain markdown, with
+your files).
 
-Then ask your AI to remember something, start a new chat, and ask again. What it wrote is in the app (Notes, Vault), and you can change it there.
+More to try: [live pages](/docs/use/claude-artifacts/), and [skills](/docs/use/skills/) that teach Claude how
+you do things. If something doesn't work: [Claude won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
+
+## What the open beta gives you
+
+Free, no card: up to 5 vaults, 500 MiB of notes and 8 GiB of files. Before any paid plan you'll hear about it well ahead. Your vault is
+yours to take: it downloads as plain markdown that a server of your own reads as it is.
+
+Parachute Cloud runs the 0.8 engine today, a release behind a server of your own: small files from a chat come with
+its next release, and skills in your vault when it moves to 0.9. [Parachute Cloud](/docs/run/cloud/) says what differs.
+
+## The app
+
+The **Parachute app** (Android, Apple Silicon Macs) shows your vault: your records, the small screens your AI makes
+for them, and a home you arrange. It has no public release yet; builds are shared by hand while it is tried. When you
+have it, **Sign in with Parachute Cloud** with the same email.
+
+## Other ways to start
+
+- **Your own computer.** One command installs Parachute on a Mac or a Linux box; its setup page makes your account
+  and first vault. [Run your own](/docs/run/self-host/).
+- **Your own Cloudflare.** Parachute Cloud's code on a Cloudflare account you own: your account, your data, your bill,
+  no computer to keep on. [Your own Cloudflare](/docs/run/own-cloudflare/).
+- **Someone else's.** An organisation or a friend can give you a vault on theirs: connect with the address they give you.
+- **Coming from Notion?** [Bring your workspace in](/docs/use/from-notion/) (on your own server for now).

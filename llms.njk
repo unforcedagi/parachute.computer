@@ -9,6 +9,9 @@ eleventyExcludeFromCollections: true
 
 Parachute is three things that work as one: a **vault** (your records: notes, typed records, files, links; on Parachute Cloud or a server of your own), the **MCP connection** any AI uses to read and write it, and the **Parachute app** (Android and Mac), a thin app that shows whatever your vault says: the applets (small screens, each one record), the home, and the pins on the bar. You and your AI write all of it as records.
 
+- **Helping a person start:** [{{ site.origin }}/docs/use/start.md]({{ site.origin }}/docs/use/start.md): an account and a vault on Parachute Cloud, then Claude connected, in five minutes. [Connect Claude]({{ site.origin }}/docs/use/connect-your-ai.md) has every step.
+- **Refused or stuck:** a refusal's `error_type` has its fix in [{{ site.origin }}/docs/fix/refusals.md]({{ site.origin }}/docs/fix/refusals.md).
+
 Every page below is plain markdown. If you are an AI working in someone's vault over the Parachute MCP, a server that lists the `docs` tool returns the same pages: `docs {}` for this list, `docs { topic: "build/make-an-applet" }` for one. Read the page before you build something new.
 
 - **For a version:** `{{ site.origin }}/docs/v/<version>/<page>.md`, where version is the vault's major.minor ({% for v in versions.versions %}{{ v.version }}{% if v.status == "current" %} (current){% endif %}{% if not loop.last %}, {% endif %}{% endfor %}). Without a version, the page is today's.

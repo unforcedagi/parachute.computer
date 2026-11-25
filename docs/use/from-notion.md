@@ -2,7 +2,7 @@
 title: "Coming from Notion"
 summary: "Bring your Notion workspace in as one file: tables stay tables, pages stay pages, and they are yours."
 door: use
-order: 1.5
+order: 3.4
 checked: "parachute applets/vault.tsx (Import from Notion, a record's pictures), src/kit/notion.ts, docs/PACKS.md (From Notion), docs/design/PICTURES.md, e2e/notion.spec.ts; Notion's help page Export your content (www.notion.com/help/export-your-content), read 2026-11-22"
 ---
 

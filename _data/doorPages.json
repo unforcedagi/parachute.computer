@@ -2,10 +2,10 @@
   {
     "door": "use",
     "title": "Use Parachute",
-    "who": "For people. Get the app, connect your AI, and see what it writes for you.",
+    "who": "For people. Start on Parachute Cloud, connect Claude, and see what it does with your vault: live pages, skills, your home.",
     "name": "Use",
     "label": "Use: for people",
-    "short": "For people: get the app, connect your AI, your home."
+    "short": "For people: start on Cloud, connect Claude, live pages and skills."
   },
   {
     "door": "build",

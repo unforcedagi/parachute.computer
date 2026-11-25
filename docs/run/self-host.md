@@ -39,6 +39,8 @@ The server answers on port 1939. To reach it from your phone, put it on your tai
 
 Every command: `parachute help`, and `parachute <command> --help`.
 
+Advanced: [your own copy of the docs](/docs/run/own-docs/), for your server's AI to read instead of parachute.computer.
+
 ## On a box with Parachute 0.7
 
 0.7 was two packages, `@openparachute/hub` and `@openparachute/vault`. Use the release bundle (it never touches the old install), then `parachute-core takeover` moves your vaults onto the new program. Don't `bun add -g @openparachute/core` there first: it silently takes over the `parachute` command.
