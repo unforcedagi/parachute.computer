@@ -463,3 +463,25 @@ main :not(pre) > code { color: var(--text); }
 .blog-post-card .date { margin: .3rem 0 0; font: var(--fs-label)/1.4 var(--sans); color: var(--muted); }
 .blog-post-card .excerpt { margin: .35rem 0 0; font: var(--fs-small)/1.5 var(--sans); color: var(--muted); }
 @media (hover: hover) and (pointer: fine) { .blog-post-card:hover { border-color: var(--line); } .blog-post-card:hover h3 { color: var(--accent); } }
+
+/* Screens in a docs page (real ones, cropped): drawn at their own size up to the measure, on a quiet frame. */
+.doc p > img:only-child { display: block; max-width: 100%; height: auto; margin: .4rem 0 .2rem; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 8px 24px -12px rgb(0 0 0 / .18); background: #fff; }
+
+/* Homepage: the connect card's numbered steps, and the asks in quotes under them. */
+.connect-card ol.steps { list-style: none; counter-reset: step calc(var(--start, 1) - 1); margin: 0 0 .7rem; }
+.connect-card ol.steps[start="3"] { --start: 3; }
+.connect-card ol.steps li { counter-increment: step; position: relative; padding: .5rem 0 0 1.5rem; border: 0; font: var(--fs-small)/1.5 var(--sans); color: var(--text); }
+.connect-card ol.steps li::before { content: counter(step); position: absolute; left: 0; color: var(--accent); font-weight: 600; }
+.connect-card ol.steps b { font-weight: 600; }
+.connect-card ol.steps li::after { content: none; }
+.connect-card ol.asks { margin-top: -.2rem; }
+.connect-card ol.asks li { padding-left: 1.5rem; }
+
+/* Homepage: real claude.ai screens, the wide one beside two small ones (stacked on a phone). */
+.seen-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: 1.8rem 2.4rem; align-items: start; }
+.seen-grid figure { margin: 0; min-width: 0; }
+.seen-grid .seen-wide { grid-row: 1 / span 2; }
+.seen-grid img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 10px 30px -14px rgb(0 0 0 / .22); }
+.seen-grid figcaption { margin: .75rem 0 0; max-width: 34rem; font: 400 var(--fs-body)/1.5 var(--serif); color: var(--muted); text-wrap: pretty; }
+.seen-grid figcaption b { color: var(--text); font-weight: 500; }
+@media (max-width: 860px) { .seen-grid { grid-template-columns: 1fr; } .seen-grid .seen-wide { grid-row: auto; } }

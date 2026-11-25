@@ -1,36 +1,60 @@
 ---
 layout: base.njk
 permalink: /
-title: "Parachute: your AI writes it, Parachute shows it"
-description: "Your own vault that any AI can read and write, and an app that shows you what is in it."
+title: "Parachute: tell Claude once, Parachute remembers"
+description: "A vault of your own that Claude, ChatGPT or any AI reads and writes. Start free on Parachute Cloud, or run your own."
 mdTwin: /llms.txt
 ---
 <main class="home">
     <section class="home-hero">
-        <h1><span>Your AI writes it.</span> <span><em>Parachute</em> shows it to you.</span></h1>
+        <h1><span>Tell Claude once.</span> <span><em>Parachute</em> remembers.</span></h1>
         <div class="say">
-            <p class="lede">A vault of your own that Claude, ChatGPT or any AI can read and write. The Parachute app shows what is in it: your records, the small screens your AI makes for them, and a home you arrange together.</p>
-            <p class="hero-actions"><a class="btn btn-primary" href="/docs/use/start/">Get Parachute</a> <a class="link-arrow" href="/docs/">Read the docs</a></p>
+            <p class="lede">A vault of your own that Claude reads and writes: your notes, tasks, people, the books you're reading. It's there in every chat, Claude builds live pages over it, and it's yours to take anywhere. ChatGPT and any MCP app connect the same way.</p>
+            <p class="hero-actions"><a class="btn btn-primary" href="/docs/use/start/">Start free on Parachute Cloud</a> <a class="link-arrow" href="/docs/run/self-host/">Or run your own</a></p>
             <section class="keep" aria-labelledby="yours">
                 <h2 id="yours">Yours to keep</h2>
-                <p>Open source (AGPL). The same vault engine runs on Parachute Cloud and on your own machine, and a vault moves between them as a file. Your AI works for you on your records; nothing runs that you didn't allow.</p>
+                <p>Open source (AGPL). The same vault engine runs on Parachute Cloud and on your own machine, and a vault moves between them as a folder of plain markdown. Your AI works for you on your records; nothing runs that you didn't allow.</p>
             </section>
         </div>
         {# The card hangs from the canopy: the drawing's rigging ends at the card's top edge. #}
         <div class="hangs">
             {% include "canopy.svg" %}
             <aside class="connect-card" aria-labelledby="connect">
-                <h2 id="connect">Connect your AI</h2>
-                <p>Give it your Parachute's address:</p>
-                <div class="addr"><code>https://my.parachute.computer/<wbr>mcp</code></div>
-                <p>Then ask it:</p>
-                <ol>
-                    <li>Make me a reading tracker I can use in Parachute.</li>
-                    <li>What did I capture this week? Sort it into the right places.</li>
-                    <li>Make me a home screen with my journal and my reading list pinned.</li>
+                <h2 id="connect">Connect Claude</h2>
+                <ol class="steps">
+                    <li>Sign up at <a href="https://my.parachute.computer">my.parachute.computer</a> and name your vault.</li>
+                    <li>In Claude, <b>+ › Plugins › Manage plugins › Add › Add custom connector</b>, and paste:</li>
                 </ol>
-                <p class="more"><a class="link-arrow" href="/docs/use/connect-your-ai/">Claude, ChatGPT and others, step by step</a></p>
+                <div class="addr"><code>https://my.parachute.computer/<wbr>mcp</code></div>
+                <ol class="steps" start="3">
+                    <li>Sign in, allow it at <b>Read &amp; write</b>, and ask:</li>
+                </ol>
+                <ol class="asks">
+                    <li>Remember this: the seed library box goes by the garden gate.</li>
+                    <li>Make me a live board of my open tasks that I can tick off.</li>
+                    <li>What did I tell you about the garden this month?</li>
+                </ol>
+                <p class="more"><a class="link-arrow" href="/docs/use/connect-your-ai/">Step by step, with pictures</a></p>
             </aside>
+        </div>
+    </section>
+
+    <section class="home-band seen" aria-labelledby="seen">
+        <h2 id="seen" class="band-title">What Claude does with it</h2>
+        <p class="band-note">From claude.ai, on a test vault of made-up records.</p>
+        <div class="seen-grid">
+            <figure class="seen-wide">
+                <img src="/assets/shots/claude-live-board.webp" width="1100" height="509" loading="lazy" alt="claude.ai: asked for a live board of open tasks, Claude built one beside the chat, tasks grouped by project, each with a circle to tick">
+                <figcaption><b>Live pages.</b> Ask for a board, a reading tracker, a people list: Claude builds a page that reads your vault each time you open it, and a tick writes straight back.</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/shots/claude-capture.webp" width="780" height="330" loading="lazy" alt="claude.ai: 'Jot this down in Parachute test: a seed library box at the garden gate…', and Claude's answer: two records added, a note and a task, linked to Maya">
+                <figcaption><b>It remembers.</b> Say it once; Claude files a note and a task, linked to the people in them. Any later chat finds it.</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/shots/claude-skill.webp" width="780" height="520" loading="lazy" alt="claude.ai: a product card for Fernhill Pottery's speckled oat mugs, in the shop's voice, signed 'Fired with care.'">
+                <figcaption><b>It learns your ways.</b> A skill in your vault says how you do something. Claude found the shop's brand skill on its own and wrote in its voice.</figcaption>
+            </figure>
         </div>
     </section>
 
@@ -52,7 +76,7 @@ mdTwin: /llms.txt
 
     <section class="home-band" aria-labelledby="doors">
         <h2 id="doors" class="band-title">The docs</h2>
-        <p class="band-note">Three doors, by who is reading. Every page is also plain markdown for your AI, at <a href="/llms.txt">/llms.txt</a>.</p>
+        <p class="band-note">Three doors by who is reading, and Fix for when something's stuck. Every page is also plain markdown for your AI, at <a href="/llms.txt">/llms.txt</a>.</p>
         {% include "doors.njk" %}
     </section>
 </main>
