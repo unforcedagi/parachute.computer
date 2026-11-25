@@ -3,11 +3,18 @@ const fs = require("node:fs");
 const ORIGIN = require("./_data/site.js").origin;
 const VERSIONS = require("./_data/versions.json");
 
+/** A docs page's markdown without its front matter (read once per page). */
+const bodies = new Map();
+const bodyOf = (doc) => {
+  if (!bodies.has(doc.inputPath)) bodies.set(doc.inputPath, fs.readFileSync(doc.inputPath, "utf8").replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, ""));
+  return bodies.get(doc.inputPath);
+};
+
 /** A docs page as an agent reads it: the page's own markdown, its title and summary on top, no front matter.
  *  With a version (a /docs/v/<version>/ copy), links stay in that version and one line on top says which it is. */
 function mdTwin(doc, version) {
   const base = version ? `${ORIGIN}/docs/v/${version.version}` : `${ORIGIN}/docs`;
-  const raw = fs.readFileSync(doc.inputPath, "utf8").replace(/^---\n[\s\S]*?\n---\n/, "").trim()
+  const raw = bodyOf(doc).trim()
     // links to other docs pages point at their markdown, with the host, so an agent can follow them (or ask the docs
     // tool for the same name); other site links get the host
     // (a page is a door and a name, `build/make-a-type`; a door alone, `/docs/build/`, has no twin and stays a page)
@@ -24,12 +31,12 @@ function mdTwin(doc, version) {
 
 /** A docs page's headings (## and ###) from its markdown, for the index an AI searches. */
 function headingsOf(doc) {
-  const raw = fs.readFileSync(doc.inputPath, "utf8").replace(/^---\n[\s\S]*?\n---\n/, "").replace(/```[\s\S]*?```/g, "");
+  const raw = bodyOf(doc).replace(/```[\s\S]*?```/g, "");
   return [...raw.matchAll(/^#{2,3} +(.+?) *$/gm)].map((m) => m[1].replace(/`/g, ""));
 }
 
 /** docs/index.json: every page, the versions, and which page fixes which refusal (a page's `errors` front matter). */
-function docsIndex(docs, latest) {
+function docsIndex(docs) {
   const errors = {};
   const pages = docs.map((doc) => {
     const d = doc.data;
@@ -68,6 +75,9 @@ module.exports = function (eleventyConfig) {
     return VERSIONS.versions.flatMap((version) => docs.map((doc) => ({ version, doc })));
   });
   eleventyConfig.addPassthroughCopy({ "docs-versions": "docs/v" });
+  // The markdown a versioned address offers: that version's copy, or today's when a frozen version never had the page.
+  eleventyConfig.addFilter("versionedMd", (slug, version) =>
+    !version.frozen || fs.existsSync(`docs-versions/${version.version}/${slug}.md`) ? `/docs/v/${version.version}/${slug}.md` : `/docs/${slug}.md`);
   // A summary is a line of markdown: its `code` drawn as code on the page, and plain in a meta description.
   const esc = (t) => String(t ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   // Inline code never breaks inside a name; a long one (an address, a call with its arguments) may break after a slash

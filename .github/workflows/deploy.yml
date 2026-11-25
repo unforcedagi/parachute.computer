@@ -3,6 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # daily, so /latest.json follows npm between site changes (the same main, built again)
+  schedule:
+    - cron: "17 6 * * *"
   workflow_dispatch:
 
 permissions:

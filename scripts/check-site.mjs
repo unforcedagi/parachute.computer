@@ -10,7 +10,8 @@ import path from "node:path";
 const SITE = "_site";
 // the origin the build was made for (docs/index.json says it), so a check never skips links a build wrote
 const ORIGIN = JSON.parse(fs.readFileSync(path.join(SITE, "docs/index.json"), "utf8")).origin.replace(/\/+$/, "");
-const FROZEN = JSON.parse(fs.readFileSync("_data/versions.json", "utf8")).versions.filter((v) => v.frozen).map((v) => v.version);
+const versions = JSON.parse(fs.readFileSync("_data/versions.json", "utf8"));
+const FROZEN = versions.versions.filter((v) => v.frozen).map((v) => v.version);
 const fails = [];
 const fail = (m) => fails.push(m);
 const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
@@ -27,11 +28,16 @@ function fileFor(urlPath) {
   if (has(path.join(f, "index.html"))) return path.join(f, "index.html");
   return null;
 }
-const idsCache = new Map();
-function idsIn(file) {
-  if (!idsCache.has(file)) idsCache.set(file, new Set([...fs.readFileSync(file, "utf8").matchAll(/\sid="([^"]+)"/g)].map((m) => m[1])));
-  return idsCache.get(file);
+// a page's ids, and whether it is a redirect page (read once per file)
+const pageCache = new Map();
+function pageOf(file) {
+  if (!pageCache.has(file)) {
+    const html = fs.readFileSync(file, "utf8");
+    pageCache.set(file, { ids: new Set([...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1])), redirect: html.includes('http-equiv="refresh"') });
+  }
+  return pageCache.get(file);
 }
+const idsIn = (file) => pageOf(file).ids;
 function checkLink(from, href) {
   if (href.startsWith(ORIGIN + "/")) href = href.slice(ORIGIN.length);
   if (!href.startsWith("/") || href.startsWith("//")) return;
@@ -41,8 +47,10 @@ function checkLink(from, href) {
   // every anchor lands on an id; a markdown twin's anchor is checked on its HTML page (a frozen version's pages
   // link to headings as they were, so theirs aren't)
   if (hash && !FROZEN.some((v) => from.startsWith(`${SITE}/docs/v/${v}/`))) {
-    const html = target.endsWith(".md") ? fileFor(href.split("#")[0].replace(/\.md$/, "/").replace(/^\/docs\/v\/[^/]+\//, "/docs/")) : target;
-    if (html && html.endsWith(".html") && !fs.readFileSync(html, "utf8").includes("http-equiv=\"refresh\"") && !idsIn(html).has(decodeURIComponent(hash)))
+    // a twin's anchor, and a versioned address's (a redirect page), are checked on today's page
+    const page = href.split("#")[0].replace(/\.md$/, "/").replace(/^\/docs\/v\/[^/]+\//, "/docs/");
+    const html = target.endsWith(".md") || href.startsWith("/docs/v/") ? fileFor(page) : target;
+    if (html && html.endsWith(".html") && !pageOf(html).redirect && !idsIn(html).has(decodeURIComponent(hash)))
       fail(`${from}: ${href}: no #${hash} on ${html}`);
   }
 }
@@ -74,7 +82,6 @@ for (const r of redirects) if (!fileFor(r.to)) fail(`redirect ${r.from} → ${r.
 
 // the docs: twins, index, versions, errors
 const index = JSON.parse(fs.readFileSync(path.join(SITE, "docs/index.json"), "utf8"));
-const versions = JSON.parse(fs.readFileSync("_data/versions.json", "utf8"));
 const pagesOnDisk = walk("docs").filter((f) => f.endsWith(".md")).map((f) => f.replace(/^docs\//, "").replace(/\.md$/, ""));
 const topics = new Set(index.pages.map((p) => p.topic));
 for (const t of pagesOnDisk) {
@@ -97,7 +104,8 @@ for (const [type, where] of Object.entries(index.errors)) {
   if (anchor && !idsIn(page).has(anchor)) fail(`errors.${type}: no #${anchor} on ${topic}`);
 }
 const latest = JSON.parse(fs.readFileSync(path.join(SITE, "latest.json"), "utf8"));
-if (!latest.core?.latest || !latest.docs) fail("latest.json lacks core.latest or docs");
+if (!latest.docs || !latest.core || !("latest" in latest.core)) fail("latest.json lacks core.latest or docs");
+if (latest.core && latest.core.latest === null && !String(latest.source).startsWith("unknown")) fail("latest.json: core.latest is null without saying why");
 
 const llms = fs.readFileSync(path.join(SITE, "llms.txt"), "utf8");
 for (const t of pagesOnDisk) if (!llms.includes(`/docs/${t}.md`)) fail(`llms.txt doesn't list ${t}`);

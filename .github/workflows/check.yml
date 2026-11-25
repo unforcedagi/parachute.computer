@@ -1,11 +1,9 @@
 name: Check the site
 
-# Every PR (and every branch push): build the site and follow it as a person and an AI would (npm run check).
-# Deploying stays in deploy.yml, on main only.
+# Every PR: build the site and follow it as a person and an AI would (npm run check). deploy.yml runs the same check
+# before it deploys main.
 on:
   pull_request:
-  push:
-    branches-ignore: [main]
 
 permissions:
   contents: read

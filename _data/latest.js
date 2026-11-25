@@ -1,6 +1,6 @@
 // /latest.json: the newest Parachute release, read from npm when the site builds (dist-tags of @openparachute/core),
-// so a connected AI can say "a newer version exists". If npm can't be read, the build uses _data/versions.json's
-// `latest` and says so; the build never fails on it.
+// so a connected AI can say "a newer version exists". The site rebuilds daily (deploy.yml) so it keeps up. If npm
+// can't be read, latest and beta are null ("unknown": say nothing) and `source` says why; the build never fails on it.
 const versions = require("./versions.json");
 const shape = (tags, source) => ({
   core: { package: versions.package, latest: tags.latest, beta: tags.beta },
@@ -15,6 +15,6 @@ module.exports = async function () {
     const tags = await res.json();
     return shape({ latest: tags.latest, beta: tags.beta }, "npm");
   } catch (e) {
-    return shape(versions.latest, "versions.json (npm unreachable at build)");
+    return shape({ latest: null, beta: null }, `unknown: npm unreachable at build (${e.message})`);
   }
 };

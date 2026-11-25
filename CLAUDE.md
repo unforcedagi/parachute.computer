@@ -22,7 +22,7 @@ this file only carries what the repo can't tell you.
 - **What an AI reads, besides the twins** (a contract with core's and Cloud's `docs` tool, T-476):
   `/docs/v/<version>/<page>.md` for each version in `_data/versions.json` (major.minor), `/docs/index.json` (every
   page, its headings, and `errors`: each refusal `error_type` → the page and section with its fix, from a page's
-  `errors:` front matter; the Fix door's pages carry them) and `/latest.json` (npm dist-tags of `@openparachute/core` at build). At a release, run
+  `errors:` front matter; the Fix door's pages carry them) and `/latest.json` (npm dist-tags of `@openparachute/core` at build; `null` with the reason when npm can't be read; deploy.yml rebuilds main daily so it follows npm). At a release, run
   `npm run docs:freeze -- <old version>` before the pages move on, then add the new version as `current`.
   `SITE_ORIGIN=<url>` builds a copy whose machine-read links point at itself (a preview, or a self-hoster's docs).
 - **`npm run check` after a build** (and in CI on every PR): every link on the live pages, the twins, llms.txt and
