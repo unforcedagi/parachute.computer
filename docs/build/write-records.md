@@ -34,7 +34,7 @@ Lists leave the body out unless you pass `include_body: true`. Field operators: 
 ## Change
 
 ```json
-update-record { "id": "Books/Piranesi", "fields": { "status": "done" }, "if_updated_at": "<updated_at you read>" }
+update-record { "id": "Books/Piranesi", "fields": { "status": "done" }, "if_updated_at": "<its updatedAt as you read it>" }
 ```
 
 - `fields` merges; `null` removes a field. `types`, `tags` and `links` take `{ "add": [...], "remove": [...] }`.
