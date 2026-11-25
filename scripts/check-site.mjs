@@ -10,6 +10,7 @@ import path from "node:path";
 const SITE = "_site";
 // the origin the build was made for (docs/index.json says it), so a check never skips links a build wrote
 const ORIGIN = JSON.parse(fs.readFileSync(path.join(SITE, "docs/index.json"), "utf8")).origin.replace(/\/+$/, "");
+const FROZEN = JSON.parse(fs.readFileSync("_data/versions.json", "utf8")).versions.filter((v) => v.frozen).map((v) => v.version);
 const fails = [];
 const fail = (m) => fails.push(m);
 const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
@@ -37,8 +38,9 @@ function checkLink(from, href) {
   const target = fileFor(href);
   if (!target) return fail(`${from}: ${href} is not built`);
   const hash = href.split("#")[1];
-  // every anchor lands on an id; a markdown twin's anchor is checked on its HTML page
-  if (hash) {
+  // every anchor lands on an id; a markdown twin's anchor is checked on its HTML page (a frozen version's pages
+  // link to headings as they were, so theirs aren't)
+  if (hash && !FROZEN.some((v) => from.startsWith(`${SITE}/docs/v/${v}/`))) {
     const html = target.endsWith(".md") ? fileFor(href.split("#")[0].replace(/\.md$/, "/").replace(/^\/docs\/v\/[^/]+\//, "/docs/")) : target;
     if (html && html.endsWith(".html") && !fs.readFileSync(html, "utf8").includes("http-equiv=\"refresh\"") && !idsIn(html).has(decodeURIComponent(hash)))
       fail(`${from}: ${href}: no #${hash} on ${html}`);
