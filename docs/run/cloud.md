@@ -8,7 +8,7 @@ checked: "parachute-cloud next 005d073 workers/identity/src/ui.ts (sign-up, Name
 
 **Cloud runs the 0.8 engine today.** Its MCP tools have the note names (`create-note`, `query-notes`, `update-note`, `update-tag`, with `content` for a body and `metadata` for fields) and REST is `/api/notes`; the record tools, `/api/records` and the `docs` tool come when Cloud moves to 0.9. The [build pages](/docs/build/) use 0.9's words; each says the 0.8 name where it differs.
 
-Parachute Cloud is Parachute run for you. Sign up at [my.parachute.computer](https://my.parachute.computer) with your email (a link or a 6-digit code, no password), name your first vault, and connect Claude: [Start on Parachute Cloud](/docs/use/start/). Your account page lists your vaults, each with its connector address and **Copy**.
+Parachute Cloud is Parachute run for you. Sign up at [my.parachute.computer](https://my.parachute.computer) with your email (a link or a 6-digit code, no password), name your first vault, and connect your AI: [Start on Parachute Cloud](/docs/use/start/). Your account page lists your vaults, each with its connector address and **Copy**.
 
 - **Open beta:** free, no card; up to 5 vaults, 500 MiB of notes and 8 GiB of files. Before any paid plan you'll hear about it well ahead.
 

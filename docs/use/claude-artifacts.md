@@ -1,5 +1,6 @@
 ---
 title: "Use Claude artifacts as Parachute surfaces"
+nav: "Live pages (in Claude)"
 summary: "Ask Claude for a live page over your vault, like a task list or a reading tracker. It reads and writes your records each time someone opens it."
 door: use
 order: 2.5

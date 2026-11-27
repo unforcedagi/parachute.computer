@@ -1,7 +1,7 @@
 name: Check the site
 
-# Every PR: build the site and follow it as a person and an AI would (npm run check). deploy.yml runs the same check
-# before it deploys main.
+# Every PR: build the site and follow it as a person and an AI would (npm run check), then use it in a browser
+# (npm run check:pages). deploy.yml runs the first check before it deploys main.
 on:
   pull_request:
 
@@ -20,5 +20,9 @@ jobs:
         run: |
           npm ci
           npx @11ty/eleventy
-      - name: Links, twins, versions, index
+      - name: Links, twins, versions, index, word budgets
         run: npm run check
+      - name: The pages in a browser
+        run: |
+          npx playwright install --with-deps chromium
+          npm run check:pages

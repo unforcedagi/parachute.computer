@@ -1,82 +1,92 @@
 ---
 layout: base.njk
 permalink: /
-title: "Parachute: tell Claude once, Parachute remembers"
-description: "A vault of your own that Claude, ChatGPT or any AI reads and writes. Start free on Parachute Cloud, or run your own."
+title: "Parachute: one vault, any AI"
+description: "A vault of your own that Claude, ChatGPT or a local model reads and writes. Open source. Start free on Parachute Cloud, or run your own."
 mdTwin: /llms.txt
 ---
+{# The homepage shows the product instead of describing it: one sentence, then a small stage where three AIs take
+   turns over one vault (assets/home-loop.js). Depth is one click away, never on this page: `npm run check` holds it
+   to a word budget. #}
 <main class="home">
     <section class="home-hero">
-        <h1><span>Tell Claude once.</span> <span><em>Parachute</em> remembers.</span></h1>
         <div class="say">
-            <p class="lede">A vault of your own that Claude reads and writes: your notes, tasks, people, the books you're reading. It's there in every chat, Claude builds live pages over it, and it's yours to take anywhere. ChatGPT and any MCP app connect the same way.</p>
+            <h1>One vault. <em>Any AI.</em></h1>
+            <p class="lede">Tell Claude, ChatGPT or a local model something once. It lands in a vault you own, and any AI you connect can find it.</p>
             <p class="hero-actions"><a class="btn btn-primary" href="/docs/use/start/">Start free on Parachute Cloud</a> <a class="link-arrow" href="/docs/run/self-host/">Or run your own</a></p>
-            <section class="keep" aria-labelledby="yours">
-                <h2 id="yours">Yours to keep</h2>
-                <p>Open source (AGPL). The same vault engine runs on Parachute Cloud and on your own machine, and a vault moves between them as a folder of plain markdown. Your AI works for you on your records; nothing runs that you didn't allow.</p>
-            </section>
+            <ul class="ticks">
+                <li>Open source</li>
+                <li>Plain markdown you can take with you</li>
+                <li>Free in the open beta</li>
+            </ul>
         </div>
-        {# The card hangs from the canopy: the drawing's rigging ends at the card's top edge. #}
-        <div class="hangs">
-            {% include "canopy.svg" %}
-            <aside class="connect-card" aria-labelledby="connect">
-                <h2 id="connect">Connect Claude</h2>
-                <ol class="steps">
-                    <li>Sign up at <a href="https://my.parachute.computer">my.parachute.computer</a> and name your vault.</li>
-                    <li>In Claude, <b>+ › Plugins › Manage plugins › Add › Add custom connector</b>, and paste:</li>
-                </ol>
-                <div class="addr"><code>https://my.parachute.computer/<wbr>mcp</code></div>
-                <ol class="steps" start="3">
-                    <li>Sign in, allow it at <b>Read &amp; write</b>, and ask:</li>
-                </ol>
-                <ol class="asks">
-                    <li>Remember this: the seed library box goes by the garden gate.</li>
-                    <li>Make me a live board of my open tasks that I can tick off.</li>
-                    <li>What did I tell you about the garden this month?</li>
-                </ol>
-                <p class="more"><a class="link-arrow" href="/docs/use/connect-your-ai/">Step by step, with pictures</a></p>
-            </aside>
-        </div>
-    </section>
 
-    <section class="home-band seen" aria-labelledby="seen">
-        <h2 id="seen" class="band-title">What Claude does with it</h2>
-        <p class="band-note">From claude.ai, on a test vault of made-up records running Parachute's next release. Skills come to Parachute Cloud with it.</p>
-        <div class="seen-grid">
-            <figure class="seen-wide">
-                <img src="/assets/shots/claude-live-board.webp" width="1100" height="509" loading="lazy" alt="claude.ai: asked for a live board of open tasks, Claude built one beside the chat, tasks grouped by project, each with a circle to tick">
-                <figcaption><b>Live pages.</b> Ask for a board, a reading tracker, a people list: Claude builds a page that reads your vault each time you open it, and a tick writes straight back.</figcaption>
-            </figure>
-            <figure>
-                <img src="/assets/shots/claude-capture.webp" width="780" height="330" loading="lazy" alt="claude.ai: 'Jot this down in Parachute test: a seed library box at the garden gate…', and Claude's answer: two records added, a note and a task, linked to Maya">
-                <figcaption><b>It remembers.</b> Say it once; Claude files a note and a task, linked to the people in them. Any later chat finds it.</figcaption>
-            </figure>
-            <figure>
-                <img src="/assets/shots/claude-skill.webp" width="780" height="520" loading="lazy" alt="claude.ai: a product card for Fernhill Pottery's speckled oat mugs, in the shop's voice, signed 'Fired with care.'">
-                <figcaption><b>It learns your ways.</b> A skill in your vault says how you do something. Claude found the shop's brand skill on its own and wrote in its voice.</figcaption>
-            </figure>
-        </div>
-    </section>
-
-    <section class="home-band" aria-labelledby="layers">
-        <div class="band-head">
-            <div>
-                <h2 id="layers">Everything is a record</h2>
-                <p class="band-note">One reading tracker passes through all four.</p>
-                <a class="link-arrow" href="/docs/build/how-it-works/">Follow it through every layer</a>
+        {# The stage. Without script it is the first scene's last frame: Claude has saved a note and a task. #}
+        <figure class="stage" data-vault="landed" aria-label="An example: three AIs take turns over one vault">
+            <div class="ai">
+                <div class="ai-pick" role="group" aria-label="Which AI is talking">
+                    <button type="button" aria-pressed="true">Claude</button>
+                    <button type="button" aria-pressed="false">ChatGPT</button>
+                    <button type="button" aria-pressed="false">Local model</button>
+                    <button class="pause" type="button" aria-label="Pause" hidden><span></span></button>
+                </div>
+                <div class="chat">
+                    <p class="you typed">Remember: the seed library box goes by the garden gate. Ask Maya if the garden will host it.</p>
+                    <p class="it typed"><b class="who">Claude</b><span class="txt">Saved a note and a task, linked to Maya.</span></p>
+                </div>
             </div>
-            <ol class="layers">
-                <li><b>Your vault</b><span>Where it is kept: Parachute Cloud, or a server of your own. Plain markdown you can export.</span><code>https://…/mcp</code></li>
-                <li><b>Types and records</b><span>A book, a meeting, a recipe: each a record with fields. Your AI makes the types it needs.</span><code>Books/Piranesi · type book</code></li>
-                <li><b>Applets</b><span>A small screen, one record of code. It runs only after you allow it, and sees only what its card says.</span><code>Applets/Reading · tagged applet</code></li>
-                <li><b>Your home</b><span>A bundle: one record that picks your home, your pins and your applets.</span><code>Parachute/Apps/&lt;id&gt;</code></li>
-            </ol>
-        </div>
+            <div class="chute" aria-hidden="true"><svg><use href="#pchute"/></svg></div>
+            <div class="vault">
+                <p class="vault-head"><b>Your vault</b><span>the same one, whichever AI you use</span></p>
+                <ul class="records">
+                    <li class="rec"><i>Person</i><b>Maya</b><span>runs the garden</span></li>
+                    <li class="rec"><i>Book</i><b>Piranesi</b><span>reading</span></li>
+                    <li class="rec new note"><i>Note</i><b>Seed library box</b><span>goes by the garden gate</span></li>
+                    <li class="rec new task"><i>Task</i><b>Ask Maya about hosting</b><span class="state"><span class="open">open</span><span class="done">done</span></span></li>
+                </ul>
+            </div>
+            <figcaption>A drawing of the flow, with made-up notes. Claude is the path we've tested most. <a href="/docs/use/connect-your-ai/">How far each AI is tested</a></figcaption>
+        </figure>
     </section>
 
-    <section class="home-band" aria-labelledby="doors">
-        <h2 id="doors" class="band-title">The docs</h2>
-        <p class="band-note">Three doors by who is reading, and Fix for when something's stuck. Every page is also plain markdown for your AI, at <a href="/llms.txt">/llms.txt</a>.</p>
-        {% include "doors.njk" %}
+    <section class="home-ways" aria-labelledby="ways">
+        <h2 id="ways">Two ways in</h2>
+        <div class="way-grid">
+            <a class="way" href="/docs/use/start/">
+                <h3>Parachute Cloud</h3>
+                <p>We run it. You get a vault in about a minute.</p>
+                <span class="price">Free in the open beta</span>
+                <span class="go">Start free</span>
+            </a>
+            <a class="way" href="/docs/run/self-host/">
+                <h3>Your own machine</h3>
+                <p>One command on a Mac or a Linux box.</p>
+                <span class="price">Free, open source</span>
+                <span class="go">Run your own</span>
+            </a>
+        </div>
+        <p class="ways-note">A vault moves between them as a folder of plain markdown. There's a third way too: <a href="/docs/run/own-cloudflare/">your own Cloudflare</a>.</p>
+    </section>
+
+    <section class="home-real">
+        <details>
+            <summary><span>See it for real</span> <small>three screens from claude.ai</small></summary>
+            <div class="real-grid">
+                <figure>
+                    <img src="/assets/shots/claude-capture.webp" width="780" height="330" loading="lazy" alt="claude.ai: 'Jot this down in Parachute test: a seed library box at the garden gate…', and Claude's answer: two records added, a note and a task, linked to Maya">
+                    <figcaption><b>It remembers.</b> Say it once; a note and a task are filed, linked to the people in them.</figcaption>
+                </figure>
+                <figure>
+                    <img src="/assets/shots/claude-live-board.webp" width="1100" height="509" loading="lazy" alt="claude.ai: asked for a live board of open tasks, Claude built one beside the chat, tasks grouped by project, each with a circle to tick">
+                    <figcaption><b>Live pages.</b> Ask for a board; it reads your vault each time, and a tick writes back. <a href="/docs/use/claude-artifacts/">How</a></figcaption>
+                </figure>
+                <figure>
+                    <img src="/assets/shots/claude-skill.webp" width="780" height="520" loading="lazy" alt="claude.ai: a product card for Fernhill Pottery's speckled oat mugs, in the shop's voice, signed 'Fired with care.'">
+                    <figcaption><b>Your ways.</b> A skill in your vault says how you do something. <a href="/docs/use/skills/">How</a></figcaption>
+                </figure>
+            </div>
+            <p class="real-note">A test vault of made-up records, on Parachute's next release.</p>
+        </details>
     </section>
 </main>
+<script src="/assets/home-loop.js" defer></script>

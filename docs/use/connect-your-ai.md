@@ -1,83 +1,132 @@
 ---
-title: "Connect Claude"
-nav: "Connect Claude (or another AI)"
-summary: "Give Claude your vault's address, sign in, allow it at Read & write. The same address works in ChatGPT, Claude Code and any MCP app."
+title: "Connect your AI"
+summary: "One address, for any AI app that speaks MCP: Claude, ChatGPT, a local model. Each one says how far we've tested it."
 door: use
 order: 2
-checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
+tabs:
+  - { id: claude, name: "Claude", level: full, label: "Tested end to end" }
+  - { id: chatgpt, name: "ChatGPT", level: part, label: "First runs pass" }
+  - { id: local-models, name: "Local models", level: part, label: "Works in our runs" }
+checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); ChatGPT sessions of 2026-11-12 (T-456: a Go account, OAuth sign-in, writes and reads on a server of ours, Allow read-only tools after parachute-core #100; not run on Parachute Cloud); a local model through an agent app on a throwaway vault, 2026-11-20 (a key on the vault's own address over loopback HTTP); parachute-core contracts/evals/mcp-tasks (Claude Code, Codex CLI); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
 ---
 
-Your AI needs one thing: your vault's address, which ends in `/mcp`.
+Your AI needs one thing: your vault's address.
 
-- **Parachute Cloud:** `https://my.parachute.computer/mcp`, the same for everyone; you pick the vault when you allow
-  it. Each vault's own address, `https://my.parachute.computer/vault/<your vault>/mcp`, is under **Connect your AI**
-  on its card.
-- **Your own server:** `https://<your server>/mcp` reaches every vault you choose when you allow it;
-  `https://<your server>/vault/<vault name>/mcp` reaches one. The app shows both under **Connect**, with **Copy**.
+- **On Parachute Cloud:** `https://my.parachute.computer/mcp`
+- **On your own server:** `https://<your server>/mcp`
+
+When you connect, Parachute's own page asks which vault and what the AI may do. Choose **Read & write**, so it can
+save what you tell it; with read only it can look but can't remember anything.
+
+<details>
+<summary>An address for one vault only</summary>
+
+- **Parachute Cloud:** each vault's own address, `https://my.parachute.computer/vault/<your vault>/mcp`, is under
+  **Connect your AI** on its card. It skips the choice of vault.
+- **Your own server:** `https://<your server>/vault/<vault name>/mcp`. The app shows both addresses under
+  **Connect**, with **Copy**.
+
+</details>
 
 ## Claude
 
-On [claude.ai](https://claude.ai). (Parachute Cloud's account page notes that Claude's free plan allows one custom
-connector.)
+**Tested end to end** on claude.ai, 25 November 2026: connecting, remembering, finding, live pages and skills.
 
-**1.** In a chat, press **+**, then **Plugins › Manage plugins**. On **Your plugins**, press **Add**, then **Add custom connector**.
+1. In a chat, press **+**, then **Plugins › Manage plugins**. On **Your plugins**, press **Add**, then **Add custom connector**.
+2. Name it `Parachute`, paste your address, and press **Continue**.
+3. Claude checks the address and picks **Sign in now** and **Register automatically** for you. Leave them and press **Add**.
+4. Parachute's page opens. Sign in (on Cloud, the emailed link or code), keep **Read & write**, and press **Allow**.
+
+<details>
+<summary>Show the screens</summary>
 
 ![The Add menu on claude.ai's Your plugins page, with Add custom connector](/assets/shots/claude-add-menu.webp)
 
-**2.** Name it `Parachute`, paste your address, and press **Continue**.
-
 ![Add custom connector: the name Parachute and the address https://my.parachute.computer/mcp](/assets/shots/claude-connector-step1.webp)
-
-**3.** Claude checks the address and picks **Sign in now** and **Register automatically** for you. Leave them and press **Add**.
 
 ![Step two: Authentication, Sign in now (Detected); OAuth client, Register automatically (Detected)](/assets/shots/claude-connector-step2.webp)
 
-*Pictures from claude.ai, connected to a test server. In these two the connector's name and address are changed to
-Parachute Cloud's; everything else is as claude.ai drew it.*
-
-**4.** Parachute's page opens. Sign in (on Cloud, the emailed link or code), then allow Claude at **Read & write**, so
-it can save what you tell it. With read only it can look but can't remember anything.
-
-- **Parachute Cloud**, through `https://my.parachute.computer/mcp`: **Connect Claude** asks which vault, and the access
-  level, **Read & write**, is chosen already. Leave **Full admin** unchosen. (Through a vault's own address the page
-  just says "Claude wants to read and write notes in" that vault: press **Allow**.)
-- **Your own server:** choose **Write** for each vault it should save to. Through one vault's own address Claude asks
-  for every level and admin comes ticked: untick it.
-
-Admin is for changing how a vault is set up; you can give it later, on purpose ([It needs admin](/docs/fix/needs-admin/)).
-
-**5.** Back in claude.ai the connector shows as connected. Ask something. On claude.ai's **Manual** setting Claude asks
-before each tool call, reads included; **Always allow** on the card is meant to stop that for the tool. On **Auto**
-(the default now) it goes ahead.
-
 ![Claude wants to use Query-records from Parachute test: Decline, Always allow, Allow once](/assets/shots/claude-tool-approval.webp)
 
-**Claude Code:** `claude mcp add --transport http parachute https://my.parachute.computer/mcp`,
-then `/mcp` in Claude Code to sign in.
+*Pictures from claude.ai, connected to a test server. In the second and third the connector's name and address are
+changed to Parachute Cloud's; everything else is as claude.ai drew it.*
+
+</details>
+
+<details>
+<summary>More: the approval page, asking before each tool, Claude Code</summary>
+
+- **The approval page on Parachute Cloud**, through `https://my.parachute.computer/mcp`: **Connect Claude** asks which
+  vault, and **Read & write** is chosen already. Leave **Full admin** unchosen. (Through a vault's own address the page
+  just says "Claude wants to read and write notes in" that vault: press **Allow**.)
+- **On your own server:** choose **Write** for each vault it should save to, and make sure **admin** is unticked.
+- **Admin** is for changing how a vault is set up; you can give it later, on purpose ([It needs admin](/docs/fix/needs-admin/)).
+- **Asking before each tool:** on claude.ai's **Manual** setting Claude asks before each tool call, reads included;
+  **Always allow** on the card is meant to stop that for the tool. On **Auto** (the default now) it goes ahead.
+- **Claude's free plan** allows one custom connector (Parachute Cloud's account page notes this).
+- **Claude Code:** `claude mcp add --transport http parachute https://my.parachute.computer/mcp`, then `/mcp` in
+  Claude Code to sign in.
+
+</details>
 
 ## ChatGPT
 
-In Settings, **Apps & Connectors**: create a custom connector (an MCP server) and paste the same address. It needs a
-paid plan, and may need Developer mode. Each tool says whether it only reads or changes something, so ChatGPT needn't
-ask before every read.
+**First runs pass; we're still testing.** On 12 November 2026 ChatGPT signed in to a server of ours, wrote notes and
+read them back. We haven't walked it on Parachute Cloud yet.
 
-## Any other MCP app
+1. In ChatGPT's settings, add a **custom connector** (an MCP server) and paste your address.
+2. Sign in on Parachute's page and allow **Read & write**.
+3. Set the connector to **Allow read-only tools**: ChatGPT then reads without asking, and still asks before it writes.
 
-Cursor, Grok, Muse and others take the same address: an MCP server over HTTP, signed in with OAuth.
+<details>
+<summary>More: what we haven't checked</summary>
+
+Our runs used a paid ChatGPT account. We haven't tried the free plan, and ChatGPT's menus change often, so the names
+above may differ; it may also ask for Developer mode. A connector has one permission for all its tools (Always ask,
+Allow read-only tools, Allow low-risk tools, Allow all tools); each Parachute tool says whether it only reads, which
+is what lets ChatGPT skip asking for reads.
+
+</details>
+
+## Local models
+
+**Works in our runs.** In November 2026 a model running on our own machine, through an agent app, read and wrote a
+test vault with a key. We haven't written steps for each app yet.
+
+1. Use an app that runs your model and speaks MCP, with a model that can call tools.
+2. Add an MCP server over HTTP with your address.
+3. Sign in when the app opens Parachute's page. If the app can't open a browser, give it a key and one vault's own
+   address instead ([Keys and what they reach](/docs/build/keys-and-scopes/)).
+
+<details>
+<summary>More: keep everything on your machine</summary>
+
+Run Parachute on the same computer as the model ([Run your own](/docs/run/self-host/)). The address is then
+`http://127.0.0.1:1939/vault/<vault name>/mcp`, with the key as `Authorization: Bearer <key>`. A local model with a
+local vault sends nothing off the computer.
+
+</details>
+
+## Other apps
+
+**The same address; less walked by us.** Claude Code and the Codex CLI run against Parachute in our own tests. Cursor,
+Grok, Muse and others take the same thing: an MCP server over HTTP, signed in with OAuth.
 
 ## Then ask it
 
 Your AI starts each conversation knowing your vault's name and its types. Try:
 
 - "Remember this in Parachute: …" and, in a new chat, "What did I tell you about …?"
-- "Make me a live board of my open tasks that I can tick off." ([Live pages](/docs/use/claude-artifacts/))
+- "Make me a live board of my open tasks that I can tick off." ([Live pages](/docs/use/claude-artifacts/), in Claude)
 - "Make me a reading tracker I can use in Parachute."
 
 ## What it can do
 
-What you allowed, in the vaults you gave it: read, or read and write (which includes making a type and adding fields
-to a type it made). It never reaches a vault you left out. It connects as itself, not as you: on your own server the app lists it
-under Vault, your vault, **Sharing**, and **End** there takes it back. To change its level, remove the connector and
-add it again. An AI can't make an applet run: you allow each one in the app ([What Allow means](/docs/use/allowing-applets/)).
+- **What you allowed, in the vaults you gave it:** read, or read and write (which includes making a type and adding
+  fields to a type it made). It never reaches a vault you left out.
+- **It connects as itself, not as you.** On your own server the app lists it under Vault, your vault, **Sharing**, and
+  **End** there takes it back.
+- **To change its level,** remove the connector and add it again.
+- **It can't make an applet run:** you allow each one in the app ([What Allow means](/docs/use/allowing-applets/)).
 
-Stuck? [Claude won't connect](/docs/fix/connect/).
+Stuck? [It won't connect](/docs/fix/connect/).

@@ -76,8 +76,8 @@
       </symbol>
     </svg>
 
-    {# One nav, on every page (the homepage too, since T-476). The doors: Use (people), Build (builders and
-       their AI), Run (whoever keeps the server), Fix (when something's stuck). #}
+    {# One nav, on every page: the brand, four plain words, and the way in. The docs' four doors (use, build, run,
+       fix) are on the docs page and beside every docs page, not up here. #}
     <a class="skip" href="#page-start">Skip to the page</a>
     <header class="site-nav">
         <div class="nav-in">
@@ -85,11 +85,9 @@
                 <svg class="mark" aria-hidden="true"><use href="#pchute"/></svg>
                 <span>Parachute</span>
             </a>
-            <nav class="doors-nav" aria-label="Docs">
-                {% for dp in doorPages %}<a class="nav-door" href="/docs/{{ dp.door }}/" {% if door == dp.door %}aria-current="true"{% endif %}>{{ dp.name }}</a>
-                {% endfor %}
-            </nav>
             <nav class="nav-right" aria-label="Site">
+                <a href="/docs/" {% if door or page.url == "/docs/" %}aria-current="true"{% endif %}>Docs</a>
+                <a class="nav-drop" href="/pricing/" {% if page.url == "/pricing/" %}aria-current="true"{% endif %}>Pricing</a>
                 <a class="nav-drop" href="/blog/">Blog</a>
                 <a class="nav-drop" href="https://github.com/ParachuteComputer" rel="noopener">GitHub</a>
                 <a class="btn btn-primary" href="/docs/use/start/">Start free</a>
@@ -105,7 +103,7 @@
         <nav class="foot-links" aria-label="More">
             <a href="/docs/">Docs</a>
             <a href="/docs/use/start/">Start here</a>
-            <a href="/docs/use/connect-your-ai/">Connect Claude</a>
+            <a href="/docs/use/connect-your-ai/">Connect your AI</a>
             <a href="/docs/run/self-host/">Self-host</a>
             <a href="/pricing/">Pricing</a>
             <a href="/blog/">Blog</a>
@@ -118,7 +116,7 @@
     {# Copy-to-clipboard — progressive enhancement. With JS off, no button
        is added and every code block stays plain, fully selectable text.
        Targets command blocks (.code-inline), every code block in a page (main pre;
-       "Copy prompt" on a post's), and the homepage's address. Opt out with data-no-copy. #}
+       "Copy prompt" on a post's). Opt out with data-no-copy. #}
     <script>
     (function () {
         if (!navigator.clipboard) return;
@@ -172,9 +170,9 @@
             }
         }
 
-        // Command blocks, every code block in a page, and the address on the homepage; a post's blocks are the
-        // starter prompts, so theirs say "Copy prompt".
-        document.querySelectorAll(".code-inline:not([data-no-copy]), main pre:not([data-no-copy]), .connect-card .addr").forEach(function (el) {
+        // Command blocks and every code block in a page; a post's blocks are the starter prompts, so theirs say
+        // "Copy prompt".
+        document.querySelectorAll(".code-inline:not([data-no-copy]), main pre:not([data-no-copy])").forEach(function (el) {
             addButton(el, el.closest(".post-content") ? "Copy prompt" : "Copy");
         });
 

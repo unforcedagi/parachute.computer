@@ -1,15 +1,23 @@
-{# The doors side by side (use, build, run, fix): each door's guides, then a way into all its pages. #}
+{# The docs page's four doors (use, build, run, fix): what each is for, its first pages, and the rest folded under
+   "All N pages". Titles only: a page's summary is on its door's page and at its own top. #}
 <div class="doors">
     {% for dp in doorPages %}
     {% set all = collections.docs | door(dp.door) %}
-    <section>
+    {% set guides = all | guides %}
+    <section class="door-card">
         <h2><a href="/docs/{{ dp.door }}/">{{ dp.name }}</a></h2>
-        <p class="who">{{ dp.short }}</p>
+        <p class="who">{{ dp.card }}</p>
         <ol>
-            {% for p in all | guides %}<li><a href="{{ p.url }}">{{ p.data.nav or p.data.title }}{% if p.data.summary %}<span class="s">{{ p.data.summary | inlineCode | safe }}</span>{% endif %}</a></li>
-            {% endfor %}
+            {% for p in guides %}{% if loop.index <= 3 %}<li><a href="{{ p.url }}">{{ p.data.nav or p.data.title }}</a></li>
+            {% endif %}{% endfor %}
         </ol>
-        {% if (all | refs).length %}<a class="link-arrow all" href="/docs/{{ dp.door }}/#reference">And the reference</a>{% endif %}
+        {% if all.length > 3 %}<details>
+            <summary>All {{ all.length }} pages</summary>
+            <ol>
+                {% for p in all %}<li><a href="{{ p.url }}">{{ (p.data.nav or p.data.title) | refName }}</a></li>
+                {% endfor %}
+            </ol>
+        </details>{% endif %}
     </section>
     {% endfor %}
 </div>
