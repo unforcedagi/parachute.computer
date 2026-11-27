@@ -29,7 +29,7 @@ You signed in and allowed it, and claude.ai still shows the connector as not con
 
 ## It's connected but says it can't save
 
-It connected at **Read only**. Remove the connector and add it again, and on the approval page choose **Read & write**. With read only it can look, but it can't remember anything for you.
+It connected at **Read only**. Remove the connector and add it again, and on the approval page choose **Read & write** (**Write** on your own server). With read only it can look, but it can't remember anything for you.
 
 ## It says Parachute refused it
 
