@@ -6,7 +6,7 @@ order: 2.5
 checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2 §3: four pages built unprompted, the one Allow sheet, the conflict line, Duet) and of 2026-11-27 (T-476 livedemo FINDINGS: how a page refreshes, measured with a probe page and the server's request log; how a refusal reaches a page; this template published unchanged and exercised: a change made elsewhere, a tick, a conflict, Refresh); parachute-core packages/vault/core/src/vault-projection.ts (LIVE_PAGE_BLOCK), core/src/mcp-records.ts (query-records, update-record), core/src/skill-files.ts (live-page), contracts/suites/door/records.test.ts; the template and two pages Claude wrote from the connector's words alone, run in a harness that mimics claude.ai's artifact runtime (contract 0.2.96)"
 ---
 
-*On a 0.8 server (Parachute Cloud today):* the page calls `query-notes` and `update-note`; a record's `body` and `fields` are `content` and `metadata`, types go in `tags`, and `include_body` is `include_content`. Change the template's names to match.
+*On a 0.8 server (Parachute Cloud today):* the page calls `query-notes` and `update-note`; a record's `body` and `fields` are `content` and `metadata`, types go in `tags`, and `include_body` is `include_content`. Change the template's names to match. A 0.8 refusal carries no `structuredContent`; the template then knows a conflict by its word and shows a plain line for the rest.
 
 **Tested in claude.ai.** Asked in plain words, Claude built a task board, a reading tracker, a people list and a journal page over a test vault, each reading and writing it, and Duet did the same. The template below was published there as it is and exercised. Those runs used Parachute's next release on a test server; on Parachute Cloud (0.8) pages aren't tried in claude.ai yet.
 
@@ -87,7 +87,7 @@ It declares two tools for the connector named `Parachute` (the name you gave it 
 </head>
 <body>
 <main>
-  <header><h1>Tasks</h1><span class="meta" id="meta">Loading…</span></header>
+  <header><h1>Tasks</h1><span class="meta"><span id="count"></span><span id="stale" class="stale"></span><span id="age">Loading…</span><button id="refresh" hidden>Refresh</button></span></header>
   <div id="note" role="status"></div>
   <h2>Open</h2><ul id="open"><li class="empty">…</li></ul>
   <h2>Done</h2><ul id="done"></ul>
@@ -101,7 +101,8 @@ const OPEN = "todo";
 
 const $ = (id) => document.getElementById(id);
 const say = (t) => { $("note").textContent = t || ""; };
-const today = () => new Date().toISOString().slice(0, 10);
+// today on the viewer's own calendar, not UTC
+const today = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 const nameOf = (r) => (r.path || r.id).split("/").pop();
 // query-records answers an array, or {records, next_cursor} when a limit or cursor is given
 const recordsOf = (payload) => Array.isArray(payload) ? payload : (payload && Array.isArray(payload.records) ? payload.records : []);
@@ -111,23 +112,31 @@ function plain(e) {
   const code = e && e.code;
   if (code === "server_not_connected" || code === "server_not_found") return "Connect Parachute in Claude (+ › Plugins) to see your tasks here.";
   if (code === "needs_reauth") return "Parachute needs you to sign in again (+ › Plugins).";
+  if (code === "selection_required") return "You have more than one Parachute connector. Choose one when Claude asks.";
   if (code === "not_granted" || code === "consent_required" || code === "approval_required" || code === "not_in_manifest") return "This page needs your OK to read Parachute.";
-  if (code === "blocked_by_policy") return "Your organisation doesn't let this page use Parachute.";
+  if (code === "blocked_by_policy" || code === "capability_disabled" || code === "capability_removed") return "This page isn't allowed to use Parachute here.";
+  if (code === "user_changed") return "You're signed in as someone else now. Reload this page.";
   if (code === "tool_error") return refusal(e).message || "Parachute refused that.";
   return "Couldn't reach Parachute.";
 }
 // Lost access, or the viewer said no: the rows come off the screen. Any other failed read keeps them.
-const LOST = ["needs_reauth", "server_not_connected", "server_not_found", "approval_required", "blocked_by_policy", "consent_required", "not_granted", "not_in_manifest"];
+const LOST = ["needs_reauth", "server_not_connected", "server_not_found", "selection_required", "approval_required", "blocked_by_policy",
+  "consent_required", "not_granted", "not_in_manifest", "capability_disabled", "capability_removed", "user_changed"];
 // A refusal rejects with code tool_error. error.result.structuredContent is Parachute's {error_type, message};
-// error.message is that same JSON as text, so never show it.
-function refusal(e) { return (e && e.result && e.result.structuredContent) || {}; }
+// error.message is that same JSON as text, so never show it. (A 0.8 server sends no structuredContent: its conflict
+// is known by the word.)
+function refusal(e) {
+  const s = e && e.result && e.result.structuredContent;
+  if (s) return s;
+  return /conflict/i.test(String((e && e.message) || "")) ? { error_type: "conflict" } : {};
+}
 
 let mcp = null;
 let rows = [];
-let readFailed = false;   // a read error is cleared by the next good read; a write's message stays until the next write
-let lastRead = 0;         // when the rows on screen were read
-let mine = new Set();     // records this page just wrote: their change isn't news
-let moved = new Set();    // records that changed somewhere else since the last read: marked once
+let readFailed = false;      // a read error is cleared by the next good read; a write's message stays until the next write
+let lastRead = 0;            // when the rows on screen were read; 0 while there are none
+const writing = new Set();   // records this page is writing right now: their change isn't news
+let moved = new Set();       // records that changed somewhere else since the last read: marked once
 
 // A refetch never redraws under the person's hands: while a note or a date is being edited, the redraw waits for blur.
 let waiting = false;
@@ -143,7 +152,9 @@ function render() {
   moved = new Set();
   stamp();
 }
-// "3 open · Updated just now · Refresh": the count, how old the rows are, and a way to read again now.
+const empty = (t) => Object.assign(document.createElement("li"), { className: "empty", textContent: t });
+
+// "4 open · Updated just now · Refresh": the count, how old the rows are, and a way to read again now.
 function age() {
   const s = Math.round((Date.now() - lastRead) / 1000);
   if (s < 45) return "Updated just now";
@@ -152,19 +163,27 @@ function age() {
 }
 function stamp() {
   if (!lastRead) return;
-  const open = rows.filter((r) => (r.fields || {}).status !== "done").length;
-  const parts = [document.createTextNode(`${open} open · `)];
-  if (readFailed) parts.push(Object.assign(document.createElement("span"), { className: "stale", textContent: "Couldn't refresh · " }));
-  parts.push(document.createTextNode(`${age()} · `), refreshButton());
-  $("meta").replaceChildren(...parts);
+  $("count").textContent = `${rows.filter((r) => (r.fields || {}).status !== "done").length} open · `;
+  $("stale").textContent = readFailed ? "Couldn't refresh · " : "";
+  $("age").textContent = `${age()} · `;
 }
 setInterval(stamp, 5000);
-const empty = (t) => Object.assign(document.createElement("li"), { className: "empty", textContent: t });
-function refreshButton() {
-  const b = Object.assign(document.createElement("button"), { textContent: "Refresh" });
-  b.onclick = () => { if (mcp) { b.textContent = "Refreshing…"; mcp.invalidate(SERVER, "query-records"); } };
-  return b;
+// With nothing on screen it says "Try again": the count and the age are cleared, the button stays.
+function nothingToShow(text) {
+  $("count").textContent = $("stale").textContent = $("age").textContent = "";
+  $("refresh").hidden = false; $("refresh").textContent = "Try again";
+  $("done").replaceChildren(); $("open").replaceChildren(empty(text));
 }
+// Read again now. A watch never asks for the viewer's OK; with nothing on screen, this makes the one call that can.
+async function refresh() {
+  if (!mcp) return;
+  $("refresh").textContent = "Refreshing…";
+  if (!lastRead) await mcp.callTool(SERVER, "query-records", QUERY, { cache: { refresh: true } }).catch(() => {});   // the watch reports a failure
+  await mcp.invalidate(SERVER, "query-records").catch(() => {});
+  $("refresh").textContent = lastRead ? "Refresh" : "Try again";
+}
+$("refresh").onclick = refresh;
+
 function row(r) {
   const f = r.fields || {};
   const li = document.createElement("li");
@@ -192,7 +211,7 @@ function row(r) {
 async function change(li, r, patch) {
   li.classList.add("busy");
   say("");
-  mine.add(r.id);
+  writing.add(r.id);
   try {
     const done = await mcp.callTool(SERVER, "update-record", { id: r.id, ...patch, if_updated_at: r.updatedAt });
     // the row now holds what was written (its new updatedAt too), so a next edit before the redraw isn't a false conflict
@@ -200,33 +219,33 @@ async function change(li, r, patch) {
   } catch (e) {
     say(refusal(e).error_type === "conflict" ? `“${nameOf(r)}” changed somewhere else, so I reloaded it. Try again.` : plain(e));
   } finally {
-    await mcp.invalidate(SERVER, "query-records");
+    await mcp.invalidate(SERVER, "query-records").catch(() => {});
+    writing.delete(r.id);
     li.classList.remove("busy");
   }
 }
 
 (async () => {
   mcp = window.claude && typeof window.claude.use === "function" ? await window.claude.use("mcp") : null;
-  if (!mcp) { $("meta").textContent = ""; $("open").replaceChildren(empty("Open this page in Claude, with Parachute connected, to see your tasks.")); return; }
+  if (!mcp) { $("age").textContent = ""; $("open").replaceChildren(empty("Open this page in Claude, with Parachute connected, to see your tasks.")); return; }
   // An open page isn't told when a record changes elsewhere: it sees the change when it reads again. The interval is
   // the watch's options (30 s is the shortest Claude allows). It pauses while the page is hidden and reads again
   // when you come back, so there is no focus handler here.
   mcp.watchTool(SERVER, "query-records", QUERY, (ev) => {
     if (ev.type === "error") {
       readFailed = true;
-      if (LOST.includes(ev.error.code)) {
-        rows = []; lastRead = 0; say("");
-        $("meta").textContent = ""; $("done").replaceChildren(); $("open").replaceChildren(empty(plain(ev.error)));
-      } else { say(plain(ev.error)); stamp(); }
+      if (LOST.includes(ev.error.code)) { rows = []; lastRead = 0; waiting = false; say(""); nothingToShow(plain(ev.error)); }
+      else if (!lastRead) { say(""); nothingToShow(plain(ev.error)); }
+      else { say(plain(ev.error)); stamp(); }
       return;
     }
     const before = new Map(rows.map((r) => [r.id, r.updatedAt]));
     rows = recordsOf(ev.result.payload);
     // rows that changed somewhere else since the last read are marked once, so the person sees what moved
-    if (before.size) for (const r of rows) if (before.get(r.id) !== r.updatedAt && !mine.has(r.id)) moved.add(r.id);
-    mine = new Set();
+    if (before.size) for (const r of rows) if (before.get(r.id) !== r.updatedAt && !writing.has(r.id)) moved.add(r.id);
     // a cached result says when it was read; a fresh one was read just now
     lastRead = (ev.result.cache && ev.result.cache.storedAt) || Date.now();
+    $("refresh").hidden = false; $("refresh").textContent = "Refresh";
     if (readFailed) { readFailed = false; say(""); }
     render();
   }, { refetchInterval: 30000 });
@@ -236,29 +255,36 @@ async function change(li, r, patch) {
 </html>
 ```
 
-In claude.ai (2026-11-27, published unchanged): a task changed elsewhere showed at the page's next read (9 and 23 seconds later in two runs), its row marked; a tick and an untick each landed in the vault; a tick on a task that had just changed elsewhere was refused with "changed somewhere else, so I reloaded it" and nothing was overwritten; Refresh read again at once. Earlier, in a harness that copies claude.ai's side: the approval shows; open tasks sort by due date; a date and a note edit land; two edits in a row on one task both land; and a refresh while typing keeps the note and the cursor.
+Published in claude.ai as it is (2026-11-27), against a test vault:
+
+- a task changed elsewhere showed at the page's next read, its row marked;
+- a tick and an untick each landed in the vault;
+- a tick on a task that had just changed elsewhere was refused ("changed somewhere else, so I reloaded it") and nothing was overwritten;
+- Refresh read again at once.
+
+Earlier, in a harness that copies claude.ai's side: the approval shows; open tasks sort by due date; a date and a note edit land; two edits in a row on one task both land; and a refresh while typing keeps the note and the cursor.
 
 ## How a page stays current
 
 A page in Claude isn't told when a record changes somewhere else: another chat, the Parachute app, another AI. It sees the change when it reads again. We measured when that happens in claude.ai (2026-11-27), with a test page and the vault's own request log:
 
-| | |
+| When | What happens |
 |---|---|
-| A page that sets no interval | reads when it opens, and when its own code asks (after a write, on a Refresh). Never otherwise: not when you click into it, not when you come back to its tab. |
-| The shortest interval | 30 seconds. A page that asked for 5 read every 30. |
-| A change made elsewhere | shows at the next read, so within 30 seconds. |
-| While the tab is hidden, or behind another window | nothing is read. |
-| When you come back | it reads again in about a second, then keeps its rhythm. |
-| Refresh (the page's own button) | reads again at once. |
-| Opening the page again | the last rows show in a fifth of a second, fresh ones under a second later. |
+| No interval set | The page reads when it opens, and when its own code asks (after a write, on a Refresh). Never otherwise: not when you click into it, not when you come back to its tab. |
+| Shortest interval | 30 seconds. A page that asked for 5 read every 30. |
+| A change elsewhere | Shows at the next read, so within 30 seconds. |
+| Tab hidden | Nothing is read. (A window in front counted as hidden on our Linux test machine.) |
+| Coming back | It reads again in about a second, then every 30 seconds again. |
+| Refresh | Reads again at once. |
+| Reloading | The last rows show almost at once, fresh ones within a second (one reload, measured straight after). |
 
 So a live page should do three things, and the template and the `live-page` skill do them by default:
 
-1. read every 30 seconds (`watchTool(…, { refetchInterval: 30000 })`, the fifth argument, not part of the tool's input);
+1. read every 30 seconds (`watchTool(…, { refetchInterval: 30000 })`: set on the watch, not in the query);
 2. say how old its rows are ("Updated just now", "Updated 2 min ago"), and say "Couldn't refresh" beside that when a read fails, keeping the rows;
 3. have a Refresh, for the moment you don't want to wait.
 
-It needs no focus handler: the interval already catches up when you return. When a read brings a change from somewhere else, the template marks that row for a moment. If the page loses its access (signed out, the connector removed, a no on the Allow sheet), it clears the rows and says what to do.
+It doesn't need to watch for you coming back: the 30-second read already catches up. When a read brings a change from somewhere else, the template marks that row for a moment. If the page loses its access (signed out, the connector removed, a no on the Allow sheet), it clears the rows, says why, and leaves a Try again.
 
 There is no way to push a change into a page: an artifact can only call tools. Thirty seconds is as live as Claude allows.
 
