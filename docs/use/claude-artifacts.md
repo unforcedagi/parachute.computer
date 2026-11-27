@@ -3,7 +3,7 @@ title: "Use Claude artifacts as Parachute surfaces"
 summary: "Ask Claude for a live page over your vault, like a task list or a reading tracker. It reads and writes your records each time someone opens it."
 door: use
 order: 2.5
-checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2 §3: four pages built unprompted, the one Allow sheet, the conflict line, Duet) and of 2026-11-27 (T-476 livedemo FINDINGS: how a page refreshes, measured with a probe page and the server's request log; how a refusal reaches a page; this template published unchanged and exercised: a change made elsewhere, a tick, a conflict, Refresh); parachute-core packages/vault/core/src/vault-projection.ts (LIVE_PAGE_BLOCK), core/src/mcp-records.ts (query-records, update-record), core/src/skill-files.ts (live-page), contracts/suites/door/records.test.ts; the template and two pages Claude wrote from the connector's words alone, run in a harness that mimics claude.ai's artifact runtime (contract 0.2.96)"
+checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2 §3: four pages built unprompted, the one Allow sheet, the conflict line, Duet) and of 2026-11-27 (T-476 livedemo FINDINGS: how a page refreshes, measured with a probe page and the server's request log; how a refusal reaches a page; this template published as it is, with only the connector's name set to the test connector's, and exercised: a change made elsewhere, a tick, a conflict, Refresh); parachute-core packages/vault/core/src/vault-projection.ts (LIVE_PAGE_BLOCK), core/src/mcp-records.ts (query-records, update-record), core/src/skill-files.ts (live-page), contracts/suites/door/records.test.ts; the template and two pages Claude wrote from the connector's words alone, run in a harness that mimics claude.ai's artifact runtime (contract 0.2.96)"
 ---
 
 *On a 0.8 server (Parachute Cloud today):* the page calls `query-notes` and `update-note`; a record's `body` and `fields` are `content` and `metadata`, types go in `tags`, and `include_body` is `include_content`. Change the template's names to match. A 0.8 refusal carries no `structuredContent`; the template then knows a conflict by its word and shows a plain line for the rest.
@@ -82,7 +82,7 @@ It declares two tools for the connector named `Parachute` (the name you gave it 
   .due { font:13px system-ui, sans-serif; color:var(--soft); border:0; background:none; padding:2px 0; text-align:right; }
   .late .due { color:var(--warn); }
   .busy { opacity:.55; pointer-events:none; }
-  .empty { color:var(--soft); font-style:italic; padding:10px 0; }
+  .empty { display:block; color:var(--soft); font-style:italic; padding:10px 0; }
 </style>
 </head>
 <body>
@@ -113,7 +113,7 @@ function plain(e) {
   if (code === "server_not_connected" || code === "server_not_found") return "Connect Parachute in Claude (+ › Plugins) to see your tasks here.";
   if (code === "needs_reauth") return "Parachute needs you to sign in again (+ › Plugins).";
   if (code === "selection_required") return "You have more than one Parachute connector. Choose one when Claude asks.";
-  if (code === "not_granted" || code === "consent_required" || code === "approval_required" || code === "not_in_manifest") return "This page needs your OK to read Parachute.";
+  if (code === "not_granted" || code === "consent_required" || code === "approval_required" || code === "not_in_manifest") return "This page needs your OK to use Parachute.";
   if (code === "blocked_by_policy" || code === "capability_disabled" || code === "capability_removed") return "This page isn't allowed to use Parachute here.";
   if (code === "user_changed") return "You're signed in as someone else now. Reload this page.";
   if (code === "tool_error") return refusal(e).message || "Parachute refused that.";
@@ -144,7 +144,7 @@ const editing = () => { const a = document.activeElement; return !!(a && a.close
 document.addEventListener("focusout", () => setTimeout(() => { if (waiting && !editing()) { waiting = false; render(); } }, 0));
 
 function render() {
-  if (editing()) { waiting = true; return; }
+  if (editing()) { waiting = true; stamp(); return; }
   const open = rows.filter((r) => (r.fields || {}).status !== "done").sort((a, b) => String((a.fields || {}).due || "9").localeCompare(String((b.fields || {}).due || "9")));
   const done = rows.filter((r) => (r.fields || {}).status === "done");
   $("open").replaceChildren(...(open.length ? open.map(row) : [empty("Nothing open.")]));
@@ -168,19 +168,32 @@ function stamp() {
   $("age").textContent = `${age()} · `;
 }
 setInterval(stamp, 5000);
-// With nothing on screen it says "Try again": the count and the age are cleared, the button stays.
-function nothingToShow(text) {
+// With nothing on screen the count and the age are cleared and the button says "Try again" (none when a retry can't help).
+function nothingToShow(text, retry = true) {
   $("count").textContent = $("stale").textContent = $("age").textContent = "";
-  $("refresh").hidden = false; $("refresh").textContent = "Try again";
+  $("refresh").hidden = !retry; $("refresh").textContent = "Try again";
   $("done").replaceChildren(); $("open").replaceChildren(empty(text));
 }
-// Read again now. A watch never asks for the viewer's OK; with nothing on screen, this makes the one call that can.
+// What a good read puts on screen: from the watch, and from Try again's own call.
+function show(result) {
+  const before = new Map(rows.map((r) => [r.id, r.updatedAt]));
+  rows = recordsOf(result.payload);
+  // rows that changed somewhere else since the last read are marked once, so the person sees what moved
+  if (before.size) for (const r of rows) if (before.get(r.id) !== r.updatedAt && !writing.has(r.id)) moved.add(r.id);
+  // a cached result says when it was read; a fresh one was read just now
+  lastRead = (result.cache && result.cache.storedAt) || Date.now();
+  $("refresh").hidden = false; $("refresh").textContent = "Refresh";
+  if (readFailed) { readFailed = false; say(""); }
+  render();
+}
+// Read again now. With rows on screen that is invalidate: every watch reads again. With none (a no, lost access), it
+// makes the one call that can ask for the viewer's OK, since a watch never asks, and shows what comes back.
+const again = () => mcp.invalidate(SERVER, "query-records").catch(() => { $("refresh").textContent = lastRead ? "Refresh" : "Try again"; });
 async function refresh() {
   if (!mcp) return;
   $("refresh").textContent = "Refreshing…";
-  if (!lastRead) await mcp.callTool(SERVER, "query-records", QUERY, { cache: { refresh: true } }).catch(() => {});   // the watch reports a failure
-  await mcp.invalidate(SERVER, "query-records").catch(() => {});
-  $("refresh").textContent = lastRead ? "Refresh" : "Try again";
+  if (lastRead) await again();
+  else await mcp.callTool(SERVER, "query-records", QUERY, { cache: { refresh: true } }).then(show, again);
 }
 $("refresh").onclick = refresh;
 
@@ -197,11 +210,17 @@ function row(r) {
   const sub = Object.assign(document.createElement("div"), { className: "sub", textContent: (r.body || "").trim() });
   sub.contentEditable = "plaintext-only";
   sub.onkeydown = (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sub.blur(); } };
-  sub.onblur = () => { const t = sub.textContent.trim(); if (t !== (r.body || "").trim()) change(li, r, { body: t }); };
+  sub.onblur = () => { const t = sub.textContent.trim(); if (!r.lost && t !== (r.body || "").trim()) change(li, r, { body: t }); };
   if (f.project) sub.title = f.project;
   mid.append(title, sub);
   const due = Object.assign(document.createElement("input"), { type: "date", className: "due", value: f.due || "" });
-  due.onchange = () => change(li, r, { fields: { due: due.value || null } });
+  // A date picked from the calendar is one change: written at once. A date typed digit by digit changes at each
+  // key: written when the field is left, or on Enter.
+  let typed = false;
+  const saveDue = () => { typed = false; const v = due.value || null; if (!r.lost && v !== ((r.fields || {}).due || null)) change(li, r, { fields: { due: v } }); };
+  due.onkeydown = (e) => { if (e.key === "Enter") due.blur(); else typed = true; };
+  due.onchange = () => { if (!typed) saveDue(); };
+  due.onblur = saveDue;
   li.append(tick, mid, due);
   return li;
 }
@@ -215,9 +234,13 @@ async function change(li, r, patch) {
   try {
     const done = await mcp.callTool(SERVER, "update-record", { id: r.id, ...patch, if_updated_at: r.updatedAt });
     // the row now holds what was written (its new updatedAt too), so a next edit before the redraw isn't a false conflict
-    if (done.payload && done.payload.updatedAt) Object.assign(r, done.payload);
+    if (done.payload && done.payload.updatedAt) for (const x of [r, rows.find((x) => x.id === r.id)]) if (x) Object.assign(x, done.payload);
   } catch (e) {
-    say(refusal(e).error_type === "conflict" ? `“${nameOf(r)}” changed somewhere else, so I reloaded it. Try again.` : plain(e));
+    const conflict = refusal(e).error_type === "conflict";
+    say(conflict ? `“${nameOf(r)}” changed somewhere else, so I reloaded it. Try again.` : plain(e));
+    // The row lost to another change: what it shows is old, so nothing more is sent from it, and the cursor leaves it
+    // so the reload can redraw it now.
+    if (conflict) { r.lost = true; const a = document.activeElement; if (a && li.contains(a)) a.blur(); }
   } finally {
     await mcp.invalidate(SERVER, "query-records").catch(() => {});
     writing.delete(r.id);
@@ -234,20 +257,13 @@ async function change(li, r, patch) {
   mcp.watchTool(SERVER, "query-records", QUERY, (ev) => {
     if (ev.type === "error") {
       readFailed = true;
-      if (LOST.includes(ev.error.code)) { rows = []; lastRead = 0; waiting = false; say(""); nothingToShow(plain(ev.error)); }
+      // user_changed: someone else is signed in now; nothing more to call, so no Try again
+      if (LOST.includes(ev.error.code)) { rows = []; lastRead = 0; waiting = false; say(""); nothingToShow(plain(ev.error), ev.error.code !== "user_changed"); }
       else if (!lastRead) { say(""); nothingToShow(plain(ev.error)); }
-      else { say(plain(ev.error)); stamp(); }
+      else { say(plain(ev.error)); $("refresh").textContent = "Refresh"; stamp(); }
       return;
     }
-    const before = new Map(rows.map((r) => [r.id, r.updatedAt]));
-    rows = recordsOf(ev.result.payload);
-    // rows that changed somewhere else since the last read are marked once, so the person sees what moved
-    if (before.size) for (const r of rows) if (before.get(r.id) !== r.updatedAt && !writing.has(r.id)) moved.add(r.id);
-    // a cached result says when it was read; a fresh one was read just now
-    lastRead = (ev.result.cache && ev.result.cache.storedAt) || Date.now();
-    $("refresh").hidden = false; $("refresh").textContent = "Refresh";
-    if (readFailed) { readFailed = false; say(""); }
-    render();
+    show(ev.result);
   }, { refetchInterval: 30000 });
 })();
 </script>
@@ -255,7 +271,7 @@ async function change(li, r, patch) {
 </html>
 ```
 
-Published in claude.ai as it is (2026-11-27), against a test vault:
+Published in claude.ai as it is (2026-11-27; only the connector's name was set to the test vault's):
 
 - a task changed elsewhere showed at the page's next read, its row marked;
 - a tick and an untick each landed in the vault;
@@ -276,7 +292,7 @@ A page in Claude isn't told when a record changes somewhere else: another chat, 
 | Tab hidden | Nothing is read. (A window in front counted as hidden on our Linux test machine.) |
 | Coming back | It reads again in about a second, then every 30 seconds again. |
 | Refresh | Reads again at once. |
-| Reloading | The last rows show almost at once, fresh ones within a second (one reload, measured straight after). |
+| Reloading | The last rows show almost at once, fresh ones within a second (measured on one reload). |
 
 So a live page should do three things, and the template and the `live-page` skill do them by default:
 
