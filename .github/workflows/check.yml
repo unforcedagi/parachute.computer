@@ -23,6 +23,8 @@ jobs:
       - name: Links, twins, versions, index, word budgets
         run: npm run check
       - name: The pages in a browser
+        # with the runner's own Chrome: Playwright's download doesn't know every runner image
         run: |
-          npx playwright install --with-deps chromium
-          npm run check:pages
+          CHROMIUM_PATH="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          echo "browser: $CHROMIUM_PATH"
+          CHROMIUM_PATH="$CHROMIUM_PATH" npm run check:pages

@@ -43,7 +43,7 @@ this file only carries what the repo can't tell you.
   section; the word budgets hold. archive/ and design/ are dated records and aren't checked.
   **`npm run check:pages`** (CI too) drives the built site in a browser: the homepage's stage, the tabs, the docs
   page's folds, and no sideways scroll at 320, 390 and 1280. `CHROMIUM_PATH=/usr/bin/chromium` uses a browser already
-  on the machine.
+  on the machine (CI uses the runner's own Chrome this way).
 - **Don't publish fast-changing metrics** — file counts, version numbers, test
   counts — anywhere on the site or in this file. They go stale silently and then
   read as truth; link to GitHub for anything that changes frequently. A docs page's
