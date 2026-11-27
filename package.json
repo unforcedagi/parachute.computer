@@ -13,7 +13,8 @@
     "docs:check-applet": "node scripts/check-applet-example.mjs",
     "docs:check-packs": "node scripts/check-packs.mjs",
     "docs:freeze": "node scripts/docs-freeze.mjs",
-    "check": "node scripts/check-site.mjs"
+    "check": "node scripts/check-site.mjs",
+    "check:pages": "node scripts/check-pages.mjs"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",

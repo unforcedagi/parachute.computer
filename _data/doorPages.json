@@ -2,10 +2,11 @@
   {
     "door": "use",
     "title": "Use Parachute",
-    "who": "For people. Start on Parachute Cloud, connect Claude, and see what it does with your vault: live pages, skills, your home.",
+    "who": "For people. Start on Parachute Cloud, connect your AI, and see what it does with your vault: live pages, skills, your home.",
     "name": "Use",
     "label": "Use: for people",
-    "short": "For people: start on Cloud, connect Claude, live pages and skills."
+    "short": "For people: start on Cloud, connect your AI, live pages and skills.",
+    "card": "Start, connect your AI, and see what it does with your vault."
   },
   {
     "door": "build",
@@ -13,7 +14,8 @@
     "who": "For builders and their AI. Types, records, applets and bundles are all records in a vault; these pages say how to write each one.",
     "name": "Build",
     "label": "Build: for builders and their AI",
-    "short": "For builders and their AI: types, records, applets, bundles."
+    "short": "For builders and their AI: types, records, applets, bundles.",
+    "card": "Make types, records and small screens, with your AI."
   },
   {
     "door": "run",
@@ -25,7 +27,8 @@
     "compare": {
       "href": "/docs/run/own-cloudflare/#which-one-is-for-me",
       "text": "Which one is for me? The three side by side"
-    }
+    },
+    "card": "Where your vault lives: our Cloud, your Cloudflare, your computer."
   },
   {
     "door": "fix",
@@ -33,6 +36,7 @@
     "who": "For people and their AI: what a refusal means, and the fix. An AI that is refused finds its page here by the refusal's error_type.",
     "name": "Fix",
     "label": "Fix: when something's stuck",
-    "short": "When something's stuck: what a refusal means, and the fix."
+    "short": "When something's stuck: what a refusal means, and the fix.",
+    "card": "When something's stuck: what a refusal means, and the fix."
   }
 ]

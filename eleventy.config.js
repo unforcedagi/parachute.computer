@@ -15,6 +15,9 @@ const bodyOf = (doc) => {
 function mdTwin(doc, version) {
   const base = version ? `${ORIGIN}/docs/v/${version.version}` : `${ORIGIN}/docs`;
   const raw = bodyOf(doc).trim()
+    // a fold on the page (<details>) is plain text to an agent: its summary as a bold line, everything in it kept
+    // (written as `<details>`, then `<summary>…</summary>` on its own line; `npm run check` fails on any other shape)
+    .replace(/^<details[^>]*>[ \t]*\n<summary>(.*?)<\/summary>[ \t]*$/gm, "**$1**").replace(/^<\/details>[ \t]*(\n\n?|$)/gm, "")
     // links to other docs pages point at their markdown, with the host, so an agent can follow them (or ask the docs
     // tool for the same name); other site links get the host
     // (a page is a door and a name, `build/make-a-type`; a door alone, `/docs/build/`, has no twin and stays a page)
