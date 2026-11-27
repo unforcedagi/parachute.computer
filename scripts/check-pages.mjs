@@ -147,7 +147,7 @@ await check("connect: one flow for any AI, with notes for some apps one tap away
   await close();
 });
 await check("connect: a link to the notes opens them, below what is pinned, on a phone too", async () => {
-  for (const width of [390, 1280]) {
+  for (const width of [320, 390, 1280]) {
     const { page, close } = await open(CONNECT + NOTES, { viewport: { width, height: 800 } });
     await page.waitForFunction((id) => document.querySelector(id).open, NOTES, { timeout: 2000 }).catch(() => { throw new Error(`at ${width} the link didn't open the notes`); });
     const { top, covered } = await page.evaluate((id) => {

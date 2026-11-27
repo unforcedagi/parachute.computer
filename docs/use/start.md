@@ -28,7 +28,7 @@ https://my.parachute.computer/mcp
 
 1. In your AI app, add a connector and paste the address.
 2. Parachute's page opens. Sign in with the same email and pick your vault.
-3. Keep **Read & write** and press **Allow**.
+3. Choose **Read & write** and press **Allow**.
 
 Where the menu is in Claude and in ChatGPT, how local-model apps connect, and how far each is tested:
 [notes for some apps](/docs/use/connect-your-ai/#notes-for-some-apps).
@@ -42,7 +42,7 @@ Where the menu is in Claude and in ChatGPT, how local-model apps connect, and ho
 What it writes is in your vault, for any chat later and any AI you connect.
 
 Next: [live pages](/docs/use/claude-artifacts/), and [skills](/docs/use/skills/) that teach your AI how you do
-things. Stuck? [Claude won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
+things. Stuck? [Your AI won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
 
 ## What you get
 

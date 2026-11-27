@@ -134,7 +134,7 @@ const home = fs.readFileSync(path.join(SITE, "index.html"), "utf8");
 for (const ai of ["Claude", "ChatGPT", "Local model"]) if (!new RegExp(`<button[^>]*>${ai}</button>`).test(home)) fail(`index.html: the stage has no "${ai}"`);
 // Connect your AI is one flow for whatever AI: no heading there names one AI app (their notes are inside a fold).
 for (const h of index.pages.find((p) => p.topic === "use/connect-your-ai").headings)
-  if (/claude|chatgpt|local model/i.test(h)) fail(`docs/use/connect-your-ai: the section "${h}" is for one AI; the page is one flow, with notes for some apps in a fold`);
+  if (/claude|chatgpt|local[- ]models?|codex|cursor|gemini/i.test(h)) fail(`docs/use/connect-your-ai: the section "${h}" is for one AI; the page is one flow, with notes for some apps in a fold`);
 // A fold's HTML never reaches the markdown an AI reads.
 for (const f of files.filter((f) => LIVE(f) && /^_site\/(docs\/.*\.md|llms-full\.txt)$/.test(f)))
   if (/<\/?(details|summary)>/.test(fs.readFileSync(f, "utf8").replace(/```[\s\S]*?```/g, ""))) fail(`${f}: a fold's HTML is in the markdown an AI reads`);

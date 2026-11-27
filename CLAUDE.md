@@ -22,9 +22,9 @@ this file only carries what the repo can't tell you.
   fold is opened); when one fails, cut or fold, don't raise it.
 - **It works with whatever AI: one flow, no view per AI.** Parachute is one vault for any AI app that takes an MCP
   connector; Claude is the first tested path, not the only one, and no page gets a tab, card or section per AI.
-  `docs/use/connect-your-ai.md` is one flow (the address, three steps) with one fold, "Notes for some apps": where the
-  menu is in Claude and ChatGPT, how local-model apps connect, and one line each on how far it is tested, with the
-  date. Change a tested line only when a run changes it, and don't claim more for ChatGPT or local models than the
+  `docs/use/connect-your-ai.md` is one flow (the address, three steps) with its notes for some apps in one fold: where
+  the menu is in Claude and ChatGPT, how local-model apps connect, and one line each on how far it is tested, with the
+  date. The screens and the fine print are in a second fold, by topic, not by AI. Change a tested line only when a run changes it, and don't claim more for ChatGPT or local models than the
   page's `checked:` line supports. A link to a fold (`…#notes-for-some-apps`) opens it (`_includes/doc.njk`).
 - **The docs are `docs/<door>/<page>.md`** (door: use, build, run, fix), each with `title`,
   `summary`, `door`, `order` and `checked` (the code it was checked against) in its front
