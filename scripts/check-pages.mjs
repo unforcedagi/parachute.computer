@@ -110,8 +110,14 @@ await check("home: nothing below the stage moves when the scene changes, on a na
     heights.push(await page.locator(".stage").evaluate((el) => Math.round(el.getBoundingClientRect().height)));
   }
   expect(new Set(heights).size === 1, `the stage is ${heights.join(", ")}px tall by scene`);
-  const pause = await page.locator(".ai-bar .pause").evaluate((el) => { el.hidden = false; return el.getBoundingClientRect().width; });
+  // Pause (shown here as it is when the loop plays) has its 44px, and no name runs under it
+  const { pause, gap } = await page.locator(".ai-bar .pause").evaluate((el) => {
+    el.hidden = false;
+    const p = el.getBoundingClientRect(), names = [...document.querySelectorAll(".ai-pick button")];
+    return { pause: p.width, gap: p.left - names[names.length - 1].getBoundingClientRect().right };
+  });
   expect(pause >= 44, `Pause is ${pause}px wide`);
+  expect(gap >= 0, `the last name runs ${Math.round(-gap)}px under Pause`);
   await close();
 });
 await check("home: without script the first scene's last frame is there to read", async () => {
@@ -145,6 +151,10 @@ await check("connect: one tab at a time, by click and by arrow key", async () =>
 await check("connect: the address's #fragment opens its tab, and a fold opens", async () => {
   const { page, close } = await open(CONNECT + "#local-models");
   expect((await shown(page)) === "Local models", "#local-models didn't open its tab");
+  await page.getByRole("tab", { name: /Claude/ }).click();
+  await page.waitForFunction(() => document.querySelector(".onpage a[aria-current]")?.textContent === "Claude", null, { timeout: 2000 })
+    .catch(() => { throw new Error("On this page doesn't mark the tab just opened"); });
+  await page.getByRole("tab", { name: /Local models/ }).click();
   await page.getByText("More: keep everything on your machine").click();
   expect(await page.getByText("both on your computer").isVisible(), "the fold didn't open");
   await page.locator(".onpage a", { hasText: "ChatGPT" }).click();   // a link: the tab follows the address, a moment later
@@ -161,8 +171,9 @@ await check("connect: a link to a tab's section lands with the tabs in view, on 
       const tabs = document.querySelector(".doc-tabs").getBoundingClientRect();
       const over = [...document.querySelectorAll(".site-nav, .toc")].map((el) => [getComputedStyle(el).position, el.getBoundingClientRect()])
         .filter(([pos, r]) => ["sticky", "fixed"].includes(pos) && r.left < tabs.right && r.right > tabs.left);   // pinned, and above the tabs' column
-      return { top: tabs.top, covered: Math.max(...over.map(([, r]) => r.bottom)) };
+      return { top: tabs.top, covered: over.length ? Math.max(...over.map(([, r]) => r.bottom)) : NaN };
     });
+    expect(!Number.isNaN(covered), "nothing is pinned above the tabs: has the nav been renamed?");
     expect(top >= covered - 1 && top < 800, `at ${width} the tabs sit at ${Math.round(top)}, under what is pinned to ${Math.round(covered)}`);
     await close();
   }

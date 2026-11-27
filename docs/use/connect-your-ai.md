@@ -7,7 +7,7 @@ tabs:
   - { id: claude, name: "Claude", level: full, label: "Tested end to end" }
   - { id: chatgpt, name: "ChatGPT", level: part, label: "Still testing" }
   - { id: local-models, name: "Local models", level: part, label: "Works in our runs" }
-checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); ChatGPT sessions of 2026-11-12 (a paid account, OAuth sign-in, writes and reads on a server of ours; a read by id failed until parachute-core #100, after which reads run without asking at Allow read-only tools once the tools are refreshed; not run on Parachute Cloud); a local model through an agent app on a throwaway vault, 2026-11-20 (a key on the vault's own address over loopback HTTP); parachute-core contracts/evals/mcp-tasks (Claude Code, Codex CLI); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
+checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); ChatGPT sessions of 2026-11-12 (a paid account, OAuth sign-in, writes and reads on a server of ours; a read by id failed until parachute-core #100 (in 0.9's pre-releases, not in 0.8), after which reads run without asking at Allow read-only tools once the tools are refreshed; on 0.8 every read asked; not run on Parachute Cloud); a local model through an agent app on a throwaway vault, 2026-11-20 (a key on the vault's own address over loopback HTTP); parachute-core contracts/evals/mcp-tasks (Claude Code, Codex CLI); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
 ---
 
 Your AI needs one thing: your vault's address.
@@ -73,19 +73,20 @@ changed to Parachute Cloud's; everything else is as claude.ai drew it.*
 ## ChatGPT
 
 **Early runs pass; we're still testing.** On 12 November 2026 ChatGPT signed in to a server of ours, wrote notes and
-read them back; one kind of read failed until a fix on our side. We haven't walked it on Parachute Cloud yet.
+read them back. Reading one note by its name failed until a fix that ships in Parachute's next release. We haven't
+walked it on Parachute Cloud yet.
 
-1. In ChatGPT's settings, add Parachute as a **custom connector** (an MCP server) and paste your address. ChatGPT has
-   also called these apps and plugins, and its menus change: the names may differ from ours.
+1. In ChatGPT, add Parachute by pasting your address. In our run ChatGPT called such a connection a plugin (or an
+   app); its menus change, so the names may differ.
 2. Sign in on Parachute's page and allow **Read & write**.
-3. Set its permission to **Allow read-only tools**: ChatGPT then reads without asking, and still asks before it
-   writes. If it still asks before a read, press **Refresh tools** on the connector.
+3. Set its permission to **Allow read-only tools**. On Parachute's next release ChatGPT then reads without asking and
+   still asks before it writes (press **Refresh tools** if it doesn't). On today's release it asks before every read.
 
 <details>
 <summary>More: what we haven't checked</summary>
 
 Our runs used a paid ChatGPT account. We haven't tried the free plan, and we didn't write the menu path down step by
-step; it may also ask for Developer mode. A connector has one permission for all its tools (Always ask,
+step; it may also ask for Developer mode. A plugin has one permission for all its tools (Always ask,
 Allow read-only tools, Allow low-risk tools, Allow all tools); each Parachute tool says whether it only reads, which
 is what lets ChatGPT skip asking for reads.
 
@@ -98,7 +99,8 @@ test vault with a key. We haven't written steps for each app yet, or tried signi
 
 1. Use an app that runs your model and speaks MCP, with a model that can call tools.
 2. Add an MCP server over HTTP: one vault's own address, with a key
-   ([Keys and what they reach](/docs/build/keys-and-scopes/)). This is the way we ran it.
+   ([Keys and what they reach](/docs/build/keys-and-scopes/)). This is the way we ran it, with the vault on the same
+   machine.
 3. Or give it your address above and sign in when the app opens Parachute's page. That should work as it does for
    Claude; we haven't tried it from a local app.
 

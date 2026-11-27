@@ -43,6 +43,7 @@
       tab.tabIndex = n === i ? 0 : -1;
       panels[n].hidden = n !== i;
     });
+    dispatchEvent(new Event("sectionschange"));   // "On this page" marks the section now open
     if (focus) tabs[i].focus();
   }
   function fromHash() {          // the tab whose section holds the address's #fragment, if any
