@@ -530,7 +530,7 @@ main :not(pre) > code { color: var(--text); }
 /* Screens in a docs page (real ones, cropped): drawn at their own size up to the measure, on a quiet frame. */
 .doc p > img:only-child { display: block; max-width: 100%; height: auto; margin: .4rem 0 .2rem; border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 1px 2px rgb(0 0 0 / .04), 0 8px 24px -12px rgb(0 0 0 / .18); background: #fff; }
 
-/* ---------- depth, folded: a fold in a page, sections as tabs, how far a thing is tested ---------- */
+/* ---------- depth, folded ---------- */
 /* A fold (<details> in a page's markdown): the page stays short and the detail is one tap away. An AI reading the
    markdown twin gets all of it (eleventy.config.js mdTwin). */
 .doc-body details { margin: 0 0 1.2rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
@@ -543,39 +543,9 @@ main :not(pre) > code { color: var(--text); }
 .doc-body details > :last-child { margin-bottom: 1.1rem; }
 @media (hover: hover) and (pointer: fine) { .doc-body details > summary:hover { color: var(--text); } }
 
-/* Sections as tabs (front matter `tabs`, assets/doc-tabs.js): one panel shows; its tab says the name and how far it
-   is tested, with a mark that is full or half (a shape and words, never colour alone). */
-.doc-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .5rem; margin: 0 0 .7rem; scroll-margin-top: 5rem; }
-.tab-set { margin-top: 2rem; }
-@media (max-width: 860px) { .doc-tabs { scroll-margin-top: 7.5rem; } }
-.doc-tabs [role="tab"] { display: grid; gap: .3rem; justify-items: start; min-width: 0; padding: .75rem .9rem .8rem; border: 1px solid var(--line); border-radius: 14px; background: none; color: var(--text); text-align: left; cursor: pointer;
-  transition: border-color var(--t-state) var(--ease-out), background-color var(--t-state) var(--ease-out), transform var(--t-press) var(--ease-out); }
-.doc-tabs [role="tab"]:active { transform: scale(.98); }
-.doc-tabs [role="tab"] b { font: 600 var(--fs-sub)/1.2 var(--serif); }
-.doc-tabs [role="tab"][aria-selected="true"] { border-color: var(--text); background: var(--surface); box-shadow: inset 0 -3px 0 var(--canopy); }
-@media (hover: hover) and (pointer: fine) { .doc-tabs [role="tab"]:hover { border-color: var(--text); } }
-.lvl { display: inline-flex; align-items: center; gap: .35rem; font: 600 var(--fs-label)/1.3 var(--sans); color: var(--muted); }
-.lvl::before { content: ""; flex: none; width: .62rem; height: .62rem; border: 1.5px solid var(--accent); border-radius: 50%; background: linear-gradient(90deg, var(--accent) 50%, transparent 50%); }
-.lvl-full::before { background: var(--accent); }
-.tab-panel { margin: 0 0 2.4rem; padding: 1.2rem 1.3rem .4rem; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
-.tab-panel[hidden] { display: none; }
-/* the tab is the panel's heading; the h2 stays for its address and for a reader without sight of the tabs */
-.tab-set { position: relative; }
-.tabbed .tab-panel > h2 { position: absolute; top: 0; left: 0; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-/* a tabbed section opens with one line on how far it is tested */
-.tab-panel > h2 + p { margin: 0 0 1.1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); font: 400 var(--fs-small)/1.55 var(--sans); color: var(--muted); }
-.tab-panel > h2 + p strong { color: var(--text); }
-.tab-panel > ol { list-style: none; padding: 0; counter-reset: step; }
-.tab-panel > ol > li { counter-increment: step; position: relative; margin: 0 0 .8rem; padding-left: 2.1rem; }
-.tab-panel > ol > li::before { content: counter(step); position: absolute; left: 0; top: -.08em; font: 500 1.5rem/1.3 var(--serif); color: var(--canopy-ink); }
-.tab-panel details:last-child { margin-bottom: .8rem; border-bottom: 0; }
-/* on paper every section prints, under its own heading */
-@media print { .doc-tabs { display: none; } .tab-panel[hidden] { display: block; } .tabbed .tab-panel > h2 { position: static; width: auto; height: auto; margin: 0 0 .8rem; clip-path: none; } }
-@media (max-width: 560px) {   /* a phone: the tabs stack, each one line: its name, then how far it is tested */
-  .doc-tabs { grid-template-columns: 1fr; gap: .4rem; }
-  .doc-tabs [role="tab"] { grid-template-columns: 1fr auto; align-items: center; padding-block: .7rem; }
-  .tab-panel { padding-inline: 1rem; }
-}
+/* a fold a link points at: land below the pinned nav */
+.doc-body details { scroll-margin-top: 5rem; }
+@media (max-width: 860px) { .doc-body details { scroll-margin-top: 7.5rem; } }
 /* what a page was checked against: a quiet fold at its foot */
 .doc-body details.checked { margin: .6rem 0 0; border: 0; }
 .doc-body details.checked > summary { min-height: 2.75rem; font-size: var(--fs-label); }

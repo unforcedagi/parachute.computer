@@ -5,7 +5,7 @@
 // - every docs page has its twin, its place in docs/index.json, and a copy under every version in versions.json;
 // - each refusal error_type in the index lands on a section that exists.
 // - the pages a newcomer reads stay light: each has a word budget for what shows before any fold is opened;
-// - a page whose sections are tabs names sections that exist, and no fold's HTML reaches an AI's markdown.
+// - no fold's HTML reaches an AI's markdown, and Connect your AI stays one flow for any AI.
 import fs from "node:fs";
 import path from "node:path";
 
@@ -110,13 +110,13 @@ if (!latest.docs || !latest.core || !("latest" in latest.core)) fail("latest.jso
 if (latest.core && latest.core.latest === null && !String(latest.source).startsWith("unknown")) fail("latest.json: core.latest is null without saying why");
 
 // The pages a newcomer reads stay light (T-476: the homepage had grown to 1,386 words). A budget counts the words a
-// person sees in the page's own part before opening any fold (<details>); a tabbed page counts its longest tab.
+// person sees in the page's own part before opening any fold (<details>).
 // Over budget? Cut, or fold the detail: don't raise the number without a reason a reader would accept.
 const BUDGETS = [
   { page: "index.html", part: /<main[\s\S]*?<\/main>/, max: 220 },
   { page: "docs/index.html", part: /<main[\s\S]*?<\/main>/, max: 140 },
   { page: "docs/use/start/index.html", part: /<div class="doc-body">[\s\S]*?<nav class="pager"/, max: 470 },
-  { page: "docs/use/connect-your-ai/index.html", part: /<div class="doc-body">[\s\S]*?<nav class="pager"/, max: 400 },
+  { page: "docs/use/connect-your-ai/index.html", part: /<div class="doc-body">[\s\S]*?<nav class="pager"/, max: 260 },
 ];
 const wordsIn = (html) => html.replace(/<details[\s\S]*?<\/details>/g, " ").replace(/<(script|style)[\s\S]*?<\/\1>/g, " ").replace(/<[^>]+>/g, " ")
   .replace(/&[a-z#0-9]+;/g, "x").split(/\s+/).filter((w) => /[\p{L}\p{N}]/u.test(w)).length;
@@ -125,25 +125,17 @@ for (const b of BUDGETS) {
   const html = fs.readFileSync(path.join(SITE, b.page), "utf8");
   let part = (html.match(b.part) || [""])[0];
   if (!part) { fail(`${b.page}: the part its word budget counts is gone`); continue; }
-  const tabs = JSON.parse((html.match(/data-tabs="([^"]*)"/) || [, "[]"])[1].replace(/&quot;/g, '"'));
-  let n = wordsIn(part);
-  if (tabs.length) {
-    // each tab's section runs from its h2 to the next h2; all but the longest are out of sight
-    const sections = tabs.map((t) => (part.match(new RegExp(`<h2[^>]*\\sid="${t.id}"[\\s\\S]*?(?=<h2|$)`)) || [""])[0]);
-    const sizes = sections.map(wordsIn);
-    n = wordsIn(sections.reduce((rest, sec) => rest.replace(sec, " "), part)) + Math.max(...sizes);
-  }
+  const n = wordsIn(part);
   counted.push(`${b.page.replace(/\/?index\.html$/, "") || "home"} ${n}/${b.max}`);
   if (n > b.max) fail(`${b.page}: ${n} words before any fold, over its budget of ${b.max}. Cut, or fold the detail (<details>).`);
 }
 // The homepage shows any AI, not one: the three it names are all there.
 const home = fs.readFileSync(path.join(SITE, "index.html"), "utf8");
 for (const ai of ["Claude", "ChatGPT", "Local model"]) if (!new RegExp(`<button[^>]*>${ai}</button>`).test(home)) fail(`index.html: the stage has no "${ai}"`);
-// Tabs name sections that exist; a fold's HTML never reaches the markdown an AI reads.
-for (const f of files.filter((f) => LIVE(f) && f.endsWith(".html"))) {
-  const m = fs.readFileSync(f, "utf8").match(/data-tabs="([^"]*)"/);
-  if (m) for (const t of JSON.parse(m[1].replace(/&quot;/g, '"'))) if (!idsIn(f).has(t.id)) fail(`${f}: tab "${t.name}" names #${t.id}, which is not a section`);
-}
+// Connect your AI is one flow for whatever AI: no heading there names one AI app (their notes are inside a fold).
+for (const h of index.pages.find((p) => p.topic === "use/connect-your-ai").headings)
+  if (/claude|chatgpt|local model/i.test(h)) fail(`docs/use/connect-your-ai: the section "${h}" is for one AI; the page is one flow, with notes for some apps in a fold`);
+// A fold's HTML never reaches the markdown an AI reads.
 for (const f of files.filter((f) => LIVE(f) && /^_site\/(docs\/.*\.md|llms-full\.txt)$/.test(f)))
   if (/<\/?(details|summary)>/.test(fs.readFileSync(f, "utf8").replace(/```[\s\S]*?```/g, ""))) fail(`${f}: a fold's HTML is in the markdown an AI reads`);
 
