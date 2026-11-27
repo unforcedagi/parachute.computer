@@ -5,7 +5,7 @@
 (function () {
   var stage = document.querySelector(".stage");
   if (!stage) return;
-  var picks = [].slice.call(stage.querySelectorAll(".ai-pick button:not(.pause)"));
+  var picks = [].slice.call(stage.querySelectorAll(".ai-pick button"));
   var you = stage.querySelector(".you"), it = stage.querySelector(".it"), who = stage.querySelector(".who"), txt = stage.querySelector(".txt");
   var pause = stage.querySelector(".pause");
   var still = matchMedia("(prefers-reduced-motion: reduce), (update: slow)");
@@ -14,9 +14,21 @@
     { who: "Claude", you: you.textContent, it: txt.textContent, before: "before", after: "landed", drop: true },
     { who: "ChatGPT", you: "What did I say about the garden?",
       it: "The seed library box goes by the garden gate. Still open: ask Maya about hosting.", before: "landed", after: "found" },
-    { who: "Local model, on your laptop", you: "Maya said yes. Tick that off.",
+    { who: "Local model, on your own machine", you: "Maya said yes. Tick that off.",
       it: "Done. “Ask Maya about hosting” is ticked off.", before: "landed", after: "done" }
   ];
+  // The chat keeps the height of its tallest scene, at any width: each scene is also laid out unseen in the same
+  // place, so nothing below moves when the scene changes.
+  var live = stage.querySelector(".scene");
+  scenes.forEach(function (s) {
+    var sizer = live.cloneNode(true);
+    sizer.classList.add("sizer");
+    sizer.setAttribute("aria-hidden", "true");
+    sizer.querySelector(".you").textContent = s.you;
+    sizer.querySelector(".who").textContent = s.who;
+    sizer.querySelector(".txt").textContent = s.it;
+    live.parentNode.appendChild(sizer);
+  });
   var WORD = 42;                 // ms between words, the same as the stylesheet's step
   var turn = 0, at = 0, paused = false, seen = false;
 
@@ -84,4 +96,5 @@
     if (seen && running()) play(0); else show(at);
   }, { threshold: 0.35 }).observe(stage);
   pause.hidden = still.matches;
+  stage.classList.add("is-live");   // the names do something now
 })();

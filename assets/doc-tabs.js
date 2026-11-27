@@ -17,6 +17,7 @@
     panel.id = "panel-" + t.id;
     panel.setAttribute("role", "tabpanel");
     panel.setAttribute("aria-labelledby", "tab-" + t.id);
+    panel.tabIndex = 0;
     h.parentNode.insertBefore(panel, h);
     for (var n = h, next; n && !(n !== h && n.tagName === "H2"); n = next) { next = n.nextElementSibling; panel.appendChild(n); }
     var tab = document.createElement("button"), name = document.createElement("b"), lvl = document.createElement("span");
@@ -27,7 +28,13 @@
     tab.appendChild(name); tab.appendChild(lvl);
     list.appendChild(tab); tabs.push(tab); panels.push(panel);
   });
-  panels[0].parentNode.insertBefore(list, panels[0]);
+  // the tabs and their panels in one box: a hidden heading is placed at its top (the stylesheet), so the browser's
+  // own jump to "#chatgpt" lands with the tabs in view
+  var set = document.createElement("div");
+  set.className = "tab-set";
+  panels[0].parentNode.insertBefore(set, panels[0]);
+  set.appendChild(list);
+  panels.forEach(function (p) { set.appendChild(p); });
   art.classList.add("tabbed");
 
   function select(i, focus) {
@@ -39,17 +46,19 @@
     if (focus) tabs[i].focus();
   }
   function fromHash() {          // the tab whose section holds the address's #fragment, if any
-    var el = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    var el = null;
+    try { el = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { /* not a name */ }
     var i = el ? panels.findIndex(function (p) { return p.contains(el); }) : -1;
     if (i < 0) return false;
     select(i);
+    // the browser's own jump found nothing to land on while the section was hidden
     (el.tagName === "H2" ? list : el).scrollIntoView();
     return true;
   }
   tabs.forEach(function (tab, i) {
     tab.addEventListener("click", function () { select(i); history.replaceState(null, "", "#" + spec[i].id); });
     tab.addEventListener("keydown", function (e) {
-      var to = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+      var to = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
       if (to === undefined) return;
       e.preventDefault();
       to = (to + tabs.length) % tabs.length;

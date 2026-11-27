@@ -331,14 +331,14 @@ main.contents { max-width: var(--wide); margin: 0 auto; padding: 3rem var(--gutt
 .door-card .who { margin: .35rem 0 .9rem; font: var(--fs-body)/1.45 var(--sans); color: var(--muted); }
 .door-card ol { list-style: none; margin: 0; padding: 0; }
 .door-card li { border-top: 1px solid var(--line); }
-.door-card li a { display: block; padding: .62rem 0; color: var(--text); text-decoration: none; font: 500 var(--fs-body)/1.35 var(--sans); }
+.door-card li a { display: block; padding: .72rem 0; color: var(--text); text-decoration: none; font: 500 var(--fs-body)/1.35 var(--sans); }
 .door-card > ol li a::after { content: " →"; color: var(--canopy-ink); }
 .door-card details { border-top: 1px solid var(--line); }
 .door-card summary { display: flex; align-items: center; min-height: 2.75rem; cursor: pointer; list-style: none; font: 500 var(--fs-small)/1.2 var(--sans); color: var(--muted); }
 .door-card summary::-webkit-details-marker { display: none; }
 .door-card summary::after { content: "+"; margin-left: auto; font: 400 1.3rem/1 var(--sans); }
 .door-card details[open] summary::after { content: "–"; }
-.door-card details li a { padding: .5rem 0; font-weight: 400; }
+.door-card details li a { padding: .72rem 0; font-weight: 400; }
 .door-card details li:first-child { border-top: 0; }
 @media (hover: hover) and (pointer: fine) { .door-card li a:hover, .door-card h2 a:hover, .door-card summary:hover { color: var(--accent); } }
 .for-your-ai { margin: 1.6rem 0 0; font: var(--fs-small)/1.6 var(--sans); color: var(--muted); }
@@ -369,18 +369,25 @@ main.home { max-width: none; padding: 0; }
 .stage { position: relative; margin: 0; min-width: 0; }
 .stage .ai, .stage .vault { border: 1px solid var(--line); background: var(--surface); }
 .stage .ai { position: relative; z-index: 2; border-radius: 18px; box-shadow: var(--lift); }
-.ai-pick { display: flex; align-items: center; gap: .15rem; padding: .3rem .5rem 0; border-bottom: 1px solid var(--line); }
-.ai-pick button { position: relative; min-height: 2.75rem; padding: 0 .8rem; white-space: nowrap; border: 0; background: none; font: 600 var(--fs-small)/1 var(--sans); color: var(--muted); cursor: pointer; transition: color var(--t-state) var(--ease-out); }
+.ai-bar { display: flex; align-items: center; padding: .3rem .5rem 0; border-bottom: 1px solid var(--line); }
+.ai-pick { display: flex; align-items: center; gap: .15rem; min-width: 0; }
+.ai-bar button { position: relative; min-height: 2.75rem; border: 0; background: none; cursor: pointer; }
+/* without script a name does nothing: only the one that is talking shows, as a label */
+.stage:not(.is-live) .ai-pick button[aria-pressed="false"] { display: none; }
+.ai-pick button { padding: 0 .8rem; white-space: nowrap; font: 600 var(--fs-small)/1 var(--sans); color: var(--muted); transition: color var(--t-state) var(--ease-out); }
 .ai-pick button[aria-pressed="true"] { color: var(--text); }
-.ai-pick button:not(.pause)::after { content: ""; position: absolute; left: .8rem; right: .8rem; bottom: -1px; height: 2px; border-radius: 2px; background: var(--canopy); transform: scaleX(0); transform-origin: left; transition: transform var(--t-sheet) var(--ease-out); }
+.ai-pick button::after { content: ""; position: absolute; left: .8rem; right: .8rem; bottom: -1px; height: 2px; border-radius: 2px; background: var(--canopy); transform: scaleX(0); transform-origin: left; transition: transform var(--t-sheet) var(--ease-out); }
 .ai-pick button[aria-pressed="true"]::after { transform: scaleX(1); }
-.ai-pick .pause { margin-left: auto; width: 2.75rem; padding: 0; display: grid; place-items: center; }
-.ai-pick .pause[hidden] { display: none; }
-.ai-pick .pause span { width: 10px; height: 12px; border-inline: 3px solid var(--muted); }
-.ai-pick .pause.is-paused span { width: 0; height: 0; border: 7px solid transparent; border-left: 11px solid var(--muted); border-right: 0; }
+.ai-bar .pause { flex: none; margin-left: auto; width: 2.75rem; padding: 0; display: grid; place-items: center; }
+.ai-bar .pause[hidden] { display: none; }
+.ai-bar .pause span { width: 10px; height: 12px; border-inline: 3px solid var(--muted); }
+.ai-bar .pause.is-paused span { width: 0; height: 0; border: 7px solid transparent; border-left: 11px solid var(--muted); border-right: 0; }
 @media (hover: hover) and (pointer: fine) { .ai-pick button:hover { color: var(--text); } }
 
-.stage .chat { display: grid; align-content: start; gap: .7rem; min-height: 10.4rem; padding: 1rem 1.1rem 1.2rem; }
+.stage .chat { display: grid; padding: 1rem 1.1rem 1.2rem; }
+/* every scene is laid out in the one place (the others unseen), so the chat is as tall as its tallest scene */
+.stage .scene { grid-area: 1 / 1; display: grid; align-content: start; gap: .7rem; min-width: 0; }
+.stage .scene.sizer { visibility: hidden; pointer-events: none; }
 .stage .chat p { max-width: 88%; margin: 0; font: 400 1.02rem/1.45 var(--serif); }
 .stage .you { justify-self: end; padding: .6rem .85rem; border-radius: 14px 14px 4px 14px; background: var(--ink-panel); color: var(--ink-panel-text); border: 1px solid var(--ink-panel-edge); }
 .stage .it { justify-self: start; padding: .1rem 0 0 .1rem; }
@@ -413,11 +420,12 @@ main.home { max-width: none; padding: 0; }
 .rec i { font: 600 .72rem/1.3 var(--sans); font-style: normal; color: var(--accent); }
 .rec b { font: 600 .95rem/1.25 var(--serif); }
 .rec span { font: 400 var(--fs-label)/1.3 var(--sans); color: var(--muted); }
+.rec .state span { font: inherit; }
 .stage[data-vault="before"] .rec.new { opacity: 0; transform: translateY(-10px) scale(.97); }
 .stage:not([data-vault="before"]) .rec.task { transition-delay: 140ms; }
 /* found: the two records an AI just read are ringed (a ring and the answer above say it, not colour alone) */
 .stage[data-vault="found"] .rec.new { border-color: var(--canopy); box-shadow: 0 0 0 3px color-mix(in srgb, var(--canopy) 18%, transparent); background: var(--surface); }
-.state .done { display: none; color: var(--accent); font-weight: 600; }
+.state .done { display: none; color: var(--accent); }
 .state .done::before { content: "✓ "; }
 .stage[data-vault="done"] .state .open { display: none; }
 .stage[data-vault="done"] .state .done { display: inline; }
@@ -468,10 +476,9 @@ main.home { max-width: none; padding: 0; }
   .home-hero .lede { margin-top: 1rem; font-size: 1.12rem; }
   .home-hero .hero-actions { margin-top: 1.15rem; }
   .home-hero .ticks { display: none; }
-  .stage .chat { min-height: 12.6rem; }
-  .ai-pick { padding-inline: .2rem; }
+  .ai-bar { padding-inline: .2rem; }
   .ai-pick button { padding: 0 .55rem; }
-  .ai-pick button:not(.pause)::after { left: .55rem; right: .55rem; }
+  .ai-pick button::after { left: .55rem; right: .55rem; }
   .stage .vault { margin-inline: .5rem; padding-inline: .8rem; }
   .way-grid, .real-grid { grid-template-columns: 1fr; }
 }
@@ -533,7 +540,9 @@ main :not(pre) > code { color: var(--text); }
 
 /* Sections as tabs (front matter `tabs`, assets/doc-tabs.js): one panel shows; its tab says the name and how far it
    is tested, with a mark that is full or half (a shape and words, never colour alone). */
-.doc-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .5rem; margin: 2rem 0 .7rem; }
+.doc-tabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: .5rem; margin: 0 0 .7rem; scroll-margin-top: 5rem; }
+.tab-set { margin-top: 2rem; }
+@media (max-width: 860px) { .doc-tabs { scroll-margin-top: 7.5rem; } }
 .doc-tabs [role="tab"] { display: grid; gap: .3rem; justify-items: start; min-width: 0; padding: .75rem .9rem .8rem; border: 1px solid var(--line); border-radius: 14px; background: none; color: var(--text); text-align: left; cursor: pointer;
   transition: border-color var(--t-state) var(--ease-out), background-color var(--t-state) var(--ease-out), transform var(--t-press) var(--ease-out); }
 .doc-tabs [role="tab"]:active { transform: scale(.98); }
@@ -546,7 +555,8 @@ main :not(pre) > code { color: var(--text); }
 .tab-panel { margin: 0 0 2.4rem; padding: 1.2rem 1.3rem .4rem; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .tab-panel[hidden] { display: none; }
 /* the tab is the panel's heading; the h2 stays for its address and for a reader without sight of the tabs */
-.tabbed .tab-panel > h2 { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.tab-set { position: relative; }
+.tabbed .tab-panel > h2 { position: absolute; top: 0; left: 0; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* a tabbed section opens with one line on how far it is tested */
 .tab-panel > h2 + p { margin: 0 0 1.1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--line); font: 400 var(--fs-small)/1.55 var(--sans); color: var(--muted); }
 .tab-panel > h2 + p strong { color: var(--text); }
@@ -554,6 +564,8 @@ main :not(pre) > code { color: var(--text); }
 .tab-panel > ol > li { counter-increment: step; position: relative; margin: 0 0 .8rem; padding-left: 2.1rem; }
 .tab-panel > ol > li::before { content: counter(step); position: absolute; left: 0; top: -.08em; font: 500 1.5rem/1.3 var(--serif); color: var(--canopy-ink); }
 .tab-panel details:last-child { margin-bottom: .8rem; border-bottom: 0; }
+/* on paper every section prints, under its own heading */
+@media print { .doc-tabs { display: none; } .tab-panel[hidden] { display: block; } .tabbed .tab-panel > h2 { position: static; width: auto; height: auto; margin: 0 0 .8rem; clip-path: none; } }
 @media (max-width: 560px) {   /* a phone: the tabs stack, each one line: its name, then how far it is tested */
   .doc-tabs { grid-template-columns: 1fr; gap: .4rem; }
   .doc-tabs [role="tab"] { grid-template-columns: 1fr auto; align-items: center; padding-block: .7rem; }

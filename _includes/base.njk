@@ -88,7 +88,7 @@
             <nav class="nav-right" aria-label="Site">
                 <a href="/docs/" {% if door or page.url == "/docs/" %}aria-current="true"{% endif %}>Docs</a>
                 <a class="nav-drop" href="/pricing/" {% if page.url == "/pricing/" %}aria-current="true"{% endif %}>Pricing</a>
-                <a class="nav-drop" href="/blog/">Blog</a>
+                <a class="nav-drop" href="/blog/" {% if "/blog/" in page.url %}aria-current="true"{% endif %}>Blog</a>
                 <a class="nav-drop" href="https://github.com/ParachuteComputer" rel="noopener">GitHub</a>
                 <a class="btn btn-primary" href="/docs/use/start/">Start free</a>
             </nav>

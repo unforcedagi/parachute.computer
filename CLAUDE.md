@@ -13,8 +13,8 @@ this file only carries what the repo can't tell you.
 - **One layout, one nav** (`_includes/base.njk`), the homepage included (since T-476; the
   2026-07 self-contained landing is archived at `archive/home-v2/`). The nav is four plain words (Docs, Pricing,
   Blog, GitHub) and Start free; the docs' four doors are on `/docs/` and beside every docs page.
-- **The pages a newcomer reads stay light** (the homepage had grown to 1,386 words and read as heavy; a person
-  should get the information without being buried in it). The homepage shows the product instead of describing it: one sentence
+- **The pages a newcomer reads stay light** (the homepage had grown to several times the old one's length and read as heavy; a
+  person should get the information without being buried in it). The homepage shows the product instead of describing it: one sentence
   and a stage where three AIs take turns over one vault (`index.njk`, `assets/home-loop.js`); it carries no docs
   index. Depth goes behind a fold, never onto the page: in a docs page write a plain `<details>` with a `<summary>`
   (blank lines inside, so the markdown renders); the markdown twin gives an AI all of it, the summary as a bold line.

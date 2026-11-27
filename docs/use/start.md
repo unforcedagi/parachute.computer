@@ -44,7 +44,7 @@ steps, the screens, and how far each is tested.
 What it writes is in your vault, for any chat later and any AI you connect.
 
 Next: [live pages](/docs/use/claude-artifacts/), and [skills](/docs/use/skills/) that teach your AI how you do
-things. Stuck? [It won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
+things. Stuck? [Claude won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
 
 ## What you get
 

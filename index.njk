@@ -21,18 +21,23 @@ mdTwin: /llms.txt
             </ul>
         </div>
 
-        {# The stage. Without script it is the first scene's last frame: Claude has saved a note and a task. #}
+        {# The stage. Without script it is the first scene's last frame: Claude has saved a note and a task (and the
+           other two names, which would do nothing, aren't shown). #}
         <figure class="stage" data-vault="landed" aria-label="An example: three AIs take turns over one vault">
             <div class="ai">
-                <div class="ai-pick" role="group" aria-label="Which AI is talking">
-                    <button type="button" aria-pressed="true">Claude</button>
-                    <button type="button" aria-pressed="false">ChatGPT</button>
-                    <button type="button" aria-pressed="false">Local model</button>
+                <div class="ai-bar">
+                    <div class="ai-pick" role="group" aria-label="Which AI is talking">
+                        <button type="button" aria-pressed="true">Claude</button>
+                        <button type="button" aria-pressed="false">ChatGPT</button>
+                        <button type="button" aria-pressed="false">Local model</button>
+                    </div>
                     <button class="pause" type="button" aria-label="Pause" hidden><span></span></button>
                 </div>
                 <div class="chat">
-                    <p class="you typed">Remember: the seed library box goes by the garden gate. Ask Maya if the garden will host it.</p>
-                    <p class="it typed"><b class="who">Claude</b><span class="txt">Saved a note and a task, linked to Maya.</span></p>
+                    <div class="scene">
+                        <p class="you typed">Remember: the seed library box goes by the garden gate. Ask Maya if the garden will host it.</p>
+                        <p class="it typed"><b class="who">Claude</b><span class="txt">Saved a note and a task, linked to Maya.</span></p>
+                    </div>
                 </div>
             </div>
             <div class="chute" aria-hidden="true"><svg><use href="#pchute"/></svg></div>
@@ -45,7 +50,7 @@ mdTwin: /llms.txt
                     <li class="rec new task"><i>Task</i><b>Ask Maya about hosting</b><span class="state"><span class="open">open</span><span class="done">done</span></span></li>
                 </ul>
             </div>
-            <figcaption>A drawing of the flow, with made-up notes. Claude is the path we've tested most. <a href="/docs/use/connect-your-ai/">How far each AI is tested</a></figcaption>
+            <figcaption>A drawing, with made-up notes. We've tested each AI on its own, Claude the most; the hand-off between them isn't a recorded run yet. <a href="/docs/use/connect-your-ai/">How far each AI is tested</a></figcaption>
         </figure>
     </section>
 

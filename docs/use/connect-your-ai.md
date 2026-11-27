@@ -5,9 +5,9 @@ door: use
 order: 2
 tabs:
   - { id: claude, name: "Claude", level: full, label: "Tested end to end" }
-  - { id: chatgpt, name: "ChatGPT", level: part, label: "First runs pass" }
+  - { id: chatgpt, name: "ChatGPT", level: part, label: "Still testing" }
   - { id: local-models, name: "Local models", level: part, label: "Works in our runs" }
-checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); ChatGPT sessions of 2026-11-12 (T-456: a Go account, OAuth sign-in, writes and reads on a server of ours, Allow read-only tools after parachute-core #100; not run on Parachute Cloud); a local model through an agent app on a throwaway vault, 2026-11-20 (a key on the vault's own address over loopback HTTP); parachute-core contracts/evals/mcp-tasks (Claude Code, Codex CLI); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
+checked: "claude.ai runs of 2026-11-25 (T-476 claudereal RESULTS2: + › Plugins › Manage plugins, Add › Add custom connector, step 2 Sign in now / Register automatically, OAuth, the tool approval card, Always allow); ChatGPT sessions of 2026-11-12 (a paid account, OAuth sign-in, writes and reads on a server of ours; a read by id failed until parachute-core #100, after which reads run without asking at Allow read-only tools once the tools are refreshed; not run on Parachute Cloud); a local model through an agent app on a throwaway vault, 2026-11-20 (a key on the vault's own address over loopback HTTP); parachute-core contracts/evals/mcp-tasks (Claude Code, Codex CLI); parachute-cloud workers/identity/src/ui.ts (consent, the vault picker on /mcp), console.ts; parachute-core packages/hub/src/oauth-ui.ts renderVaultLevels, contracts/suites/door/one-address.test.ts"
 ---
 
 Your AI needs one thing: your vault's address.
@@ -30,7 +30,8 @@ save what you tell it; with read only it can look but can't remember anything.
 
 ## Claude
 
-**Tested end to end** on claude.ai, 25 November 2026: connecting, remembering, finding, live pages and skills.
+**Tested end to end** on claude.ai, 25 November 2026, against a server of ours on Parachute's next release:
+connecting, remembering, finding, live pages and skills. (Skills come to Parachute Cloud with that release.)
 
 1. In a chat, press **+**, then **Plugins › Manage plugins**. On **Your plugins**, press **Add**, then **Add custom connector**.
 2. Name it `Parachute`, paste your address, and press **Continue**.
@@ -71,18 +72,20 @@ changed to Parachute Cloud's; everything else is as claude.ai drew it.*
 
 ## ChatGPT
 
-**First runs pass; we're still testing.** On 12 November 2026 ChatGPT signed in to a server of ours, wrote notes and
-read them back. We haven't walked it on Parachute Cloud yet.
+**Early runs pass; we're still testing.** On 12 November 2026 ChatGPT signed in to a server of ours, wrote notes and
+read them back; one kind of read failed until a fix on our side. We haven't walked it on Parachute Cloud yet.
 
-1. In ChatGPT's settings, add a **custom connector** (an MCP server) and paste your address.
+1. In ChatGPT's settings, add Parachute as a **custom connector** (an MCP server) and paste your address. ChatGPT has
+   also called these apps and plugins, and its menus change: the names may differ from ours.
 2. Sign in on Parachute's page and allow **Read & write**.
-3. Set the connector to **Allow read-only tools**: ChatGPT then reads without asking, and still asks before it writes.
+3. Set its permission to **Allow read-only tools**: ChatGPT then reads without asking, and still asks before it
+   writes. If it still asks before a read, press **Refresh tools** on the connector.
 
 <details>
 <summary>More: what we haven't checked</summary>
 
-Our runs used a paid ChatGPT account. We haven't tried the free plan, and ChatGPT's menus change often, so the names
-above may differ; it may also ask for Developer mode. A connector has one permission for all its tools (Always ask,
+Our runs used a paid ChatGPT account. We haven't tried the free plan, and we didn't write the menu path down step by
+step; it may also ask for Developer mode. A connector has one permission for all its tools (Always ask,
 Allow read-only tools, Allow low-risk tools, Allow all tools); each Parachute tool says whether it only reads, which
 is what lets ChatGPT skip asking for reads.
 
@@ -91,19 +94,20 @@ is what lets ChatGPT skip asking for reads.
 ## Local models
 
 **Works in our runs.** In November 2026 a model running on our own machine, through an agent app, read and wrote a
-test vault with a key. We haven't written steps for each app yet.
+test vault with a key. We haven't written steps for each app yet, or tried signing in from one.
 
 1. Use an app that runs your model and speaks MCP, with a model that can call tools.
-2. Add an MCP server over HTTP with your address.
-3. Sign in when the app opens Parachute's page. If the app can't open a browser, give it a key and one vault's own
-   address instead ([Keys and what they reach](/docs/build/keys-and-scopes/)).
+2. Add an MCP server over HTTP: one vault's own address, with a key
+   ([Keys and what they reach](/docs/build/keys-and-scopes/)). This is the way we ran it.
+3. Or give it your address above and sign in when the app opens Parachute's page. That should work as it does for
+   Claude; we haven't tried it from a local app.
 
 <details>
 <summary>More: keep everything on your machine</summary>
 
 Run Parachute on the same computer as the model ([Run your own](/docs/run/self-host/)). The address is then
-`http://127.0.0.1:1939/vault/<vault name>/mcp`, with the key as `Authorization: Bearer <key>`. A local model with a
-local vault sends nothing off the computer.
+`http://127.0.0.1:1939/vault/<vault name>/mcp`, with the key as `Authorization: Bearer <key>`. The model and the
+vault are then both on your computer.
 
 </details>
 
@@ -129,4 +133,4 @@ Your AI starts each conversation knowing your vault's name and its types. Try:
 - **To change its level,** remove the connector and add it again.
 - **It can't make an applet run:** you allow each one in the app ([What Allow means](/docs/use/allowing-applets/)).
 
-Stuck? [It won't connect](/docs/fix/connect/).
+Stuck? [Claude won't connect](/docs/fix/connect/) has the fixes we know.

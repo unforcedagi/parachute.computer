@@ -32,9 +32,20 @@ async function check(name, fn) {
 const expect = (ok, what) => { if (!ok) throw new Error(what); };
 
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
-async function open(url, opts = {}) {
+async function open(url, { watch, ...opts } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 }, ...opts });
   const page = await ctx.newPage();
+  // watch: record every state of the stage from the moment it exists
+  if (watch) await page.addInitScript(() => {
+    window.__states = [];
+    new MutationObserver(() => {
+      const stage = document.querySelector(".stage");
+      if (!stage || stage.__watched) return;
+      stage.__watched = true;
+      window.__states.push(stage.dataset.vault);
+      new MutationObserver(() => window.__states.push(stage.dataset.vault)).observe(stage, { attributes: true, attributeFilter: ["data-vault"] });
+    }).observe(document, { childList: true, subtree: true });
+  });
   const errors = [];
   page.on("pageerror", (e) => errors.push(String(e)));
   await page.goto(U + url, { waitUntil: "load" });
@@ -55,7 +66,7 @@ await check("home: the loop plays all three scenes and starts again", async () =
   // scene 2: ChatGPT finds them; scene 3: the local model ticks the task off
   await page.waitForFunction(() => document.querySelector(".stage").dataset.vault === "found", null, { timeout: 12000 });
   expect((await pressed(page)) === "ChatGPT", "scene 2 is not ChatGPT's");
-  expect((await page.locator(".stage .who").innerText()) === "ChatGPT", "the answer is not signed ChatGPT");
+  expect((await page.locator(".stage .scene:not(.sizer) .who").innerText()) === "ChatGPT", "the answer is not signed ChatGPT");
   await page.waitForFunction(() => document.querySelector(".stage").dataset.vault === "done", null, { timeout: 12000 });
   expect((await pressed(page)) === "Local model", "scene 3 is not the local model's");
   expect(await page.locator(".rec.task .done").isVisible(), "the task doesn't show as done");
@@ -74,23 +85,40 @@ await check("home: an AI's name jumps to its scene, and Pause holds it", async (
   expect((await vault(page)) === "done" && (await pressed(page)) === "Local model", "the stage moved while paused");
   await page.getByRole("button", { name: "ChatGPT" }).click();
   expect((await vault(page)) === "found", "a name doesn't show its scene while paused");
-  expect((await page.locator(".stage .txt").innerText()).includes("garden gate"), "ChatGPT's answer isn't shown");
+  expect((await page.locator(".stage .scene:not(.sizer) .txt").innerText()).includes("garden gate"), "ChatGPT's answer isn't shown");
   await close();
 });
 await check("home: with reduce-motion nothing plays, and each scene can still be seen", async () => {
-  const { page, close } = await open("/", { reducedMotion: "reduce" });
+  // every state the stage passes through is kept from the first frame: a loop that played would empty the vault
+  // ("before") within a second, and be back at "landed" by the time anyone looked
+  const { page, close } = await open("/", { reducedMotion: "reduce", watch: true });
   await page.waitForTimeout(4000);
-  expect((await vault(page)) === "landed" && (await pressed(page)) === "Claude", "the stage moved with reduce-motion on");
-  expect(await page.locator(".stage .you").evaluate((el) => getComputedStyle(el).opacity === "1"), "what was said isn't shown");
-  expect(await page.locator(".ai-pick .pause").isHidden(), "Pause shows though nothing plays");
+  const states = await page.evaluate(() => window.__states);
+  expect(states.every((s) => s === "landed"), `the stage moved with reduce-motion on (${states.join(" → ")})`);
+  expect((await pressed(page)) === "Claude", "the stage moved with reduce-motion on");
+  expect(await page.locator(".stage .scene:not(.sizer) .you").evaluate((el) => getComputedStyle(el).opacity === "1"), "what was said isn't shown");
+  expect(await page.locator(".ai-bar .pause").isHidden(), "Pause shows though nothing plays");
   await page.getByRole("button", { name: "Local model" }).click();
   expect((await vault(page)) === "done", "a name doesn't show its scene");
+  await close();
+});
+await check("home: nothing below the stage moves when the scene changes, on a narrow phone", async () => {
+  const { page, close } = await open("/", { viewport: { width: 320, height: 800 }, reducedMotion: "reduce" });
+  const heights = [];
+  for (const name of ["Claude", "ChatGPT", "Local model"]) {
+    await page.getByRole("button", { name }).click();
+    heights.push(await page.locator(".stage").evaluate((el) => Math.round(el.getBoundingClientRect().height)));
+  }
+  expect(new Set(heights).size === 1, `the stage is ${heights.join(", ")}px tall by scene`);
+  const pause = await page.locator(".ai-bar .pause").evaluate((el) => { el.hidden = false; return el.getBoundingClientRect().width; });
+  expect(pause >= 44, `Pause is ${pause}px wide`);
   await close();
 });
 await check("home: without script the first scene's last frame is there to read", async () => {
   const { page, close } = await open("/", { javaScriptEnabled: false });
   expect(await page.getByText("Saved a note and a task, linked to Maya.").isVisible(), "Claude's answer isn't shown");
   expect(await page.locator(".rec.note").evaluate((el) => getComputedStyle(el).opacity === "1"), "the note isn't in the vault");
+  expect((await page.locator(".ai-pick button:visible").count()) === 1, "a name that does nothing is shown as a button");
   await close();
 });
 
@@ -105,7 +133,7 @@ await check("connect: one tab at a time, by click and by arrow key", async () =>
   expect((await page.getByRole("tab", { name: /Claude/ }).innerText()).includes("Tested end to end"), "Claude's tab doesn't say how far it is tested");
   await page.getByRole("tab", { name: /ChatGPT/ }).click();
   expect((await shown(page)) === "ChatGPT" && (await page.locator(".tab-panel:not([hidden])").count()) === 1, "ChatGPT's panel isn't the one shown");
-  expect(await page.getByText("still testing").isVisible(), "ChatGPT's panel doesn't say it is still being tested");
+  expect(await page.locator(".tab-panel:not([hidden])").getByText("we're still testing").isVisible(), "ChatGPT's panel doesn't say it is still being tested");
   expect(page.url().endsWith("#chatgpt"), "the address doesn't name the open tab");
   await page.keyboard.press("ArrowRight");
   expect((await shown(page)) === "Local models", "ArrowRight didn't move to the next tab");
@@ -118,10 +146,30 @@ await check("connect: the address's #fragment opens its tab, and a fold opens", 
   const { page, close } = await open(CONNECT + "#local-models");
   expect((await shown(page)) === "Local models", "#local-models didn't open its tab");
   await page.getByText("More: keep everything on your machine").click();
-  expect(await page.getByText("sends nothing off the computer").isVisible(), "the fold didn't open");
+  expect(await page.getByText("both on your computer").isVisible(), "the fold didn't open");
   await page.locator(".onpage a", { hasText: "ChatGPT" }).click();   // a link: the tab follows the address, a moment later
   await page.waitForFunction(() => document.querySelector(".tab-panel:not([hidden]) > h2").textContent === "ChatGPT", null, { timeout: 3000 })
     .catch(() => { throw new Error("On this page didn't open ChatGPT's tab"); });
+  await close();
+});
+await check("connect: a link to a tab's section lands with the tabs in view, on a phone too", async () => {
+  for (const width of [390, 1280]) {
+    const { page, close } = await open(CONNECT + "#chatgpt", { viewport: { width, height: 800 } });
+    await page.waitForTimeout(400);
+    // nothing sticky may cover the tabs: the nav, and on a phone the line that says where you are
+    const { top, covered } = await page.evaluate(() => {
+      const tabs = document.querySelector(".doc-tabs").getBoundingClientRect();
+      const over = [...document.querySelectorAll(".site-nav, .toc")].map((el) => [getComputedStyle(el).position, el.getBoundingClientRect()])
+        .filter(([pos, r]) => ["sticky", "fixed"].includes(pos) && r.left < tabs.right && r.right > tabs.left);   // pinned, and above the tabs' column
+      return { top: tabs.top, covered: Math.max(...over.map(([, r]) => r.bottom)) };
+    });
+    expect(top >= covered - 1 && top < 800, `at ${width} the tabs sit at ${Math.round(top)}, under what is pinned to ${Math.round(covered)}`);
+    await close();
+  }
+});
+await check("connect: a bad #fragment leaves the first tab open", async () => {
+  const { page, errors, close } = await open(CONNECT + "#%");
+  expect((await shown(page)) === "Claude" && !errors.length, errors[0] || "the first tab isn't open");
   await close();
 });
 await check("connect: without script every section is there", async () => {
