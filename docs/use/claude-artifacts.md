@@ -140,7 +140,7 @@ let moved = new Set();       // records that changed somewhere else since the la
 
 // A refetch never redraws under the person's hands: while a note or a date is being edited, the redraw waits for blur.
 let waiting = false;
-const editing = () => { const a = document.activeElement; return !!(a && a.closest && a.closest("li") && (a.isContentEditable || a.tagName === "INPUT")); };
+const editing = () => { const a = document.activeElement, li = a && a.closest && a.closest("li"); return !!(li && !li.lost && (a.isContentEditable || a.tagName === "INPUT")); };
 document.addEventListener("focusout", () => setTimeout(() => { if (waiting && !editing()) { waiting = false; render(); } }, 0));
 
 function render() {
@@ -216,8 +216,8 @@ function row(r) {
   const due = Object.assign(document.createElement("input"), { type: "date", className: "due", value: f.due || "" });
   // A date picked from the calendar is one change: written at once. A date typed digit by digit changes at each
   // key: written when the field is left, or on Enter.
-  let typed = false;
-  const saveDue = () => { typed = false; const v = due.value || null; if (!r.lost && v !== ((r.fields || {}).due || null)) change(li, r, { fields: { due: v } }); };
+  let typed = false, sent = f.due || null;   // sent: what the vault has or is being sent, so leaving the field mid-write sends nothing twice
+  const saveDue = () => { typed = false; const v = due.value || null; if (!r.lost && v !== sent) { sent = v; change(li, r, { fields: { due: v } }); } };
   due.onkeydown = (e) => { if (e.key === "Enter") due.blur(); else typed = true; };
   due.onchange = () => { if (!typed) saveDue(); };
   due.onblur = saveDue;
@@ -238,9 +238,9 @@ async function change(li, r, patch) {
   } catch (e) {
     const conflict = refusal(e).error_type === "conflict";
     say(conflict ? `“${nameOf(r)}” changed somewhere else, so I reloaded it. Try again.` : plain(e));
-    // The row lost to another change: what it shows is old, so nothing more is sent from it, and the cursor leaves it
-    // so the reload can redraw it now.
-    if (conflict) { r.lost = true; const a = document.activeElement; if (a && li.contains(a)) a.blur(); }
+    // The row lost to another change: what it shows is old. Its note and date send nothing more, and it no longer
+    // holds back the redraw, so the reload shows the other change even with the cursor still in it.
+    if (conflict) r.lost = li.lost = true;
   } finally {
     await mcp.invalidate(SERVER, "query-records").catch(() => {});
     writing.delete(r.id);
@@ -271,7 +271,7 @@ async function change(li, r, patch) {
 </html>
 ```
 
-Published in claude.ai as it is (2026-11-27; only the connector's name was set to the test vault's):
+Published in claude.ai as it is (2026-11-27; only the connector's name was set to the test connector's):
 
 - a task changed elsewhere showed at the page's next read, its row marked;
 - a tick and an untick each landed in the vault;
