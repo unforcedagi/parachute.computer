@@ -20,20 +20,18 @@ tell one, the others know. Three steps on **Parachute Cloud**, where we run the 
 
 ## 2. Connect your AI
 
-Give your AI this address, the same for every Parachute Cloud account:
+Whatever AI you use, give it this address, the same for every Parachute Cloud account:
 
 ```
 https://my.parachute.computer/mcp
 ```
 
-**In Claude**, the path we've tested most, on [claude.ai](https://claude.ai):
+1. In your AI app, add a connector and paste the address.
+2. Parachute's page opens. Sign in with the same email and pick your vault.
+3. Choose **Read & write** and press **Allow**.
 
-1. In a chat, press **+**, then **Plugins › Manage plugins**. On the plugins page, **Add › Add custom connector**.
-2. Name it `Parachute`, paste the address, and press **Continue**, then **Add**.
-3. Parachute's page opens. Sign in with the same email, pick your vault, keep **Read & write** and press **Allow**.
-
-**ChatGPT or a local model** takes the same address. [Connect your AI](/docs/use/connect-your-ai/) has each one's
-steps, the screens, and how far each is tested.
+Where the menu is in Claude and in ChatGPT, how local-model apps connect, and how far each is tested:
+[notes for some apps](/docs/use/connect-your-ai/#notes-for-some-apps).
 
 ## 3. Ask it
 
@@ -44,7 +42,7 @@ steps, the screens, and how far each is tested.
 What it writes is in your vault, for any chat later and any AI you connect.
 
 Next: [live pages](/docs/use/claude-artifacts/), and [skills](/docs/use/skills/) that teach your AI how you do
-things. Stuck? [Claude won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
+things. Stuck? [Your AI won't connect](/docs/fix/connect/), and [every fix](/docs/fix/).
 
 ## What you get
 
@@ -63,8 +61,10 @@ things. Stuck? [Claude won't connect](/docs/fix/connect/), and [every fix](/docs
 - Parachute Cloud runs the 0.8 engine today, a release behind a server of your own: small files from a chat come
   with its next release, and skills in your vault when it moves to 0.9. [Parachute Cloud](/docs/run/cloud/) says what
   differs.
-- In step 2 leave what Claude detects (**Sign in now**, **Register automatically**), and on Parachute's page leave
-  **Full admin** unchosen. **Read & write** is chosen already.
+- In step 2, in Claude: in a chat press **+**, then **Plugins › Manage plugins › Add › Add custom connector**; name
+  it `Parachute`, paste the address, press **Continue**, leave what Claude detects (**Sign in
+  now**, **Register automatically**) and press **Add**. On Parachute's page leave **Full admin** unchosen; **Read &
+  write** is chosen already.
 - Each vault also has its own address, under **Connect your AI** on its card; it skips the choice of vault.
 - On claude.ai's **Manual** setting Claude asks before each tool call, and **Always allow** on the card stops that for
   the tool; on **Auto** (claude.ai's default now) it goes ahead.

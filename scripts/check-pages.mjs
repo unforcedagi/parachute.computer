@@ -2,8 +2,8 @@
 // npm run check:pages: the built site (_site) in a real browser, used as a person would. Exits 1 on any failure.
 // - the homepage's stage plays its three scenes (Claude files, ChatGPT finds, a local model ticks off), an AI's name
 //   jumps to its scene, Pause holds it, and with reduce-motion nothing plays but every scene can still be seen;
-// - Connect your AI shows one tab at a time, by click, by arrow key and by the address's #fragment, and without
-//   script every section is simply there;
+// - Connect your AI is one flow with no tabs; its notes for some apps open by a tap and by a link to them (the
+//   homepage's included), and say how far each app is tested;
 // - the docs page's "All N pages" lists every page of its door;
 // - none of these pages scrolls sideways, at 320, 390 or 1280 wide, and the way in stays on screen.
 // CHROMIUM_PATH=/usr/bin/chromium uses a browser already on the machine instead of Playwright's own.
@@ -130,64 +130,51 @@ await check("home: without script the first scene's last frame is there to read"
 
 // ---- Connect your AI ----
 const CONNECT = "/docs/use/connect-your-ai/";
-const shown = (page) => page.locator(".tab-panel:not([hidden]) > h2").innerText();
-await check("connect: one tab at a time, by click and by arrow key", async () => {
+const NOTES = "#notes-for-some-apps";
+await check("connect: one flow for any AI, with notes for some apps one tap away", async () => {
   const { page, errors, close } = await open(CONNECT);
-  const tabs = page.getByRole("tab");
-  expect((await tabs.count()) === 3, `expected 3 tabs, found ${await tabs.count()}`);
-  expect((await shown(page)) === "Claude", "the first tab isn't Claude");
-  expect((await page.getByRole("tab", { name: /Claude/ }).innerText()).includes("Tested end to end"), "Claude's tab doesn't say how far it is tested");
-  await page.getByRole("tab", { name: /ChatGPT/ }).click();
-  expect((await shown(page)) === "ChatGPT" && (await page.locator(".tab-panel:not([hidden])").count()) === 1, "ChatGPT's panel isn't the one shown");
-  expect(await page.locator(".tab-panel:not([hidden])").getByText("we're still testing").isVisible(), "ChatGPT's panel doesn't say it is still being tested");
-  expect(page.url().endsWith("#chatgpt"), "the address doesn't name the open tab");
-  await page.waitForFunction(() => document.querySelector(".onpage a[aria-current]")?.textContent === "ChatGPT", null, { timeout: 2000 })
-    .catch(() => { throw new Error("On this page doesn't mark the tab opened on an unscrolled page"); });
-  await page.keyboard.press("ArrowRight");
-  expect((await shown(page)) === "Local models", "ArrowRight didn't move to the next tab");
-  await page.keyboard.press("ArrowRight");
-  expect((await shown(page)) === "Claude", "ArrowRight on the last tab didn't wrap to the first");
+  // the flow is there without opening anything: the address, and the three steps
+  expect((await page.locator(".doc-body pre").first().innerText()).trim() === "https://my.parachute.computer/mcp", "the address isn't the first thing to copy");
+  expect(await page.locator(".doc-body .code-frame .copy-btn").first().isVisible(), "the address has no Copy");
+  expect((await page.locator(".doc-body > ol").first().locator("> li").count()) === 3, "the flow isn't three steps");
+  expect((await page.getByRole("tab").count()) === 0, "there are tabs: the page is one flow");
+  // the notes are folded, and say how far each app is tested
+  const notes = page.locator(NOTES);
+  expect(!(await notes.getByText("Tested end to end").isVisible()), "the notes are open before anyone asked");
+  await notes.locator("summary").click();
+  for (const level of ["Tested end to end", "Still testing", "Works in our runs"]) expect(await notes.getByText(level).isVisible(), `the notes don't say "${level}"`);
   expect(!errors.length, errors[0]);
   await close();
 });
-await check("connect: the address's #fragment opens its tab, and a fold opens", async () => {
-  const { page, close } = await open(CONNECT + "#local-models");
-  expect((await shown(page)) === "Local models", "#local-models didn't open its tab");
-  await page.getByRole("tab", { name: /Claude/ }).click();
-  await page.waitForFunction(() => document.querySelector(".onpage a[aria-current]")?.textContent === "Claude", null, { timeout: 2000 })
-    .catch(() => { throw new Error("On this page doesn't mark the tab just opened"); });
-  await page.getByRole("tab", { name: /Local models/ }).click();
-  await page.getByText("More: keep everything on your machine").click();
-  expect(await page.getByText("both on your computer").isVisible(), "the fold didn't open");
-  await page.locator(".onpage a", { hasText: "ChatGPT" }).click();   // a link: the tab follows the address, a moment later
-  await page.waitForFunction(() => document.querySelector(".tab-panel:not([hidden]) > h2").textContent === "ChatGPT", null, { timeout: 3000 })
-    .catch(() => { throw new Error("On this page didn't open ChatGPT's tab"); });
-  await close();
-});
-await check("connect: a link to a tab's section lands with the tabs in view, on a phone too", async () => {
-  for (const width of [390, 1280]) {
-    const { page, close } = await open(CONNECT + "#chatgpt", { viewport: { width, height: 800 } });
-    await page.waitForTimeout(400);
-    // nothing sticky may cover the tabs: the nav, and on a phone the line that says where you are
-    const { top, covered } = await page.evaluate(() => {
-      const tabs = document.querySelector(".doc-tabs").getBoundingClientRect();
+await check("connect: a link to the notes opens them, below what is pinned, on a phone too", async () => {
+  for (const width of [320, 390, 1280]) {
+    const { page, close } = await open(CONNECT + NOTES, { viewport: { width, height: 800 } });
+    await page.waitForFunction((id) => document.querySelector(id).open, NOTES, { timeout: 2000 }).catch(() => { throw new Error(`at ${width} the link didn't open the notes`); });
+    const { top, covered } = await page.evaluate((id) => {
+      const fold = document.querySelector(id).getBoundingClientRect();
       const over = [...document.querySelectorAll(".site-nav, .toc")].map((el) => [getComputedStyle(el).position, el.getBoundingClientRect()])
-        .filter(([pos, r]) => ["sticky", "fixed"].includes(pos) && r.left < tabs.right && r.right > tabs.left);   // pinned, and above the tabs' column
-      return { top: tabs.top, covered: over.length ? Math.max(...over.map(([, r]) => r.bottom)) : NaN };
-    });
-    expect(!Number.isNaN(covered), "nothing is pinned above the tabs: has the nav been renamed?");
-    expect(top >= covered - 1 && top < 800, `at ${width} the tabs sit at ${Math.round(top)}, under what is pinned to ${Math.round(covered)}`);
+        .filter(([pos, r]) => ["sticky", "fixed"].includes(pos) && r.left < fold.right && r.right > fold.left);   // pinned, and above the fold's column
+      return { top: fold.top, covered: over.length ? Math.max(...over.map(([, r]) => r.bottom)) : NaN };
+    }, NOTES);
+    expect(!Number.isNaN(covered), "nothing is pinned above the page: has the nav been renamed?");
+    expect(top >= covered - 1 && top < 800, `at ${width} the notes sit at ${Math.round(top)}, under what is pinned to ${Math.round(covered)}`);
     await close();
   }
 });
-await check("connect: a bad #fragment leaves the first tab open", async () => {
-  const { page, errors, close } = await open(CONNECT + "#%");
-  expect((await shown(page)) === "Claude" && !errors.length, errors[0] || "the first tab isn't open");
+await check("connect: the homepage's link about testing lands on the open notes", async () => {
+  const { page, close } = await open("/", { reducedMotion: "reduce" });
+  await page.locator(".stage figcaption a").click();
+  await page.waitForURL("**" + CONNECT + NOTES);
+  await page.waitForFunction((id) => document.querySelector(id).open, NOTES, { timeout: 2000 }).catch(() => { throw new Error("the notes aren't open"); });
   await close();
 });
-await check("connect: without script every section is there", async () => {
+await check("connect: a bad #fragment harms nothing, and without script the notes still open", async () => {
+  const bad = await open(CONNECT + "#%");
+  expect(!bad.errors.length, bad.errors[0]);
+  await bad.close();
   const { page, close } = await open(CONNECT, { javaScriptEnabled: false });
-  for (const id of ["claude", "chatgpt", "local-models"]) expect(await page.locator("#" + id).isVisible(), `#${id} isn't shown`);
+  await page.locator(NOTES + " summary").click();
+  expect(await page.locator(NOTES).getByText("Still testing").isVisible(), "the notes don't open without script");
   await close();
 });
 
@@ -227,4 +214,4 @@ if (fails.length) {
   console.log(`${fails.length} failed, ${passed} passed`);
   process.exit(1);
 }
-console.log(`PASS: ${passed} checks in a browser (the stage, the tabs, the docs page, three widths)`);
+console.log(`PASS: ${passed} checks in a browser (the stage, Connect your AI, the docs page, three widths)`);

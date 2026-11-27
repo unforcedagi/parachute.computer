@@ -1,6 +1,6 @@
 ---
-title: "Claude won't connect"
-summary: "The connector says it can't reach Parachute, sign-in goes round in a loop, or Claude doesn't see your vault. What each means and the fix."
+title: "Your AI won't connect"
+summary: "The connector says it can't reach Parachute, sign-in goes round in a loop, or your AI doesn't see your vault. What each means and the fix, as we've seen them in Claude."
 door: fix
 order: 1
 checked: "claude.ai runs of 2026-11-25 (T-476 claudereal: Plugins › Add › Add custom connector, step 2, consent, Reconnect); parachute-cloud workers/vault/src/index.ts (root /mcp), workers/identity/src/ui.ts (consent, vault picker); parachute-core packages/hub/src/oauth-ui.ts"
@@ -27,11 +27,11 @@ You signed in and allowed it, and claude.ai still shows the connector as not con
 - **You have no vault yet.** On Parachute Cloud the approval page says "You don't have a vault yet" and has no Allow. Make one in your account ("Name your vault", **Create my vault**), then connect again.
 - **The sign-in link expired.** Links work once, for 10 minutes. Ask for a new one, or type the 6-digit code from the same email.
 
-## Claude is connected but says it can't save
+## It's connected but says it can't save
 
-It connected at **Read only**. Remove the connector and add it again, and on the approval page choose **Read & write**. With read only it can look, but it can't remember anything for you.
+It connected at **Read only**. Remove the connector and add it again, and on the approval page choose **Read & write** (**Write** on your own server). With read only it can look, but it can't remember anything for you.
 
-## Claude says Parachute refused it
+## It says Parachute refused it
 
 Each refusal names its reason (`error_type`), and from the next release the page with the fix (`docs`): [It needs admin](/docs/fix/needs-admin/), [A type or field isn't there](/docs/fix/unknown-type/), [A file is too big](/docs/fix/file-too-large/), and [every refusal](/docs/fix/refusals/).
 

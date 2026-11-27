@@ -49,7 +49,7 @@ layout: base.njk
         });
     })();
     </script>
-    <article class="doc arrive"{% if tabs %} data-tabs="{{ tabs | dump }}"{% endif %}>
+    <article class="doc arrive">
         <h1>{{ title }}</h1>
         <p class="summary">{{ summary | inlineCode | safe }}</p>
         <div class="doc-body">
@@ -68,8 +68,19 @@ layout: base.njk
         </div>
     </article>
     {% if gallery %}<script src="/assets/components/gallery.js" defer></script>{% endif %}
-    {# Sections as tabs (front matter `tabs`): assets/doc-tabs.js. Before "On this page", which skips a hidden tab's heading. #}
-    {% if tabs %}<script src="/assets/doc-tabs.js"></script>{% endif %}
+    {# A link to a fold, or to something inside one (…/connect-your-ai/#notes-for-some-apps), opens it. #}
+    <script>
+    (function () {
+        function open() {
+            var el = null;
+            try { el = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (e) { /* not a name */ }
+            var fold = el && el.closest(".doc-body details");
+            if (fold && !fold.open) { fold.open = true; el.scrollIntoView(); }
+        }
+        addEventListener("hashchange", open);
+        open();
+    })();
+    </script>
     {% if secs.length > 2 %}
     <aside class="onpage" aria-label="On this page">
         <h2>On this page</h2>
@@ -86,12 +97,10 @@ layout: base.njk
         function mark() {
             queued = false;
             if (!shown) return;
-            // (the first section that is on the page: a tab that isn't open has no box)
-            var root = document.documentElement, view = root.clientHeight, cur = (heads.find(function (x) { return x[0].getClientRects().length; }) || heads[0])[1];
+            var root = document.documentElement, view = root.clientHeight, cur = heads[0][1];
             if (root.scrollHeight > view + 2) {
                 if (scrollY + view >= root.scrollHeight - 2) cur = heads[heads.length - 1][1];
-                // (a heading inside a tab that isn't open has no box, and is never the one being read)
-                else heads.forEach(function (x) { if (x[0].getClientRects().length && x[0].getBoundingClientRect().top <= view * 0.35) cur = x[1]; });
+                else heads.forEach(function (x) { if (x[0].getBoundingClientRect().top <= view * 0.35) cur = x[1]; });
             }
             links.forEach(function (a) { a.toggleAttribute("aria-current", a === cur); });
         }
@@ -101,7 +110,6 @@ layout: base.njk
         addEventListener("scroll", soon, { passive: true });
         addEventListener("resize", look);
         addEventListener("hashchange", soon);
-        addEventListener("sectionschange", soon);   // a tab opened (assets/doc-tabs.js)
         look();
     })();
     </script>

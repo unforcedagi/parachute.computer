@@ -20,11 +20,12 @@ this file only carries what the repo can't tell you.
   (blank lines inside, so the markdown renders); the markdown twin gives an AI all of it, the summary as a bold line.
   `npm run check` holds the homepage, `/docs/`, Start and Connect your AI to a word budget (words showing before any
   fold is opened); when one fails, cut or fold, don't raise it.
-- **Any AI, with the tested level said.** Parachute is one vault for any AI: Claude is the first tested path, not the
-  only one. `docs/use/connect-your-ai.md` has a section per AI, drawn as tabs (`tabs:` in its front matter:
-  each entry is a section's heading id, its name, `level: full|part` and a short label; `assets/doc-tabs.js`). Each
-  tabbed section opens with one paragraph saying how far it is tested, with the date; change it only when a run
-  changes it. Don't claim more for ChatGPT or local models than the page's `checked:` line supports.
+- **It works with whatever AI: one flow, no view per AI.** Parachute is one vault for any AI app that takes an MCP
+  connector; Claude is the first tested path, not the only one, and no page gets a tab, card or section per AI.
+  `docs/use/connect-your-ai.md` is one flow (the address, three steps) with its notes for some apps in one fold: where
+  the menu is in Claude and ChatGPT, how local-model apps connect, and one line each on how far it is tested, with the
+  date. The screens and the fine print are in a second fold, by topic, not by AI. Change a tested line only when a run changes it, and don't claim more for ChatGPT or local models than the
+  page's `checked:` line supports. A link to a fold (`…#notes-for-some-apps`) opens it (`_includes/doc.njk`).
 - **The docs are `docs/<door>/<page>.md`** (door: use, build, run, fix), each with `title`,
   `summary`, `door`, `order` and `checked` (the code it was checked against) in its front
   matter. Every page is also served as markdown at `/docs/<door>/<page>.md`
@@ -41,7 +42,7 @@ this file only carries what the repo can't tell you.
 - **`npm run check` after a build** (and in CI on every PR): every link on the live pages, the twins, llms.txt and
   llms-full.txt resolves, anchors included; every page exists under every version; every mapped refusal lands on a
   section; the word budgets hold. archive/ and design/ are dated records and aren't checked.
-  **`npm run check:pages`** (CI too) drives the built site in a browser: the homepage's stage, the tabs, the docs
+  **`npm run check:pages`** (CI too) drives the built site in a browser: the homepage's stage, Connect your AI, the docs
   page's folds, and no sideways scroll at 320, 390 and 1280. `CHROMIUM_PATH=/usr/bin/chromium` uses a browser already
   on the machine (CI uses the runner's own Chrome this way).
 - **Don't publish fast-changing metrics** — file counts, version numbers, test
