@@ -87,8 +87,9 @@ walked it on Parachute Cloud yet.
 
 Our runs used a paid ChatGPT account. We haven't tried the free plan, and we didn't write the menu path down step by
 step; it may also ask for Developer mode. A plugin has one permission for all its tools (Always ask,
-Allow read-only tools, Allow low-risk tools, Allow all tools); each Parachute tool says whether it only reads, which
-is what lets ChatGPT skip asking for reads.
+Allow read-only tools, Allow low-risk tools, Allow all tools); from the next release each Parachute tool says whether
+it only reads, which is what lets ChatGPT skip asking for reads. On today's release ChatGPT may also say the vault
+didn't confirm a save that did go through.
 
 </details>
 

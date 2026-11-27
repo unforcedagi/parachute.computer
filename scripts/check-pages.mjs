@@ -141,6 +141,8 @@ await check("connect: one tab at a time, by click and by arrow key", async () =>
   expect((await shown(page)) === "ChatGPT" && (await page.locator(".tab-panel:not([hidden])").count()) === 1, "ChatGPT's panel isn't the one shown");
   expect(await page.locator(".tab-panel:not([hidden])").getByText("we're still testing").isVisible(), "ChatGPT's panel doesn't say it is still being tested");
   expect(page.url().endsWith("#chatgpt"), "the address doesn't name the open tab");
+  await page.waitForFunction(() => document.querySelector(".onpage a[aria-current]")?.textContent === "ChatGPT", null, { timeout: 2000 })
+    .catch(() => { throw new Error("On this page doesn't mark the tab opened on an unscrolled page"); });
   await page.keyboard.press("ArrowRight");
   expect((await shown(page)) === "Local models", "ArrowRight didn't move to the next tab");
   await page.keyboard.press("ArrowRight");

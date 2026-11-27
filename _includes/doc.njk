@@ -86,7 +86,8 @@ layout: base.njk
         function mark() {
             queued = false;
             if (!shown) return;
-            var root = document.documentElement, view = root.clientHeight, cur = heads[0][1];
+            // (the first section that is on the page: a tab that isn't open has no box)
+            var root = document.documentElement, view = root.clientHeight, cur = (heads.find(function (x) { return x[0].getClientRects().length; }) || heads[0])[1];
             if (root.scrollHeight > view + 2) {
                 if (scrollY + view >= root.scrollHeight - 2) cur = heads[heads.length - 1][1];
                 // (a heading inside a tab that isn't open has no box, and is never the one being read)

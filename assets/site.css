@@ -327,7 +327,7 @@ main.contents { max-width: var(--wide); margin: 0 auto; padding: 3rem var(--gutt
 .doors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; align-items: start; }
 .door-card { min-width: 0; padding: .9rem 1.5rem 1.1rem; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); }
 .door-card h2 { margin: 0; font: 450 var(--fs-head)/1.1 var(--serif); letter-spacing: -.015em; }
-.door-card h2 a { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--text); text-decoration: none; }
+.door-card h2 a { display: inline-flex; align-items: center; min-width: 2.75rem; min-height: 2.75rem; color: var(--text); text-decoration: none; }
 .door-card .who { margin: 0 0 .9rem; font: var(--fs-body)/1.45 var(--sans); color: var(--muted); }
 .door-card ol { list-style: none; margin: 0; padding: 0; }
 .door-card li { border-top: 1px solid var(--line); }
